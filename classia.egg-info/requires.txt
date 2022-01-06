@@ -1,5 +1,0 @@
-numpy
-plotly
-pandas
-fire
-dionysus

@@ -26,7 +26,7 @@ class Pipeline():
         self.create_directory(os.path.join(os.getcwd(),'point_cloud'))
         file_path=os.path.join(os.getcwd(),"point_cloud",file_name)
         attach_level(lattice.data,file_path,survival_rates=survival_rates)
-        print(f"Point cloud with {lattice_layer_size**3} atoms generated.")
+        print(f"A {crystal_type} lattice with {lattice_layer_size**3} atoms generated.")
         #step 2 - generate filtration
         self.create_directory(os.path.join(os.getcwd(),'filtration'))
         filt_file_path=os.path.join(os.getcwd(),"filtration",f"{file_name_prefix}.fil")

@@ -1,0 +1,61 @@
+body {
+    background-color: #F5F5F5;
+    /* WhiteSmoke see https://www.w3schools.com/cssref/css_colors.asp */
+    color: #000000;
+}
+
+a:link {
+    color: #0000ff;
+}
+
+a:visited {
+    color: #66ffff;
+}
+
+a:hover {
+    color: #ff9999;
+}
+
+a:active {
+    color: #ff0000;
+}
+
+a {
+    color: #000000;
+    font-size: 36px;
+}
+
+#foundation {
+    position: relative;
+    /* height: max-content; */
+    /* width: 720px;
+    height: 680px;
+    border: #ffffff 1px solid; */
+}
+
+.topItem {
+    display: flex;
+    width: 1200px;
+    align-items: center;
+    justify-content: end;
+}
+
+.barContainer {
+    width: 500px;
+    margin: 0;
+}
+
+.gradient {
+    width: 85%;
+    white-space: nowrap;
+    position: relative;
+    display: inline-block;
+    top: 4px;
+    padding-bottom: 15px;
+}
+
+.grad-step {
+    display: inline-block;
+    height: 20px;
+    width: 0.5%;
+}

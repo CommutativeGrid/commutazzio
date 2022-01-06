@@ -1,5 +1,7 @@
 # Commutative Ladder Source-Sink Interval Approximation
 
+[日本語](README_ja.md) (Translated by DeepL)
+
 **C**ommutative **la**dder **s**ource-**s**ink **i**nterval **a**pproximation is a python module providing an integrated computational tool for computing source-sink type interval approximation of commutative ladders of arbitrary length obtained.
 It features a streamlined process from an user input of parameters of fcc/hcp lattice to decorated persistence diagram.
 

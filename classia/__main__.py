@@ -1,4 +1,5 @@
 import fire
+
 from . import Pipeline
 
 if __name__ == '__main__':

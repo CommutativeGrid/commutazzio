@@ -7,34 +7,33 @@ Created on Thu Dec 23 14:47:08 2021
 """
 import os
 
-from .helper import attach_level
-from .helper import command_generator
-from .helper import create_directory
-from cpes import face_centered_cubic,hexagonal_close_packing
-from .compute import commutative_ladder_kinji_ss
-from .plot import commutative_ladder_pd_ss
+from cpes import FaceCenteredCubic, HexagonalClosePacking
+
+from .compute import CommutativeLadderKinjiSS
+from .helper import attach_level, command_generator, create_directory
+from .plot import CommutativeLadderPdSS
 
 
 class Pipeline():
     def __init__(self,crystal_type,start,end,survival_rates=[0.5,1],dim=1,lattice_layer_size=10,ladder_length=50,executor='./random-cech/cech_filtration'):
         #step 1 - generate point cloud
         if crystal_type=='fcc':
-            lattice=face_centered_cubic(lattice_layer_size,radius=1)
+            lattice=FaceCenteredCubic(lattice_layer_size,radius=1)
         elif crystal_type=='hcp':
-            lattice=hexagonal_close_packing(lattice_layer_size,radius=1)
+            lattice=HexagonalClosePacking(lattice_layer_size,radius=1)
         file_name_prefix=f"{crystal_type}_{lattice_layer_size}_{survival_rates[0]}_{survival_rates[1]}_{ladder_length}"
         file_name=f"{file_name_prefix}.xyz"
         create_directory(os.path.join(os.getcwd(),'point_cloud'))
         file_path=os.path.join(os.getcwd(),"point_cloud",file_name)
         attach_level(lattice.data,file_path,survival_rates=survival_rates)
-        print(f"An {crystal_type} lattice with {lattice_layer_size**3} atoms generated.")
+        print(f"An {crystal_type.upper()} lattice with {lattice_layer_size**3} atoms generated.")
         #step 2 - generate filtration
         create_directory(os.path.join(os.getcwd(),'filtration'))
         filt_file_path=os.path.join(os.getcwd(),"filtration",f"{file_name_prefix}.fil")
         os.system(command_generator(file_path,filt_file_path,start=start,end=end,ladder_length=ladder_length,executor=executor))
         print("Cech filtration generated.")
         #step 3 - generate the data for PD
-        self.compute_engine=commutative_ladder_kinji_ss(filt_file_path,m=ladder_length,n=2,dim=dim)
+        self.compute_engine=CommutativeLadderKinjiSS(filt_file_path,m=ladder_length,n=2,dim=dim)
 
     def plot_js(self):
         """plot using javascript canvas
@@ -57,7 +56,7 @@ class Pipeline():
             overwrite=kwargs.pop('overwrite')
         else:
             overwrite=False
-        plot_engine=commutative_ladder_pd_ss(self.compute_engine.dots,self.compute_engine.lines,title=title,ladder_length=self.compute_engine.m)
+        plot_engine=CommutativeLadderPdSS(self.compute_engine.dots,self.compute_engine.lines,title=title,ladder_length=self.compute_engine.m)
         plot_engine.render(export_mode=export_mode,overwrite=overwrite,**kwargs)
 
 def clean(directory):

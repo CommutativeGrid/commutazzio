@@ -8,10 +8,13 @@ Created on Tue Jan  4 12:21:08 2022
 import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
+from ..helper import create_directory
 import pandas as pd
 import numpy as np
 from .colors_helper import get_color
-import time, os
+import os
+import uuid
+
 
 
 class commutative_ladder_pd_ss():
@@ -140,9 +143,9 @@ class commutative_ladder_pd_ss():
                 legend=dict(
                     orientation="h",
                     yanchor="top",
-                    y=0.96,
-                    xanchor="left",
-                    x=0.02,
+                    y=1,
+                    xanchor="right",
+                    x=0,
                     itemsizing="constant",
                     title_font_family="Times New Roman",
                     font=dict(
@@ -155,27 +158,37 @@ class commutative_ladder_pd_ss():
                     bordercolor='black',
                     borderwidth=2,
                 ),
-                legend_title='line multiplicity',
+                legend_title='',
             )
             
 
         # fig.show()
         # see https://plotly.com/python/interactive-html-export/
         # for parameters
+        dir_name='diagrams'
+        create_directory(dir_name)
         if export_mode == 'full_html':
             if 'file' in kwargs:
                 file=kwargs.pop('file')
+                file=os.path.join(dir_name,file)
             else:
                 if overwrite is True:
-                    file=f'./test.html'
+                    file=f'./{dir_name}/test.html'
                 else:
-                    file=f'./test{time.strftime("%Y%m%d_%H%M%S")}.html'
+                    file=f'./{dir_name}/test_{uuid.uuid4()}.html'
             # check if file already existed
             if overwrite is False and os.path.exists(file):
                 raise FileExistsError(f'{file} already exists')
             fig.write_html(file=file, include_plotlyjs='cdn')
         elif export_mode == 'div':
-            file=kwargs.pop('file')
+            if 'file' in kwargs:
+                file=kwargs.pop('file')
+                file=os.path.join(dir_name,file)
+            else:
+                if overwrite is True:
+                    file=f'./{dir_name}/div.html'
+                else:
+                    file=f'./{dir_name}/div_{uuid.uuid4()}.html'
             if overwrite is False and os.path.exists(file):
                 raise FileExistsError(f'{file} already exists')
             fig.write_html(file=file,full_html=False,include_plotlyjs=False,**kwargs)

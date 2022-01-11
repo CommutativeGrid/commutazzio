@@ -5,14 +5,11 @@ Created on Sun Jan  2 17:29:27 2022
 @author: kasumi
 """
 import dionysus as dio
-import sys
 import pandas as pd
 
 
 class commutative_ladder_kinji_ss():
     def __init__(self, txf=None, m=None, n=2, dim=1):
-        if txf is None:
-            txf, m, n, dim = self.from_cmd_line()
         self.txf = txf
         self.m = m
         self.n = n
@@ -45,20 +42,6 @@ class commutative_ladder_kinji_ss():
         """Pipeline for plot using native JavaScript"""
         # self.delt_ss=self.deco()
         self.save2js()
-
-    def from_cmd_line(self):
-        # TODO: replace with fire
-        """Get parameters from the command line
-        """
-        args = sys.argv
-        txf = args[1];  # txf: name of the input file(simplicial complex)
-        m = int(args[2]);  # m: horizontal length of the ladder
-        n = 2;  # n: vertical length of the ladder
-        dim = 1;  # dim: dimension, by defalut is 1.
-        # self.intv=[] # intv: list of intervals
-        if len(args) >= 4:
-            dim = int(args[3])
-        return txf, m, n, dim
 
     def interval_generator(self):
         """Generate intervals"""

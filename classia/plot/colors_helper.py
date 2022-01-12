@@ -2,6 +2,7 @@
 # https://stackoverflow.com/questions/62710057/access-color-from-plotly-color-scale
 def get_color(colorscale_name, loc):
     from _plotly_utils.basevalidators import ColorscaleValidator
+
     # first parameter: Name of the property being validated
     # second parameter: a string, doesn't really matter in our use case
     cv = ColorscaleValidator("colorscale", "")
@@ -16,6 +17,7 @@ def get_color(colorscale_name, loc):
 # Identical to Adam's answer
 import plotly.colors
 from PIL import ImageColor
+
 
 #https://community.plotly.com/t/plotly-colours-list/11730/6
 def get_continuous_color(colorscale, intermed):

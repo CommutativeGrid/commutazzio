@@ -8,7 +8,7 @@ import dionysus as dio
 import pandas as pd
 
 
-class commutative_ladder_kinji_ss():
+class CommutativeLadderKinjiSS():
     def __init__(self, txf=None, m=None, n=2, dim=1):
         self.txf = txf
         self.m = m
@@ -389,6 +389,6 @@ class commutative_ladder_kinji_ss():
 
 
 if __name__ == '__main__':
-    a = commutative_ladder_kinji_ss('./data/fcc_7_0.5_1_10.fil', m=10)
+    a = CommutativeLadderKinjiSS('./data/fcc_7_0.5_1_10.fil', m=10)
     # a.temp()
     # a.pipeline()

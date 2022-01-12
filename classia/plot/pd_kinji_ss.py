@@ -5,19 +5,20 @@ Created on Tue Jan  4 12:21:08 2022
 
 @author: kasumi
 """
-import plotly.express as px
-import plotly.graph_objects as go
-import plotly.io as pio
-from ..helper import create_directory
-import pandas as pd
-import numpy as np
-from .colors_helper import get_color
 import os
 import uuid
 
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
+
+from ..helper import create_directory
+from .colors_helper import get_color
 
 
-class commutative_ladder_pd_ss():
+class CommutativeLadderPdSS():
     """plot persistence diagrams of a commutative ladder
     """
 

@@ -8,6 +8,7 @@ Created on Thu Dec 23 14:36:04 2021
 
 import numpy as np
 
+
 def command_generator(in_fn,out_fn,start=1,end=6,ladder_length=50,executor='./cech_filtration'):
     radia=np.linspace(start,end,ladder_length)
     output=[executor,str(ladder_length),*[str(np.round(np.sqrt(_),3)) for _ in radia],"<",in_fn,">",out_fn]

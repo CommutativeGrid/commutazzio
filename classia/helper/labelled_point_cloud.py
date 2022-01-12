@@ -1,8 +1,7 @@
-import numpy as np
 from operator import itemgetter
-from cpes import face_centered_cubic
-from cpes import hexagonal_close_packing
 
+import numpy as np
+from cpes import FaceCenteredCubic, HexagonalClosePacking
 
 
 def attach_level(data:np.array,fn:str,space_dim:int=3,survival_rates:list=[0.5,1])->None:

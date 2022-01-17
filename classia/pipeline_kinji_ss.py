@@ -47,17 +47,12 @@ class Pipeline():
             title=kwargs.pop('title')
         else:
             title='test_pipeline'
-            overwrite=True
         if 'export_mode' in kwargs:
             export_mode=kwargs.pop('export_mode')
         else :
             export_mode='full_html'
-        if 'overwrite' in kwargs:
-            overwrite=kwargs.pop('overwrite')
-        else:
-            overwrite=False
         plot_engine=CommutativeLadderPdSS(self.compute_engine.dots,self.compute_engine.lines,title=title,ladder_length=self.compute_engine.m)
-        plot_engine.render(export_mode=export_mode,overwrite=overwrite,**kwargs)
+        plot_engine.render(export_mode=export_mode,**kwargs)
 
 def clean(directory):
     """delete all files in a folder"""

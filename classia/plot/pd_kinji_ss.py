@@ -42,7 +42,7 @@ class CommutativeLadderPdSS():
         self.size_area_max = 24  # max dot size in area
         self.compute_colorscales()
 
-    def render(self,export_mode,overwrite=False,**kwargs):
+    def render(self,export_mode,**kwargs):
         """Combine scatter and line chart together and generate the final plot
         Parameters
         ----------
@@ -173,26 +173,25 @@ class CommutativeLadderPdSS():
                 file=kwargs.pop('file')
                 file=os.path.join(dir_name,file)
             else:
-                if overwrite is True:
-                    file=f'./{dir_name}/test.html'
-                else:
-                    file=f'./{dir_name}/test_{uuid.uuid4()}.html'
+                file=f'./{dir_name}/test.html'
             # check if file already existed
-            if overwrite is False and os.path.exists(file):
+            if os.path.exists(file):
+                # change file name (include datetime and some uuid)
+                #file=f'./{dir_name}/test_{uuid.uuid4()}.html'
                 raise FileExistsError(f'{file} already exists')
             fig.write_html(file=file, include_plotlyjs='cdn')
+            print("Saved to", file)
         elif export_mode == 'div':
             if 'file' in kwargs:
                 file=kwargs.pop('file')
                 file=os.path.join(dir_name,file)
             else:
-                if overwrite is True:
-                    file=f'./{dir_name}/div.html'
-                else:
-                    file=f'./{dir_name}/div_{uuid.uuid4()}.html'
-            if overwrite is False and os.path.exists(file):
+                file=f'./{dir_name}/div.html'
+            if os.path.exists(file):
+                # change file name (include datetime and some uuid)
                 raise FileExistsError(f'{file} already exists')
             fig.write_html(file=file,full_html=False,include_plotlyjs=False,**kwargs)
+            print("Saved to", file)
         else:
             raise ValueError('export_mode should be either full_html or div')
         print("Plot saved to", file)
@@ -408,4 +407,4 @@ if __name__ == "__main__":
     lines = pd.read_pickle("./sample/lines.pkl")
     lines = lines.astype('int', copy=False)
     aaa = commutative_ladder_pd_ss(dots, lines, title='CL(50)のss方式による区間近似(hcp)')
-    aaa.render(export_mode='full_html',overwrite=True)
+    aaa.render(export_mode='full_html')

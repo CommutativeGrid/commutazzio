@@ -6,7 +6,6 @@ Created on Thu Dec 23 14:47:08 2021
 @author: kasumi
 """
 import os
-import numpy as np
 from cpes import FaceCenteredCubic, HexagonalClosePacking
 
 from .compute import CommutativeLadderKinjiSS
@@ -65,7 +64,7 @@ class Pipeline():
         else:
             parameters = dict(dots=self.compute_engine.dots,
                              lines=self.compute_engine.lines,
-                             radia=np.array([np.sqrt(r) for r in radia_generator(1,6,50)]),
+                             radia=np.array([r for r in radia_generator(1,6,50)]),
                              ladder_length=50)
             plot_engine = CommutativeLadderPdSS(
                 title=title, **parameters)

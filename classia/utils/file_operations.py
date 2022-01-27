@@ -25,17 +25,18 @@ def filename_generator(dirname,name,suffix=None,overwrite=False):
         raise ValueError("Suffix of the file not defined.")
     file_path=os.path.join(dirname,f"{name}.{suffix}")
     original_file_path=file_path
-    count=0
+    count=1
     while os.path.isfile(file_path):
         if overwrite is True:
             print(f"Overwrite mode is on. Rewriting to {file_path} .")
             return file_path
-        file_path=os.path.join(dirname,f"{name}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')}.{suffix}")
+        #file_path=os.path.join(dirname,f"{name}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')}.{suffix}")
+        file_path=os.path.join(dirname,f"{name}({str(count).zfill(2)}).{suffix}")
         sleep(1e-6)
         count+=1
-        if count>=10:
+        if count>=100:
             raise FileExistsError(f"{file_path} already exists. Cannot create a new file with random file name.")
-    if count==0:
+    if count==1:
         print(f"Saving to {file_path} .")
     else:
         print(f"File {original_file_path} already exists. Saving to {file_path} .")
@@ -59,10 +60,10 @@ def pickle_save(obj,file_path=None):
     if file_path is None:
         fn=''
         fn+=parameters['crystal_type']+'_'
-        fn+=f"dim:{parameters['dim']}_"
-        fn+=f"{parameters['lattice_layer_size']**3}_{parameters['ladder_length']}_"
+        fn+=f"atoms_{parameters['lattice_layer_size']**3}_length_{parameters['ladder_length']}_"
         fn+=f"dimension_{parameters['dim']}_"
-        fn+=f"{parameters['survival_rates'][0]}_{parameters['survival_rates'][1]}"
+        fn+=f"sr_{parameters['survival_rates'][0]}_{parameters['survival_rates'][1]}"
+        fn+=".pkl"
         file_path=fn
     fp=filename_generator('./pickles',file_path,overwrite=False)
     filename_logger(obj,fp)
@@ -88,6 +89,5 @@ def pickle_load_latest(number):
     """
     with open('./pickles/files.log','r') as f:
         fps=f.read().splitlines()[-number:]
-    breakpoint()
     for fp in fps:
         yield pickle_load(fp)

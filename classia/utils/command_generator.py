@@ -12,7 +12,8 @@ from .radia_generator import radia_generator
 
 def command_generator(in_fn,out_fn,start=1,end=6,ladder_length=50,executor='./cech_filtration'):
     radia=radia_generator(start,end,ladder_length)
-    output=[executor,str(ladder_length),*[str(np.round(np.sqrt(_),3)) for _ in radia],"<",in_fn,">",out_fn]
+    #output=[executor,str(ladder_length),*[str(np.round(np.sqrt(_),3)) for _ in radia],"<",in_fn,">",out_fn]
+    output=[executor,str(ladder_length),*[str(np.round(_,3)) for _ in radia],"<",in_fn,">",out_fn]
     #breakpoint()
     return ' '.join(output)
 

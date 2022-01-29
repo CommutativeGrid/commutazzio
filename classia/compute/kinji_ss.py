@@ -6,7 +6,8 @@ Created on Sun Jan  2 17:29:27 2022
 """
 import dionysus as dio
 import pandas as pd
-from ..utils import radia_generator
+from ..utils import radii_generator
+import numpy as np
 
 
 class CommutativeLadderKinjiSS():
@@ -16,7 +17,7 @@ class CommutativeLadderKinjiSS():
         self.m = kwargs.get('ladder_length', 10) # default length is 10
         self.ladder_length = self.m
         self.n = 2 # two layers by default
-        self.radia = self.radia_compute(**kwargs)
+        self.radii = self.radii_compute(**kwargs)
         self.dim = kwargs.get('dim', 1)
         self.intv = self.interval_generator()
         self.cov = self.cover_generator()
@@ -29,7 +30,7 @@ class CommutativeLadderKinjiSS():
 
     def parameter_setup(self,**kwargs):
         parameters={k:v for k,v in kwargs.items()}
-        parameters.update({'radia': self.radia})
+        parameters.update({'radii': self.radii})
         parameters.update({'dots': self.dots})
         parameters.update({'lines': self.lines})
         return parameters
@@ -51,12 +52,15 @@ class CommutativeLadderKinjiSS():
         self.dec = ttt
 
     @staticmethod
-    def radia_compute(**kwargs):
+    def radii_compute(**kwargs):
+        radii = kwargs.get("radii")
+        if radii is not None:
+            return np.array(radii)
         start = kwargs.get("start")
         end = kwargs.get("end")
         ladder_length = kwargs.get("ladder_length")
-        radia = radia_generator(start,end,ladder_length)
-        return radia
+        radii = radii_generator(start,end,ladder_length)
+        return radii
 
     def plot_js(self):
         """Pipeline for plot using native JavaScript"""
@@ -374,9 +378,9 @@ class CommutativeLadderKinjiSS():
                 D= self.dotdec[f"{i},{j},{m},-1"]
                 U= self.dotdec[f"{m},-1,{i},{j}"]
                 if D != 0:
-                    container.loc[len(container)] = [j+1, i+1, D, 'D',] #self.radia[i], self.radia[j]]
+                    container.loc[len(container)] = [j+1, i+1, D, 'D',] #self.radii[i], self.radii[j]]
                 if U != 0:
-                    container.loc[len(container)] = [i+1, j+1, U, 'U',] #self.radia[i], self.radia[j]]
+                    container.loc[len(container)] = [i+1, j+1, U, 'U',] #self.radii[i], self.radii[j]]
         self.dots= container
 
     def save2js(self, mode='support_only'):

@@ -23,7 +23,7 @@ class CommutativeLadderPdSS():
         """
         self.dots = kwargs.get("dots", None)
         self.lines = kwargs.get("lines", None)
-        self.radia = kwargs.get("radia")
+        self.radii = kwargs.get("radii")
         self.ladder_length = kwargs.get("ladder_length", None)
         self.title = title
         self.legend = True
@@ -130,17 +130,17 @@ class CommutativeLadderPdSS():
         # specify ticks
         tick_coords = np.array(range(1, self.ladder_length+1, 5))
         # tick_coords = np.concatenate(([1], tick_coords))  # prepend 1
-        radia_text = [f"{r:.2f}" for r in self.radia[tick_coords-1]]
+        radii_text = [f"{r:.2f}" for r in self.radii[tick_coords-1]]
         fig.update_layout(
             xaxis=dict(
                 tickmode='array',
                 tickvals=tick_coords,
-                ticktext=radia_text
+                ticktext=radii_text
             ),
             yaxis=dict(
                 tickmode='array',
                 tickvals=tick_coords,
-                ticktext=radia_text
+                ticktext=radii_text
             ),
         )
         # fig.update_layout(
@@ -222,9 +222,9 @@ class CommutativeLadderPdSS():
         self.dots["birth_num"] = np.where(df.area == 'U', df['x'], df['y'])
         self.dots["death_num"] = np.where(df.area == 'U', df['y'], df['x'])
         self.dots["birth_radius"] = np.where(
-            df.area == 'U', self.radia[df['x']-1], self.radia[df['y']-1])
+            df.area == 'U', self.radii[df['x']-1], self.radii[df['y']-1])
         self.dots["death_radius"] = np.where(
-            df.area == 'U', self.radia[df['y']-1], self.radia[df['x']-1])
+            df.area == 'U', self.radii[df['y']-1], self.radii[df['x']-1])
 
     def data_preprocessing_lines(self):
         """Add some auxiliary columns to lines

@@ -9,12 +9,12 @@ import os
 from cpes import FaceCenteredCubic, HexagonalClosePacking
 
 from .compute import CommutativeLadderKinjiSS
-from .utils import attach_level, command_generator, create_directory, radia_generator
+from .utils import attach_level, command_generator, create_directory, radii_generator
 from .plot import CommutativeLadderPdSS
 
 
 class Pipeline():
-    def __init__(self, crystal_type, start, end, survival_rates=[0.5, 1], dim=1, lattice_layer_size=10, ladder_length=50, executor='./random-cech/cech_filtration'):
+    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, lattice_layer_size=10, ladder_length=50, executor='./random-cech/cech_filtration'):
         parameters = {k: v for k, v in locals().items() if k not in [
             'self', 'executor']}
         # step 1 - generate point cloud
@@ -33,8 +33,10 @@ class Pipeline():
         create_directory(os.path.join(os.getcwd(), 'filtration'))
         filt_file_path = os.path.join(
             os.getcwd(), "filtration", f"{file_name_prefix}.fil")
-        os.system(command_generator(file_path, filt_file_path, start=start,
-                                    end=end, ladder_length=ladder_length, executor=executor))
+        #breakpoint()
+        if radii is None:
+            radii=radia_generator(start,end,ladder_length)
+        os.system(command_generator(file_path, filt_file_path, radii=radii, executor=executor))
         print("Cech filtration generated.")
         # step 3 - generate the data for PD
         self.compute_engine = CommutativeLadderKinjiSS(

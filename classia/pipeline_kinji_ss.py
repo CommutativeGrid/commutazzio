@@ -35,7 +35,7 @@ class Pipeline():
             os.getcwd(), "filtration", f"{file_name_prefix}.fil")
         #breakpoint()
         if radii is None:
-            radii=radia_generator(start,end,ladder_length)
+            radii=radii_generator(start,end,ladder_length)
         os.system(command_generator(file_path, filt_file_path, radii=radii, executor=executor))
         print("Cech filtration generated.")
         # step 3 - generate the data for PD

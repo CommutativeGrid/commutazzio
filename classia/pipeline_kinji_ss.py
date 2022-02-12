@@ -7,68 +7,60 @@ Created on Thu Dec 23 14:47:08 2021
 """
 import os
 from cpes import FaceCenteredCubic, HexagonalClosePacking
-
+import numpy as np
 from .compute import CommutativeLadderKinjiSS
-from .utils import attach_level, command_generator, create_directory, radii_generator
+from .utils import attach_level, command_generator, create_directory, radii_generator, filepath_generator
 from .plot import CommutativeLadderPdSS
+from tempfile import NamedTemporaryFile
 
-class NewPipeline():
-    def __init__(self, point_cloud_file, start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, ladder_length=50, executor='./random-cech/cech_filtration'):
-        parameters = {k: v for k, v in locals().items() if k not in [
-            'self', 'executor']}
-        # step 1 - generate point cloud
-        # layered point cloud
-        file_path = os.path.join(os.getcwd(), "levelpoint_cloud", file_name)
-        point_cloud = np.loadtxt(point_cloud_file)
-        attach_level(point_cloud, file_path, survival_rates=survival_rates)
-        print(
-            f"An {crystal_type.upper()} lattice with {lattice_layer_size**3} atoms generated.")
-        # step 2 - generate filtration
-        create_directory(os.path.join(os.getcwd(), 'filtration'))
-        filt_file_path = os.path.join(
-            os.getcwd(), "filtration", f"{file_name_prefix}.fil")
-        #breakpoint()
-        if radii is None:
-            radii=radii_generator(start,end,ladder_length)
-        os.system(command_generator(file_path, filt_file_path, radii=radii, executor=executor))
-        print("Cech filtration generated.")
-        # step 3 - generate the data for PD
-        self.compute_engine = CommutativeLadderKinjiSS(
-            txf=filt_file_path, **parameters)
+
+def deco_print(func):
+    def wrapper(*args, **kwargs):
+        func('--------------------')
+        func(*args, **kwargs)
+    return wrapper
+
+print=deco_print(print)
 
 class Pipeline():
-    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, lattice_layer_size=10, ladder_length=50, executor='./random-cech/cech_filtration'):
+    def __init__(self, point_cloud_fpath=None, layered_point_cloud_fpath=None, start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, ladder_length=50, executor='./random-cech/cech_filtration'):
         parameters = {k: v for k, v in locals().items() if k not in [
             'self', 'executor']}
-        # step 1 - generate point cloud
-        if crystal_type == 'fcc':
-            lattice = FaceCenteredCubic(lattice_layer_size, radius=1)
-        elif crystal_type == 'hcp':
-            lattice = HexagonalClosePacking(lattice_layer_size, radius=1)
-        file_name_prefix = f"{crystal_type}_{lattice_layer_size}_{survival_rates[0]}_{survival_rates[1]}_{ladder_length}"
-        file_name = f"{file_name_prefix}.xyz"
-        create_directory(os.path.join(os.getcwd(), 'point_cloud'))
-        file_path = os.path.join(os.getcwd(), "point_cloud", file_name)
-        attach_level(lattice.data, file_path, survival_rates=survival_rates)
-        print(
-            f"An {crystal_type.upper()} lattice with {lattice_layer_size**3} atoms generated.")
+        # step 1 - laminate the given point cloud
+        # layered point cloud
+        print("Initiating plotting sequence based on the given parameters..")
+        if (point_cloud_fpath is None) == (layered_point_cloud_fpath is None):
+            raise ValueError('One and only one path to either point_cloud_fp or layered_point_cloud_fp should be provided.')
+        
+        filename_prefix = f"layered_{survival_rates[0]}_{survival_rates[1]}_{ladder_length}"
+        if point_cloud_fpath is not None:
+            try:
+                point_cloud = np.load(point_cloud_fpath)
+            except ValueError:
+                pass
+            try:
+                point_cloud = np.loadtxt(point_cloud_fpath)
+            except Exception as e:
+                print(e) 
+            create_directory(os.path.join(os.getcwd(), 'layered_point_cloud'))
+            layered_filename=os.path.normpath(point_cloud_fpath).split(os.path.sep)[-1]
+            layered_filename=''.join(layered_filename.split('.')[:-1])
+            layered_point_cloud_fpath = filepath_generator(os.path.join(os.getcwd(), "layered_point_cloud"),f"{filename_prefix}_{layered_filename}","lyr")
+            attach_level(point_cloud, layered_point_cloud_fpath, survival_rates=survival_rates)
+        else: # point_cloud_fpath is None and layered_point_cloud_fpath is not None
+            pass
+        print(f"Layered point cloud data {layered_point_cloud_fpath} generated.")
         # step 2 - generate filtration
+        print(f"Starting filtration process..")
         create_directory(os.path.join(os.getcwd(), 'filtration'))
-        filt_file_path = os.path.join(
-            os.getcwd(), "filtration", f"{file_name_prefix}.fil")
-        #breakpoint()
+        filtration_fpath = filepath_generator(os.path.join(os.getcwd(), "filtration"),f"{filename_prefix}_filtration","fltr")
         if radii is None:
             radii=radii_generator(start,end,ladder_length)
-        os.system(command_generator(file_path, filt_file_path, radii=radii, executor=executor))
+        os.system(command_generator(layered_point_cloud_fpath, filtration_fpath, radii=radii, executor=executor))
         print("Cech filtration generated.")
         # step 3 - generate the data for PD
         self.compute_engine = CommutativeLadderKinjiSS(
-            txf=filt_file_path, **parameters)
-
-    def plot_js(self):
-        """plot using javascript canvas
-        """
-        self.compute_engine.save2js(mode="all")
+            txf=filtration_fpath, **parameters)
 
     def plot(self, **kwargs):
         """plot using plotly python
@@ -96,6 +88,29 @@ class Pipeline():
 
         plot_engine.render(export_mode=export_mode, **kwargs)
 
+class PipelineClosePacking(Pipeline):
+    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, lattice_layer_size=10, ladder_length=50, executor='./random-cech/cech_filtration'):
+        # parameters = {k: v for k, v in locals().items() if k not in [
+        #     'self', 'executor']}
+        # step 1 - generate point cloud
+        if crystal_type == 'fcc':
+            lattice = FaceCenteredCubic(lattice_layer_size, radius=1)
+        elif crystal_type == 'hcp':
+            lattice = HexagonalClosePacking(lattice_layer_size, radius=1)
+        print(
+            f"An {crystal_type.upper()} lattice with {lattice_layer_size**3} atoms generated.")
+        with  NamedTemporaryFile() as outfile:
+            np.savetxt(outfile.name, lattice.data)
+            super().__init__(point_cloud_fpath=outfile.name, layered_point_cloud_fpath=None, start=start, end=end, radii = radii, survival_rates=survival_rates, dim=dim, ladder_length=ladder_length, executor=executor)
+
+
+    # def plot_js(self):
+    #     """plot using javascript canvas
+    #     """
+    #     self.compute_engine.save2js(mode="all")
+
+
+
 def clean(directory):
     """delete all files in a folder"""
     for file in os.listdir(directory):
@@ -107,5 +122,5 @@ def clean(directory):
             print(e)
 
 def clean_all():
-    clean('point_cloud')
+    clean('layered_point_cloud')
     clean('filtration')

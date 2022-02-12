@@ -10,7 +10,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-from ..utils import create_directory, filename_generator
+from ..utils import create_directory, filepath_generator
 from .colors_helper import get_color
 
 
@@ -190,18 +190,18 @@ class CommutativeLadderPdSS():
         if export_mode == 'full_html':
             if 'file' in kwargs:
                 file = kwargs.pop('file')
-                file = filename_generator(dir_name, file, overwrite=overwrite)
+                file = filepath_generator(dir_name, file, overwrite=overwrite)
             else:
-                file = filename_generator(
+                file = filepath_generator(
                     dir_name, 'test', 'html', overwrite=overwrite)
             fig.write_html(file=file, include_plotlyjs='cdn')
             #print("Saved to", file)
         elif export_mode == 'div':
             if 'file' in kwargs:
                 file = kwargs.pop('file')
-                file = filename_generator(dir_name, file, overwrite=overwrite)
+                file = filepath_generator(dir_name, file, overwrite=overwrite)
             else:
-                file = filename_generator(
+                file = filepath_generator(
                     dir_name, 'div', 'html', overwrite=overwrite)
             # TODO decorate the write_html function in an inherited class
             fig.write_html(file=file, full_html=False,

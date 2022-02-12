@@ -11,7 +11,7 @@ def create_directory(new_dir):
             print("\n")
         #print(f"Saving to folder {os.path.split(new_dir)[-1]}.")
 
-def filename_generator(dirname,name,suffix=None,overwrite=False):
+def filepath_generator(dirname,name,suffix=None,overwrite=False):
     """
     Generate a filename with a given name and suffix.
     If the file exists, append datetime to the provided name
@@ -31,15 +31,15 @@ def filename_generator(dirname,name,suffix=None,overwrite=False):
             print(f"Overwrite mode is on. Rewriting to {file_path} .")
             return file_path
         #file_path=os.path.join(dirname,f"{name}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')}.{suffix}")
-        file_path=os.path.join(dirname,f"{name}({str(count).zfill(2)}).{suffix}")
+        file_path=os.path.join(dirname,f"{name}_{str(count).zfill(2)}.{suffix}")
         sleep(1e-6)
         count+=1
         if count>=100:
             raise FileExistsError(f"{file_path} already exists. Cannot create a new file with random file name.")
     if count==1:
-        print(f"Saving to {file_path} .")
+        print(f"Saving to {file_path}.")
     else:
-        print(f"File {original_file_path} already exists. Saving to {file_path} .")
+        print(f"File {original_file_path} already exists. Saving to {file_path}.")
     return file_path
 
 def filename_logger(obj,filename):
@@ -65,7 +65,7 @@ def pickle_save(obj,file_path=None):
         fn+=f"sr_{parameters['survival_rates'][0]}_{parameters['survival_rates'][1]}"
         fn+=".pkl"
         file_path=fn
-    fp=filename_generator('./pickles',file_path,overwrite=False)
+    fp=filepath_generator('./pickles',file_path,overwrite=False)
     filename_logger(obj,fp)
     with open(fp,'wb') as f:
         pickle.dump(obj,f)

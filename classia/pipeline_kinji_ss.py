@@ -12,6 +12,29 @@ from .compute import CommutativeLadderKinjiSS
 from .utils import attach_level, command_generator, create_directory, radii_generator
 from .plot import CommutativeLadderPdSS
 
+class NewPipeline():
+    def __init__(self, point_cloud_file, start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, ladder_length=50, executor='./random-cech/cech_filtration'):
+        parameters = {k: v for k, v in locals().items() if k not in [
+            'self', 'executor']}
+        # step 1 - generate point cloud
+        # layered point cloud
+        file_path = os.path.join(os.getcwd(), "levelpoint_cloud", file_name)
+        point_cloud = np.loadtxt(point_cloud_file)
+        attach_level(point_cloud, file_path, survival_rates=survival_rates)
+        print(
+            f"An {crystal_type.upper()} lattice with {lattice_layer_size**3} atoms generated.")
+        # step 2 - generate filtration
+        create_directory(os.path.join(os.getcwd(), 'filtration'))
+        filt_file_path = os.path.join(
+            os.getcwd(), "filtration", f"{file_name_prefix}.fil")
+        #breakpoint()
+        if radii is None:
+            radii=radii_generator(start,end,ladder_length)
+        os.system(command_generator(file_path, filt_file_path, radii=radii, executor=executor))
+        print("Cech filtration generated.")
+        # step 3 - generate the data for PD
+        self.compute_engine = CommutativeLadderKinjiSS(
+            txf=filt_file_path, **parameters)
 
 class Pipeline():
     def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, lattice_layer_size=10, ladder_length=50, executor='./random-cech/cech_filtration'):
@@ -73,7 +96,6 @@ class Pipeline():
 
         plot_engine.render(export_mode=export_mode, **kwargs)
 
-
 def clean(directory):
     """delete all files in a folder"""
     for file in os.listdir(directory):
@@ -83,7 +105,6 @@ def clean(directory):
                 os.unlink(file_path)
         except Exception as e:
             print(e)
-
 
 def clean_all():
     clean('point_cloud')

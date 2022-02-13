@@ -8,7 +8,7 @@ def create_directory(new_dir):
         if not os.path.isdir(new_dir):
             os.makedirs(new_dir)
             print(f"Directory {os.path.split(new_dir)[-1]} created.")
-            print("\n")
+            #print("\n")
         #print(f"Saving to folder {os.path.split(new_dir)[-1]}.")
 
 def filepath_generator(dirname,name,suffix=None,overwrite=False):
@@ -91,3 +91,19 @@ def pickle_load_latest(number):
         fps=f.read().splitlines()[-number:]
     for fp in fps:
         yield pickle_load(fp)
+
+def clean(directory):
+    """delete all files in a folder"""
+    for file in os.listdir(directory):
+        file_path = os.path.join(directory, file)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+        except Exception as e:
+            print(e)
+
+def clean_all():
+    clean('layered_point_cloud')
+    clean('filtration')
+    clean('pickles')
+    clean('point_cloud')

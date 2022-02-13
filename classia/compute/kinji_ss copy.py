@@ -10,7 +10,6 @@ from ..utils import radii_generator
 import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 from multiprocessing import Manager, Value
-from dataclasses import dataclass
 
 
 class CommutativeLadderKinjiSS():
@@ -24,7 +23,6 @@ class CommutativeLadderKinjiSS():
         self.dim = kwargs.get('dim', 1)
         self.intv = self.interval_generator()
         self.cov = self.cover_generator()
-        self.C = self.C_compute()
         self.delt_ss = self.deco()
         self.compute_dec_obj()
         self.compute_connecting_lines()
@@ -73,8 +71,8 @@ class CommutativeLadderKinjiSS():
 
     def interval_generator(self):
         """Generate intervals"""
-        n = self.n  # vertical height, use !n in debug mode
-        m = self.m  # horizontal length
+        n = self.n  # vertical use !n in debug mode
+        m = self.m  # horizontal
         intv = []
         for k in range(n):
             for birth in range(m):
@@ -200,8 +198,18 @@ class CommutativeLadderKinjiSS():
         if s < t and Z[t][0] > Z[t-1][0]: Z[t] = (Z[t][0]-1, Z[t][1])
         return tuple(Z)
 
-    def C_compute(self):
-        C = [[set() for j in range(self.n)] for i in range(self.m)]
+    def deco(self):
+        n = self.n
+        m = self.m
+        dim = self.dim
+        def getPD(*args,**kwargs):
+            return self.getPD(*args, **kwargs)
+        def toDio(*args,**kwargs):
+            return self.toDio(*args, **kwargs)
+        #getPD = self.getPD
+        #toDio = self.toDio
+        num_intv = len(self.intv)
+        C = [[set() for j in range(n)] for i in range(m)]
         with open(self.txf, 'r') as f:
             filt = [line.rstrip() for line in f]
             # filt=f.read().rstrip().split('\n') #filtration
@@ -211,163 +219,26 @@ class CommutativeLadderKinjiSS():
             # data=filt[i].rstrip().split()
             data = filt[i].split()
             if data[0] == '#': continue
-            if self.dim < 1 and data[0] == '2': continue
-            if self.dim < 2 and data[0] == '3': continue
+            if dim < 1 and data[0] == '2': continue
+            if dim < 2 and data[0] == '3': continue
             C[int(data[3])][int(data[2])].add(','.join(sorted(data[4:])))
-        for i in range(1, self.m):
+        for i in range(1, m):
             C[i][0] = C[i][0] | C[i-1][0]
-        for j in range(1, self.n):
+        for j in range(1, n):
             C[0][j] = C[0][j] | C[0][j-1]
-        for i in range(1, self.m):
-            for j in range(1, self.n):
+        for i in range(1, m):
+            for j in range(1, n):
                 C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
-        return C
-
-    def multiplicity(self,I,c_ss):
-        b0,d0=I[0]
-        b1,d1=I[1]
-        C=self.C
-        if d1 == -1 and b0 == d0:
-            self.pp.c_ss[I] = self.getPD([C[b0][0]])
-        elif d0 == -1 and b1 == d1:
-            self.pp.c_ss[I] = self.getPD([C[b1][1]])
-        elif d1 == -1:
-            if c_ss[((b0, d0-1), (m, -1))] >= 1 and c_ss[((b0+1, d0), (m, -1))] >= 1:
-                self.pp.c_ss[I] = self.getPD([C[b0][0], C[d0][0]])
-            else:
-                self.pp.c_ss[I] = 0
-        elif d0 == -1:
-            if c_ss[((m, -1), (b1, d1-1))] >= 1 and c_ss[((self.m, -1), (b1+1, d1))] >= 1:
-                self.pp.c_ss[I] = self.getPD([C[b1][1], C[d1][1]])
-            else:
-                self.pp.c_ss[I] = 0
-        elif b0 == d0 and b1 == d1:
-            if c_ss[((b0, b0), (self.m, -1))] >= 1 and c_ss[((self.m, -1), (b1, b1))] >= 1:
-                self.pp.c_ss[I] = self.getPD([C[b0][0], C[b1][1]]) 
-            else:
-                self.pp.c_ss[I] = 0
-        elif b0 == b1 and d0 == d1:
-            if c_ss[((b0, d0), (b1, d1-1))] >= 1 and c_ss[((b0+1, d0), (b1, d1))] >= 1:
-                self.pp.c_ss[I] =  self.getPD([C[b0][0], C[d1][1]])    
-            else:
-                self.pp.c_ss[I] = 0
-        elif b1 == d1:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, b1))],c_ss[((b0, d0), (self.m, -1))])
-            if r == 0:
-                pass
-            elif r != 0: 
-                self.pp.c_ss[I] = self.getPD([C[b0][0], C[d1][1] | C[d0][0]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    self.pp.c_ss[I] = self.toDio([C[b1][1], C[b0][0], C[d0][0]])
-                    self.pp.q += 1
-        elif b0 == d0:
-            self.pp.c_ss[I] = r = min(c_ss[((self.m, -1), (b1, d1))],c_ss[((d0, d0), (b1+1, d1))])
-            if r == 0:
-                pass
-            elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b1][1] & C[b0][0], C[d1][1]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    self.pp.c_ss[I] = self.toDio([C[b1][1], C[d1][1], C[d0][0]])
-                    self.pp.q += 1
-        elif b0 == d1:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],c_ss[((b0, d0), (b1+1, d1))])
-            if r == 0: 
-                pass
-            elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    self.pp.c_ss[I] = self.toDio([C[b1][1], C[d1][1], C[b0][0], C[d0][0]])
-                    self.pp.q += 1
-        elif b0 == b1:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
-                            c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0+1, d0), (b1, d1))])
-            if r == 0: 
-                pass
-            elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b0][0], C[d1][1] | C[d0][0]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    c_ss[I] = self.toDio([C[d1][1], C[b0][0], C[d0][0]])
-                    self.pp.q += 1
-        elif d0 == d1:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))],
-                            c_ss[((b0+1, d0), (b1, d1))], c_ss[((b0, d0), (b1, d1-1))])
-            if r == 0: 
-                pass
-            elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b1][1] & C[b0][0], C[d1][1]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    self.pp.c_ss[I] = self.toDio([C[b1][1], C[d1][1], C[b0][0]])
-                    self.pp.q += 1
-        else:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))], c_ss[((b0+1, d0), (b1, d1))],
-                                c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0, d0-1), (b1, d1))])
-            if r == 0: 
-                pass
-            elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
-            if self.pp.c_ss[I] == r:
-                self.pp.p += 1
-            elif self.pp.c_ss[I] != r:
-                c_ss[I] = self.toDio([C[b1][1], C[d1][1], C[b0][0], C[d0][0]])
-                self.pp.q += 1
-
-    def intv_classify(self, I):
-        b0, d0 = I[0]
-        b1, d1 = I[1]
-        # single vertex
-        if d1 == -1 and b0 == d0:
-            return 0
-        if d0 == -1 and b1 == d1:
-            return 0
-        # adjacent vertices (two)
-        ...
-        
-        
-
-    def deco(self):
-        n = self.n
-        m = self.m
-        dim = self.dim
-        C=self.C
-        def getPD(*args,**kwargs):
-            return self.getPD(*args, **kwargs)
-        def toDio(*args,**kwargs):
-            return self.toDio(*args, **kwargs)
-        #getPD = self.getPD
-        #toDio = self.toDio
-        num_intv = len(self.intv)
-        
-        #breakpoint()
-        ### Multiprocessing
-        #TODO: classify intervals in self.intv
-        # @dataclass
-        # class IntermediateValues():
-        #     c = Value('I',0)
-        #     p = Value('I',0)
-        #     q = Value('I',0)
-        #     r = Value('I',0)
-        #     c_ss = Manager().dict()
-        #     delt_ss = Manager().dict()
-
-        # self.pp=IntermediateValues() #process parameters
-
-        # with Pool() as pool: # the same as Pool(os.cpu_count())
-        #         results=pool.map(self.multiplicity_zigzag_pool,params)
-
-        ###
         c,p,q,r = 0,0,0,0
         c_ss,delt_ss = {},{}
-        self.intv.reverse()
+
+        ### Multiprocessing
+        c,p,q,r = V
+        with Pool() as pool: # the same as Pool(os.cpu_count())
+                results=pool.map(self.multiplicity_zigzag_pool,params)
+
+        ###
+
         for I in self.intv:
             #print(f"\r進捗: {c}/{num_intv} | 処理中: {I} | zig回避: {p} | zigした: {q}")
             #\r for carriage return

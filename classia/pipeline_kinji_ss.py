@@ -108,19 +108,3 @@ class PipelineClosePacking(Pipeline):
     #     """plot using javascript canvas
     #     """
     #     self.compute_engine.save2js(mode="all")
-
-
-
-def clean(directory):
-    """delete all files in a folder"""
-    for file in os.listdir(directory):
-        file_path = os.path.join(directory, file)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print(e)
-
-def clean_all():
-    clean('layered_point_cloud')
-    clean('filtration')

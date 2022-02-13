@@ -13,6 +13,7 @@ from multiprocessing import Manager, Value
 from dataclasses import dataclass
 
 
+
 class CommutativeLadderKinjiSS():
     def __init__(self, txf, **kwargs):
         # , txf=None, m=None, n=2, dim=1):
@@ -23,8 +24,6 @@ class CommutativeLadderKinjiSS():
         self.radii = self.radii_compute(**kwargs)
         self.dim = kwargs.get('dim', 1)
         self.intv = self.interval_generator()
-        self.cov = self.cover_generator()
-        self.C = self.C_compute()
         self.delt_ss = self.deco()
         self.compute_dec_obj()
         self.compute_connecting_lines()
@@ -223,122 +222,128 @@ class CommutativeLadderKinjiSS():
                 C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
         return C
 
-    def multiplicity(self,I,c_ss):
+    
+
+    @staticmethod
+    def intv_support_num(I):
+        b0, d0 = I[0]
+        b1, d1 = I[1]
+        return max(d1-b1+1,0)+max(d0-b0+1,0)
+
+    
+    def f(self,args):
+        I,getPD,toDio,C,m,c_ss=args
+        print(I)
+        #return len(I)
+
+    @staticmethod
+    def multiplicity(args):
+        I,getPD,toDio,C,m,c_ss=args
+        print('inside multiplicity', I)
         b0,d0=I[0]
         b1,d1=I[1]
-        C=self.C
+        p=0
+        q=0
         if d1 == -1 and b0 == d0:
-            self.pp.c_ss[I] = self.getPD([C[b0][0]])
+            c_ss[I] = getPD([C[b0][0]])
         elif d0 == -1 and b1 == d1:
-            self.pp.c_ss[I] = self.getPD([C[b1][1]])
+            c_ss[I] = getPD([C[b1][1]])
         elif d1 == -1:
             if c_ss[((b0, d0-1), (m, -1))] >= 1 and c_ss[((b0+1, d0), (m, -1))] >= 1:
-                self.pp.c_ss[I] = self.getPD([C[b0][0], C[d0][0]])
+                c_ss[I] = getPD([C[b0][0], C[d0][0]])
             else:
-                self.pp.c_ss[I] = 0
+                c_ss[I] = 0
         elif d0 == -1:
-            if c_ss[((m, -1), (b1, d1-1))] >= 1 and c_ss[((self.m, -1), (b1+1, d1))] >= 1:
-                self.pp.c_ss[I] = self.getPD([C[b1][1], C[d1][1]])
+            if c_ss[((m, -1), (b1, d1-1))] >= 1 and c_ss[((m, -1), (b1+1, d1))] >= 1:
+                c_ss[I] = getPD([C[b1][1], C[d1][1]])
             else:
-                self.pp.c_ss[I] = 0
+                c_ss[I] = 0
         elif b0 == d0 and b1 == d1:
-            if c_ss[((b0, b0), (self.m, -1))] >= 1 and c_ss[((self.m, -1), (b1, b1))] >= 1:
-                self.pp.c_ss[I] = self.getPD([C[b0][0], C[b1][1]]) 
+            if c_ss[((b0, b0), (m, -1))] >= 1 and c_ss[((m, -1), (b1, b1))] >= 1:
+                c_ss[I] = getPD([C[b0][0], C[b1][1]]) 
             else:
-                self.pp.c_ss[I] = 0
+                c_ss[I] = 0
         elif b0 == b1 and d0 == d1:
             if c_ss[((b0, d0), (b1, d1-1))] >= 1 and c_ss[((b0+1, d0), (b1, d1))] >= 1:
-                self.pp.c_ss[I] =  self.getPD([C[b0][0], C[d1][1]])    
+                c_ss[I] =  getPD([C[b0][0], C[d1][1]])    
             else:
-                self.pp.c_ss[I] = 0
+                c_ss[I] = 0
         elif b1 == d1:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, b1))],c_ss[((b0, d0), (self.m, -1))])
+            c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, b1))],c_ss[((b0, d0), (m, -1))])
             if r == 0:
                 pass
             elif r != 0: 
-                self.pp.c_ss[I] = self.getPD([C[b0][0], C[d1][1] | C[d0][0]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    self.pp.c_ss[I] = self.toDio([C[b1][1], C[b0][0], C[d0][0]])
-                    self.pp.q += 1
+                c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
+                if c_ss[I] == r:
+                    p += 1
+                elif pp.c_ss[I] != r:
+                    c_ss[I] = toDio([C[b1][1], C[b0][0], C[d0][0]])
+                    q += 1
         elif b0 == d0:
-            self.pp.c_ss[I] = r = min(c_ss[((self.m, -1), (b1, d1))],c_ss[((d0, d0), (b1+1, d1))])
+            c_ss[I] = r = min(c_ss[((m, -1), (b1, d1))],c_ss[((d0, d0), (b1+1, d1))])
             if r == 0:
                 pass
             elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b1][1] & C[b0][0], C[d1][1]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    self.pp.c_ss[I] = self.toDio([C[b1][1], C[d1][1], C[d0][0]])
-                    self.pp.q += 1
+                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
+                if c_ss[I] == r:
+                    p += 1
+                elif c_ss[I] != r:
+                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[d0][0]])
+                    q += 1
         elif b0 == d1:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],c_ss[((b0, d0), (b1+1, d1))])
+            c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],c_ss[((b0, d0), (b1+1, d1))])
             if r == 0: 
                 pass
             elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    self.pp.c_ss[I] = self.toDio([C[b1][1], C[d1][1], C[b0][0], C[d0][0]])
-                    self.pp.q += 1
+                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
+                if pp.c_ss[I] == r:
+                    p += 1
+                elif c_ss[I] != r:
+                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[b0][0], C[d0][0]])
+                    q += 1
         elif b0 == b1:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
+            c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
                             c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0+1, d0), (b1, d1))])
             if r == 0: 
                 pass
             elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b0][0], C[d1][1] | C[d0][0]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    c_ss[I] = self.toDio([C[d1][1], C[b0][0], C[d0][0]])
-                    self.pp.q += 1
+                c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
+                if c_ss[I] == r:
+                    p += 1
+                elif c_ss[I] != r:
+                    c_ss[I] = toDio([C[d1][1], C[b0][0], C[d0][0]])
+                    q += 1
         elif d0 == d1:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))],
+            c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))],
                             c_ss[((b0+1, d0), (b1, d1))], c_ss[((b0, d0), (b1, d1-1))])
             if r == 0: 
                 pass
             elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b1][1] & C[b0][0], C[d1][1]])
-                if self.pp.c_ss[I] == r:
-                    self.pp.p += 1
-                elif self.pp.c_ss[I] != r:
-                    self.pp.c_ss[I] = self.toDio([C[b1][1], C[d1][1], C[b0][0]])
-                    self.pp.q += 1
+                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
+                if pp.c_ss[I] == r:
+                    p += 1
+                elif c_ss[I] != r:
+                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[b0][0]])
+                    q += 1
         else:
-            self.pp.c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))], c_ss[((b0+1, d0), (b1, d1))],
+            c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))], c_ss[((b0+1, d0), (b1, d1))],
                                 c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0, d0-1), (b1, d1))])
             if r == 0: 
                 pass
             elif r != 0:
-                self.pp.c_ss[I] = self.getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
-            if self.pp.c_ss[I] == r:
-                self.pp.p += 1
-            elif self.pp.c_ss[I] != r:
-                c_ss[I] = self.toDio([C[b1][1], C[d1][1], C[b0][0], C[d0][0]])
-                self.pp.q += 1
+                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
+            if c_ss[I] == r:
+                p += 1
+            elif c_ss[I] != r:
+                c_ss[I] = toDio([C[b1][1], C[d1][1], C[b0][0], C[d0][0]])
+                q += 1
 
-    def intv_classify(self, I):
-        b0, d0 = I[0]
-        b1, d1 = I[1]
-        # single vertex
-        if d1 == -1 and b0 == d0:
-            return 0
-        if d0 == -1 and b1 == d1:
-            return 0
-        # adjacent vertices (two)
-        ...
-        
-        
 
     def deco(self):
         n = self.n
         m = self.m
         dim = self.dim
-        C=self.C
+        C = self.C_compute()
         def getPD(*args,**kwargs):
             return self.getPD(*args, **kwargs)
         def toDio(*args,**kwargs):
@@ -346,28 +351,33 @@ class CommutativeLadderKinjiSS():
         #getPD = self.getPD
         #toDio = self.toDio
         num_intv = len(self.intv)
-        
-        #breakpoint()
+
         ### Multiprocessing
-        #TODO: classify intervals in self.intv
-        # @dataclass
-        # class IntermediateValues():
-        #     c = Value('I',0)
-        #     p = Value('I',0)
-        #     q = Value('I',0)
-        #     r = Value('I',0)
-        #     c_ss = Manager().dict()
-        #     delt_ss = Manager().dict()
+        #attach gradings to the intervals by number of supporting vertices
+        
+        c_ss,delt_ss = {},{}
+        supp_num_list=np.array(list(map(self.intv_support_num,self.intv)))
+        change_indices = np.where(supp_num_list[:-1] != supp_num_list[1:])[0] + 1
+        change_indices=np.append(change_indices,num_intv)
+        change_indices=np.insert(change_indices,0,0)
+        
+        # # print('123')
+        # # with Pool(processes=4) as pool:
+        # #     print(pool.map(self.f, range(10)))
 
-        # self.pp=IntermediateValues() #process parameters
+        for left,right in zip(change_indices,change_indices[1:]):
+            intvs=self.intv[left:right]
+            print(self.intv_support_num(intvs[0]))
+            #self.multiplicity(intvs[0])
+            params=[(I,self.getPD,self.toDio,C,self.m,c_ss) for I in intvs]
+            params=[(I,1,1,1,1,1) for I in intvs]
+            with Pool() as pool: # the same as Pool(os.cpu_count())
+                results=pool.map(self.f,params)
+            #update c_ss
+        # ###
 
-        # with Pool() as pool: # the same as Pool(os.cpu_count())
-        #         results=pool.map(self.multiplicity_zigzag_pool,params)
-
-        ###
         c,p,q,r = 0,0,0,0
         c_ss,delt_ss = {},{}
-        self.intv.reverse()
         for I in self.intv:
             #print(f"\r進捗: {c}/{num_intv} | 処理中: {I} | zig回避: {p} | zigした: {q}")
             #\r for carriage return
@@ -441,14 +451,15 @@ class CommutativeLadderKinjiSS():
                     [C[b1][1], C[d1][1], C[b0][0], C[d0][0]]); q += 1
         # last info
         print('\r進捗: {0}/{1} | 処理中: - | zig回避: {2} | zigした: {3} '.format(c, num_intv, p, q))
+        cov = self.cover_generator()
         for I in self.intv:
-            t = len(self.cov[I]); subs = 1 << t; ans_ss = 0
+            t = len(cov[I]); subs = 1 << t; ans_ss = 0
             for s in range(subs):
                 js = I; sl = 0
                 for j in range(t):
                     if (1 << j) & s:
                         sl += 1
-                        js = self.join_intv(js, self.cov[I][j])
+                        js = self.join_intv(js, cov[I][j])
                 ans_ss += ((-1)**sl)*c_ss[js]
             delt_ss[I] = ans_ss
         return delt_ss

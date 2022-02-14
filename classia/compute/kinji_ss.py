@@ -9,10 +9,12 @@ import pandas as pd
 from ..utils import radii_generator
 import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
-from multiprocessing import Manager, Value
-from dataclasses import dataclass
+from multiprocessing import Manager
+from functools import partial
+#import gc
 
-
+def toList(st):
+    return list(map(int, st.split(',')))
 
 class CommutativeLadderKinjiSS():
     def __init__(self, txf, **kwargs):
@@ -24,6 +26,7 @@ class CommutativeLadderKinjiSS():
         self.radii = self.radii_compute(**kwargs)
         self.dim = kwargs.get('dim', 1)
         self.intv = self.interval_generator()
+        self.mproc = kwargs.get('mproc')
         self.delt_ss = self.deco()
         self.compute_dec_obj()
         self.compute_connecting_lines()
@@ -142,11 +145,7 @@ class CommutativeLadderKinjiSS():
         return cov
 
     @staticmethod
-    def toList(st):
-        return list(map(int, st.split(',')))
-
-    # @staticmethod
-    def toDio(self, cpxList):
+    def toDio(dim, cpxList):
         U = set()
         for K in cpxList: U = U | K
         U = list(U); times = []
@@ -156,23 +155,23 @@ class CommutativeLadderKinjiSS():
                 if (ex == 0 and (U[i] in cpxList[j])) or (ex == 1 and (U[i] not in cpxList[j])):
                     times[i].append(j/10)
                     ex = (ex+1) % 2
-        f = dio.Filtration(list(map(self.toList, U)))
+        f = dio.Filtration(list(map(toList, U)))
         _, dgms, _ = dio.zigzag_homology_persistence(f, times)
         c = 0
         for i, dgm in enumerate(dgms):
-            if i == self.dim:
+            if i == dim:
                 for p in dgm:
                     if p.birth == 0 and p.death == float('inf'): c += 1
         return c
 
-    # @staticmethod
-    def getPD(self, cpxList):
+    @staticmethod
+    def getPD(dim, cpxList):
         simplices = []
         U = list(cpxList[0])
-        for C in U: simplices.append((self.toList(C), 0))
+        for C in U: simplices.append((toList(C), 0))
         if len(cpxList) == 2:
             U = list(cpxList[1]-cpxList[0])
-            for C in U: simplices.append((self.toList(C), 1))
+            for C in U: simplices.append((toList(C), 1))
         f = dio.Filtration()
         for vertices, time in simplices: f.append(dio.Simplex(vertices, time))
         f.sort()
@@ -180,12 +179,12 @@ class CommutativeLadderKinjiSS():
         dgms = dio.init_diagrams(m, f)
         c = 0
         for i, dgm in enumerate(dgms):
-            if i == self.dim:
+            if i == dim:
                 for p in dgm:
                     if p.birth == 0 and p.death == float('inf'): c += 1
         return c
-    # @staticmethod
 
+    #@staticmethod
     def join_intv(self, X, Y):
         n = self.n
         Z = list(X)
@@ -231,41 +230,41 @@ class CommutativeLadderKinjiSS():
         return max(d1-b1+1,0)+max(d0-b0+1,0)
 
     
-    def f(self,args):
-        I,getPD,toDio,C,m,c_ss=args
+    @staticmethod
+    def f(args):
+        I,C,getPD,toDio,m,dim,c_ss,p,q=args
         print(I)
-        #return len(I)
 
     @staticmethod
     def multiplicity(args):
-        I,getPD,toDio,C,m,c_ss=args
-        print('inside multiplicity', I)
+        I,Cpart,getPD,toDio,m,dim,c_ss,p,q=args
+        C=Cpart
+        #print('inside multiplicity', I)
+        #print(c_ss)
         b0,d0=I[0]
         b1,d1=I[1]
-        p=0
-        q=0
         if d1 == -1 and b0 == d0:
-            c_ss[I] = getPD([C[b0][0]])
+            c_ss[I] = getPD(dim,[C[(b0,0)]])
         elif d0 == -1 and b1 == d1:
-            c_ss[I] = getPD([C[b1][1]])
+            c_ss[I] = getPD(dim,[C[(b1,1)]])
         elif d1 == -1:
             if c_ss[((b0, d0-1), (m, -1))] >= 1 and c_ss[((b0+1, d0), (m, -1))] >= 1:
-                c_ss[I] = getPD([C[b0][0], C[d0][0]])
+                c_ss[I] = getPD(dim,[C[(b0,0)], C[(d0,0)]])
             else:
                 c_ss[I] = 0
         elif d0 == -1:
             if c_ss[((m, -1), (b1, d1-1))] >= 1 and c_ss[((m, -1), (b1+1, d1))] >= 1:
-                c_ss[I] = getPD([C[b1][1], C[d1][1]])
+                c_ss[I] = getPD(dim,[C[(b1,1)], C[(d1,1)]])
             else:
                 c_ss[I] = 0
         elif b0 == d0 and b1 == d1:
             if c_ss[((b0, b0), (m, -1))] >= 1 and c_ss[((m, -1), (b1, b1))] >= 1:
-                c_ss[I] = getPD([C[b0][0], C[b1][1]]) 
+                c_ss[I] = getPD(dim,[C[(b0,0)], C[(b1,1)]]) 
             else:
                 c_ss[I] = 0
         elif b0 == b1 and d0 == d1:
             if c_ss[((b0, d0), (b1, d1-1))] >= 1 and c_ss[((b0+1, d0), (b1, d1))] >= 1:
-                c_ss[I] =  getPD([C[b0][0], C[d1][1]])    
+                c_ss[I] =  getPD(dim,[C[(b0,0)], C[(d1,1)]])    
             else:
                 c_ss[I] = 0
         elif b1 == d1:
@@ -273,185 +272,234 @@ class CommutativeLadderKinjiSS():
             if r == 0:
                 pass
             elif r != 0: 
-                c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
+                c_ss[I] = getPD(dim,[C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
                 if c_ss[I] == r:
-                    p += 1
-                elif pp.c_ss[I] != r:
-                    c_ss[I] = toDio([C[b1][1], C[b0][0], C[d0][0]])
-                    q += 1
+                    p.value += 1
+                elif c_ss[I] != r:
+                    c_ss[I] = toDio(dim,[C[(b1,1)], C[(b0,0)], C[(d0,0)]])
+                    q.value += 1
         elif b0 == d0:
             c_ss[I] = r = min(c_ss[((m, -1), (b1, d1))],c_ss[((d0, d0), (b1+1, d1))])
             if r == 0:
                 pass
             elif r != 0:
-                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
+                c_ss[I] = getPD(dim,[C[(b1,1)] & C[(b0,0)], C[(d1,1)]])
                 if c_ss[I] == r:
-                    p += 1
+                    p.value += 1
                 elif c_ss[I] != r:
-                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[d0][0]])
-                    q += 1
+                    c_ss[I] = toDio(dim,[C[(b1,1)], C[(d1,1)], C[(d0,0)]])
+                    q.value += 1
         elif b0 == d1:
             c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],c_ss[((b0, d0), (b1+1, d1))])
             if r == 0: 
                 pass
             elif r != 0:
-                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
-                if pp.c_ss[I] == r:
-                    p += 1
+                c_ss[I] = getPD(dim,[C[(b1,1)] & C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
+                if c_ss[I] == r:
+                    p.value += 1
                 elif c_ss[I] != r:
-                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[b0][0], C[d0][0]])
-                    q += 1
+                    c_ss[I] = toDio(dim,[C[(b1,1)], C[(d1,1)], C[(b0,0)], C[(d0,0)]])
+                    q.value += 1
         elif b0 == b1:
             c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
                             c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0+1, d0), (b1, d1))])
             if r == 0: 
                 pass
             elif r != 0:
-                c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
+                c_ss[I] = getPD(dim,[C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
                 if c_ss[I] == r:
-                    p += 1
+                    p.value += 1
                 elif c_ss[I] != r:
-                    c_ss[I] = toDio([C[d1][1], C[b0][0], C[d0][0]])
-                    q += 1
+                    c_ss[I] = toDio(dim,[C[(d1,1)], C[(b0,0)], C[(d0,0)]])
+                    q.value += 1
         elif d0 == d1:
             c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))],
                             c_ss[((b0+1, d0), (b1, d1))], c_ss[((b0, d0), (b1, d1-1))])
             if r == 0: 
                 pass
             elif r != 0:
-                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
-                if pp.c_ss[I] == r:
-                    p += 1
+                c_ss[I] = getPD(dim,[C[(b1,1)] & C[(b0,0)], C[(d1,1)]])
+                if c_ss[I] == r:
+                    p.value += 1
                 elif c_ss[I] != r:
-                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[b0][0]])
-                    q += 1
+                    c_ss[I] = toDio(dim,[C[(b1,1)], C[(d1,1)], C[(b0,0)]])
+                    q.value += 1
         else:
             c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))], c_ss[((b0+1, d0), (b1, d1))],
                                 c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0, d0-1), (b1, d1))])
             if r == 0: 
                 pass
             elif r != 0:
-                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
+                c_ss[I] = getPD(dim,[C[(b1,1)] & C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
             if c_ss[I] == r:
-                p += 1
+                p.value += 1
             elif c_ss[I] != r:
-                c_ss[I] = toDio([C[b1][1], C[d1][1], C[b0][0], C[d0][0]])
-                q += 1
+                c_ss[I] = toDio(dim,[C[(b1,1)], C[(d1,1)], C[(b0,0)], C[(d0,0)]])
+                q.value += 1
 
+    
+    def intv_C_pairing(self,I):
+        C=self.C
+        b0,d0=I[0]
+        b1,d1=I[1]
+        if d1 == -1 and b0 == d0:
+            return {(b0,0):C[b0][0]}
+            #return [C[b0][0]]
+        elif d0 == -1 and b1 == d1:
+            return {(b1,1):C[b1][1]}
+            #return [C[b1][1]]
+        elif d1 == -1:
+            return {(b0,0):C[b0][0],(d0,0):C[d0][0]}
+            #return [C[b0][0], C[d0][0]]
+        elif d0 == -1:
+            return {(b1,1):C[b1][1],(d1,1):C[d1][1]}
+            #return [C[b1][1], C[d1][1]]
+        elif b0 == d0 and b1 == d1:
+            return {(b0,0):C[b0][0],(b1,1):C[b1][1]}
+            #return [C[b0][0], C[b1][1]]
+        elif b0 == b1 and d0 == d1:
+            return {(b0,0):C[b0][0],(d1,1):C[d1][1]}
+            #return [C[b0][0], C[d1][1]]
+        elif b1 == d1:
+            return {(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
+                    (b1,1):C[b1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
+        elif b0 == d0:
+            return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],
+                    (b1,1):C[b1][1],(d1,1):C[d1][1],(d0,0):C[d0][0],}
+        elif b0 == d1:
+            return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
+                    (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
+        elif b0 == b1:
+            return {(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
+                    (d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
+        elif d0 == d1:
+            return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],
+                    (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0]}
+        else:
+            return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
+                    (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
 
     def deco(self):
-        n = self.n
+        #n = self.n
         m = self.m
-        dim = self.dim
-        C = self.C_compute()
-        def getPD(*args,**kwargs):
-            return self.getPD(*args, **kwargs)
-        def toDio(*args,**kwargs):
-            return self.toDio(*args, **kwargs)
+        #dim = self.dim
         #getPD = self.getPD
         #toDio = self.toDio
         num_intv = len(self.intv)
-
-        ### Multiprocessing
-        #attach gradings to the intervals by number of supporting vertices
-        
-        c_ss,delt_ss = {},{}
-        supp_num_list=np.array(list(map(self.intv_support_num,self.intv)))
-        change_indices = np.where(supp_num_list[:-1] != supp_num_list[1:])[0] + 1
-        change_indices=np.append(change_indices,num_intv)
-        change_indices=np.insert(change_indices,0,0)
-        
+        self.C = self.C_compute()
+        C=self.C
         # # print('123')
         # # with Pool(processes=4) as pool:
         # #     print(pool.map(self.f, range(10)))
-
-        for left,right in zip(change_indices,change_indices[1:]):
-            intvs=self.intv[left:right]
-            print(self.intv_support_num(intvs[0]))
-            #self.multiplicity(intvs[0])
-            params=[(I,self.getPD,self.toDio,C,self.m,c_ss) for I in intvs]
-            params=[(I,1,1,1,1,1) for I in intvs]
-            with Pool() as pool: # the same as Pool(os.cpu_count())
-                results=pool.map(self.f,params)
-            #update c_ss
+        #mp_flag=True
+        mp_flag=self.mproc
+        if mp_flag is True:
+            #gc.disable()
+            def getPD(*args,**kwargs):
+                return self.getPD(*args, **kwargs)
+            def toDio(*args,**kwargs):
+                return self.toDio(*args, **kwargs)
+        ### Multiprocessing
+        #attach gradings to the intervals by number of supporting vertices
+            supp_num_list=np.array(list(map(self.intv_support_num,self.intv)))
+            change_indices = np.where(supp_num_list[:-1] != supp_num_list[1:])[0] + 1
+            change_indices=np.append(change_indices,num_intv)
+            change_indices=np.insert(change_indices,0,0)
+            c_ss = Manager().dict()
+            p = Manager().Value('I',0)
+            q = Manager().Value('I',0)
+            for left,right in zip(change_indices,change_indices[1:]):
+                intvs=self.intv[left:right]
+                print(self.intv_support_num(intvs[0]))
+                #params=[(I,1,self.getPD,self.toDio,self.C,self.m,self.dim,c_ss) for I in intvs]
+                params=[(I,self.intv_C_pairing(I),self.getPD,self.toDio,self.m,self.dim,c_ss,p,q) for I in intvs]
+                with Pool() as pool: # the same as Pool(os.cpu_count())
+                    pool.map(self.multiplicity,params)
+                print(f"\r進捗: {right}/{num_intv} | zig回避: {p.value} | zigした: {q.value}")
+            #gc.enable()
+            # last info
+            print('\r進捗: {0}/{1} | 処理中: - | zig回避: {2} | zigした: {3} '.format(num_intv, num_intv, p.value, q.value))
         # ###
-
-        c,p,q,r = 0,0,0,0
-        c_ss,delt_ss = {},{}
-        for I in self.intv:
-            #print(f"\r進捗: {c}/{num_intv} | 処理中: {I} | zig回避: {p} | zigした: {q}")
-            #\r for carriage return
-            print('\r進捗: {0}/{1} | 処理中: {2} | zig回避: {3} | zigした: {4} '.format(c, num_intv, I, p, q), end='')
-            b0, d0 = I[0]; b1, d1 = I[1]; c += 1;
-            if d1 == -1 and b0 == d0:
-                c_ss[I] = getPD([C[b0][0]])
-            elif d0 == -1 and b1 == d1:
-                c_ss[I] = getPD([C[b1][1]])
-            elif d1 == -1:
-                c_ss[I] = getPD([C[b0][0], C[d0][0]]) if c_ss[(
-                    (b0, d0-1), (m, -1))] >= 1 and c_ss[((b0+1, d0), (m, -1))] >= 1 else 0
-            elif d0 == -1:
-                c_ss[I] = getPD([C[b1][1], C[d1][1]]) if c_ss[(
-                    (m, -1), (b1, d1-1))] >= 1 and c_ss[((m, -1), (b1+1, d1))] >= 1 else 0
-            elif b0 == d0 and b1 == d1:
-                c_ss[I] = getPD([C[b0][0], C[b1][1]]) if c_ss[(
-                    (b0, b0), (m, -1))] >= 1 and c_ss[((m, -1), (b1, b1))] >= 1 else 0
-            elif b0 == b1 and d0 == d1:
-                c_ss[I] = getPD([C[b0][0], C[d1][1]]) if c_ss[(
-                    (b0, d0), (b1, d1-1))] >= 1 and c_ss[((b0+1, d0), (b1, d1))] >= 1 else 0
-            elif b1 == d1:
-                c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, b1))],
-                                  c_ss[((b0, d0), (m, -1))])
-                if r == 0: continue
-                c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
-                if c_ss[I] == r:
-                    p += 1; continue
-                c_ss[I] = toDio([C[b1][1], C[b0][0], C[d0][0]]); q += 1
-            elif b0 == d0:
-                c_ss[I] = r = min(c_ss[((m, -1), (b1, d1))],
-                                  c_ss[((d0, d0), (b1+1, d1))])
-                if r == 0: continue
-                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
-                if c_ss[I] == r:
-                    p += 1; continue
-                c_ss[I] = toDio([C[b1][1], C[d1][1], C[d0][0]]); q += 1
-            elif b0 == d1:
-                c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
-                                  c_ss[((b0, d0), (b1+1, d1))])
-                if r == 0: continue
-                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
-                if c_ss[I] == r:
-                    p += 1; continue
-                c_ss[I] = toDio(
-                    [C[b1][1], C[d1][1], C[b0][0], C[d0][0]]); q += 1
-            elif b0 == b1:
-                c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
-                                  c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0+1, d0), (b1, d1))])
-                if r == 0: continue
-                c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
-                if c_ss[I] == r:
-                    p += 1; continue
-                c_ss[I] = toDio([C[d1][1], C[b0][0], C[d0][0]]); q += 1
-            elif d0 == d1:
-                c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))],
-                                  c_ss[((b0+1, d0), (b1, d1))], c_ss[((b0, d0), (b1, d1-1))])
-                if r == 0: continue
-                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
-                if c_ss[I] == r:
-                    p += 1; continue
-                c_ss[I] = toDio([C[b1][1], C[d1][1], C[b0][0]]); q += 1
-            else:
-                c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))], c_ss[((b0+1, d0), (b1, d1))],
-                                  c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0, d0-1), (b1, d1))])
-                if r == 0: continue
-                c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
-                if c_ss[I] == r:
-                    p += 1; continue
-                c_ss[I] = toDio(
-                    [C[b1][1], C[d1][1], C[b0][0], C[d0][0]]); q += 1
-        # last info
-        print('\r進捗: {0}/{1} | 処理中: - | zig回避: {2} | zigした: {3} '.format(c, num_intv, p, q))
+        else: # single thread
+            c,p,q,r = 0,0,0,0
+            c_ss={}
+            getPD=partial(self.getPD,self.dim)
+            toDio=partial(self.toDio,self.dim)
+            for I in self.intv:
+                #print(f"\r進捗: {c}/{num_intv} | 処理中: {I} | zig回避: {p} | zigした: {q}")
+                #\r for carriage return
+                print('\r進捗: {0}/{1} | 処理中: {2} | zig回避: {3} | zigした: {4} '.format(c, num_intv, I, p, q), end='')
+                b0, d0 = I[0]; b1, d1 = I[1]; c += 1;
+                if d1 == -1 and b0 == d0:
+                    c_ss[I] = getPD([C[b0][0]])
+                elif d0 == -1 and b1 == d1:
+                    c_ss[I] = getPD([C[b1][1]])
+                elif d1 == -1:
+                    c_ss[I] = getPD([C[b0][0], C[d0][0]]) if c_ss[(
+                        (b0, d0-1), (m, -1))] >= 1 and c_ss[((b0+1, d0), (m, -1))] >= 1 else 0
+                elif d0 == -1:
+                    c_ss[I] = getPD([C[b1][1], C[d1][1]]) if c_ss[(
+                        (m, -1), (b1, d1-1))] >= 1 and c_ss[((m, -1), (b1+1, d1))] >= 1 else 0
+                elif b0 == d0 and b1 == d1:
+                    c_ss[I] = getPD([C[b0][0], C[b1][1]]) if c_ss[(
+                        (b0, b0), (m, -1))] >= 1 and c_ss[((m, -1), (b1, b1))] >= 1 else 0
+                elif b0 == b1 and d0 == d1:
+                    c_ss[I] = getPD([C[b0][0], C[d1][1]]) if c_ss[(
+                        (b0, d0), (b1, d1-1))] >= 1 and c_ss[((b0+1, d0), (b1, d1))] >= 1 else 0
+                elif b1 == d1:
+                    c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, b1))],
+                                    c_ss[((b0, d0), (m, -1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio([C[b1][1], C[b0][0], C[d0][0]]); q += 1
+                elif b0 == d0:
+                    c_ss[I] = r = min(c_ss[((m, -1), (b1, d1))],
+                                    c_ss[((d0, d0), (b1+1, d1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[d0][0]]); q += 1
+                elif b0 == d1:
+                    c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
+                                    c_ss[((b0, d0), (b1+1, d1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio(
+                        [C[b1][1], C[d1][1], C[b0][0], C[d0][0]]); q += 1
+                elif b0 == b1:
+                    c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
+                                    c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0+1, d0), (b1, d1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio([C[d1][1], C[b0][0], C[d0][0]]); q += 1
+                elif d0 == d1:
+                    c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))],
+                                    c_ss[((b0+1, d0), (b1, d1))], c_ss[((b0, d0), (b1, d1-1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[b0][0]]); q += 1
+                else:
+                    c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))], c_ss[((b0+1, d0), (b1, d1))],
+                                    c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0, d0-1), (b1, d1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio(
+                        [C[b1][1], C[d1][1], C[b0][0], C[d0][0]]); q += 1
+            # last info
+            print('\r進捗: {0}/{1} | 処理中: - | zig回避: {2} | zigした: {3} '.format(c, num_intv, p, q))
         cov = self.cover_generator()
+        delt_ss = {}
         for I in self.intv:
             t = len(cov[I]); subs = 1 << t; ans_ss = 0
             for s in range(subs):

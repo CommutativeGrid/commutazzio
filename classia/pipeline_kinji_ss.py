@@ -23,13 +23,19 @@ def deco_print(func):
 print=deco_print(print)
 
 class Pipeline():
-    def __init__(self, point_cloud_fpath=None, layered_point_cloud_fpath=None, start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, ladder_length=50, executor='./random-cech/cech_filtration'):
+    def __init__(self, point_cloud_fpath=None, layered_point_cloud_fpath=None, filtration_fpath=None, 
+                start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, ladder_length=50, 
+                executor='./random-cech/cech_filtration',mproc=False):
         parameters = {k: v for k, v in locals().items() if k not in [
             'self', 'executor']}
+        # dim is used in parameters
         # step 1 - laminate the given point cloud
         # layered point cloud
         print("Initiating plotting sequence based on the given parameters..")
-        if (point_cloud_fpath is None) == (layered_point_cloud_fpath is None):
+        if point_cloud_fpath is None and layered_point_cloud_fpath is None:
+            if filtration_fpath is None:
+                raise ValueError("Input data missing.")
+        if point_cloud_fpath is not None and layered_point_cloud_fpath is not None:
             raise ValueError('One and only one path to either point_cloud_fp or layered_point_cloud_fp should be provided.')
         
         filename_prefix = f"layered_{survival_rates[0]}_{survival_rates[1]}_{ladder_length}"
@@ -47,17 +53,20 @@ class Pipeline():
             layered_filename=''.join(layered_filename.split('.')[:-1])
             layered_point_cloud_fpath = filepath_generator(os.path.join(os.getcwd(), "layered_point_cloud"),f"{filename_prefix}_{layered_filename}","lyr")
             attach_level(point_cloud, layered_point_cloud_fpath, survival_rates=survival_rates)
-        else: # point_cloud_fpath is None and layered_point_cloud_fpath is not None
-            pass
-        print(f"Layered point cloud data {layered_point_cloud_fpath} generated.")
+            print(f"Layered point cloud data {layered_point_cloud_fpath} generated.")
+        elif layered_point_cloud_fpath is not None:
+            print(f"Layered point cloud data {layered_point_cloud_fpath} received.")
         # step 2 - generate filtration
-        print(f"Starting filtration process..")
-        create_directory(os.path.join(os.getcwd(), 'filtration'))
-        filtration_fpath = filepath_generator(os.path.join(os.getcwd(), "filtration"),f"{filename_prefix}_filtration","fltr")
-        if radii is None:
-            radii=radii_generator(start,end,ladder_length)
-        os.system(command_generator(layered_point_cloud_fpath, filtration_fpath, radii=radii, executor=executor))
-        print("Cech filtration generated.")
+        if filtration_fpath is None:
+            print(f"Starting filtration process..")
+            create_directory(os.path.join(os.getcwd(), 'filtration'))
+            filtration_fpath = filepath_generator(os.path.join(os.getcwd(), "filtration"),f"{filename_prefix}_filtration","fltr")
+            if radii is None:
+                radii=radii_generator(start,end,ladder_length)
+            os.system(command_generator(layered_point_cloud_fpath, filtration_fpath, radii=radii, executor=executor))
+            print("Cech filtration generated.")
+        else:
+            print(f"Using the input filtration.")
         # step 3 - generate the data for PD
         self.compute_engine = CommutativeLadderKinjiSS(
             txf=filtration_fpath, **parameters)
@@ -89,7 +98,9 @@ class Pipeline():
         plot_engine.render(export_mode=export_mode, **kwargs)
 
 class PipelineClosePacking(Pipeline):
-    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, lattice_layer_size=10, ladder_length=50, executor='./random-cech/cech_filtration'):
+    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=[0.5, 1], 
+                dim=1, lattice_layer_size=10, ladder_length=50, 
+                executor='./random-cech/cech_filtration',mproc=False):
         # parameters = {k: v for k, v in locals().items() if k not in [
         #     'self', 'executor']}
         # step 1 - generate point cloud
@@ -101,7 +112,9 @@ class PipelineClosePacking(Pipeline):
             f"An {crystal_type.upper()} lattice with {lattice_layer_size**3} atoms generated.")
         with  NamedTemporaryFile() as outfile:
             np.savetxt(outfile.name, lattice.data)
-            super().__init__(point_cloud_fpath=outfile.name, layered_point_cloud_fpath=None, start=start, end=end, radii = radii, survival_rates=survival_rates, dim=dim, ladder_length=ladder_length, executor=executor)
+            super().__init__(point_cloud_fpath=outfile.name, layered_point_cloud_fpath=None, start=start, end=end, 
+            radii = radii, survival_rates=survival_rates, dim=dim, ladder_length=ladder_length, executor=executor,
+            mproc=mproc)
 
 
     # def plot_js(self):

@@ -145,7 +145,7 @@ class CommutativeLadderKinjiSS():
         return cov
 
     @staticmethod
-    def toDio(dim, cpxList):
+    def _toDio(dim, cpxList):
         U = set()
         for K in cpxList: U = U | K
         U = list(U); times = []
@@ -165,7 +165,7 @@ class CommutativeLadderKinjiSS():
         return c
 
     @staticmethod
-    def getPD(dim, cpxList):
+    def _getPD(dim, cpxList):
         simplices = []
         U = list(cpxList[0])
         for C in U: simplices.append((toList(C), 0))
@@ -232,39 +232,42 @@ class CommutativeLadderKinjiSS():
     
     @staticmethod
     def f(args):
-        I,C,getPD,toDio,m,dim,c_ss,p,q=args
-        print(I)
+        #i,I,C,getPD,toDio,m,dim,c_ss,p,q=args
+        i=args[0]
+        print(i.value)
+        print('\n')
+        i.value+=1
 
     @staticmethod
     def multiplicity(args):
-        I,Cpart,getPD,toDio,m,dim,c_ss,p,q=args
+        I,Cpart,getPD,toDio,m,c_ss,p,q=args
         C=Cpart
-        #print('inside multiplicity', I)
+        print('inside multiplicity', I)
         #print(c_ss)
         b0,d0=I[0]
         b1,d1=I[1]
         if d1 == -1 and b0 == d0:
-            c_ss[I] = getPD(dim,[C[(b0,0)]])
+            c_ss[I] = getPD([C[(b0,0)]])
         elif d0 == -1 and b1 == d1:
-            c_ss[I] = getPD(dim,[C[(b1,1)]])
+            c_ss[I] = getPD([C[(b1,1)]])
         elif d1 == -1:
             if c_ss[((b0, d0-1), (m, -1))] >= 1 and c_ss[((b0+1, d0), (m, -1))] >= 1:
-                c_ss[I] = getPD(dim,[C[(b0,0)], C[(d0,0)]])
+                c_ss[I] = getPD([C[(b0,0)], C[(d0,0)]])
             else:
                 c_ss[I] = 0
         elif d0 == -1:
             if c_ss[((m, -1), (b1, d1-1))] >= 1 and c_ss[((m, -1), (b1+1, d1))] >= 1:
-                c_ss[I] = getPD(dim,[C[(b1,1)], C[(d1,1)]])
+                c_ss[I] = getPD([C[(b1,1)], C[(d1,1)]])
             else:
                 c_ss[I] = 0
         elif b0 == d0 and b1 == d1:
             if c_ss[((b0, b0), (m, -1))] >= 1 and c_ss[((m, -1), (b1, b1))] >= 1:
-                c_ss[I] = getPD(dim,[C[(b0,0)], C[(b1,1)]]) 
+                c_ss[I] = getPD([C[(b0,0)], C[(b1,1)]]) 
             else:
                 c_ss[I] = 0
         elif b0 == b1 and d0 == d1:
             if c_ss[((b0, d0), (b1, d1-1))] >= 1 and c_ss[((b0+1, d0), (b1, d1))] >= 1:
-                c_ss[I] =  getPD(dim,[C[(b0,0)], C[(d1,1)]])    
+                c_ss[I] =  getPD([C[(b0,0)], C[(d1,1)]])    
             else:
                 c_ss[I] = 0
         elif b1 == d1:
@@ -272,33 +275,33 @@ class CommutativeLadderKinjiSS():
             if r == 0:
                 pass
             elif r != 0: 
-                c_ss[I] = getPD(dim,[C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
+                c_ss[I] = getPD([C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
                 if c_ss[I] == r:
                     p.value += 1
                 elif c_ss[I] != r:
-                    c_ss[I] = toDio(dim,[C[(b1,1)], C[(b0,0)], C[(d0,0)]])
+                    c_ss[I] = toDio([C[(b1,1)], C[(b0,0)], C[(d0,0)]])
                     q.value += 1
         elif b0 == d0:
             c_ss[I] = r = min(c_ss[((m, -1), (b1, d1))],c_ss[((d0, d0), (b1+1, d1))])
             if r == 0:
                 pass
             elif r != 0:
-                c_ss[I] = getPD(dim,[C[(b1,1)] & C[(b0,0)], C[(d1,1)]])
+                c_ss[I] = getPD([C[(b1,1)] & C[(b0,0)], C[(d1,1)]])
                 if c_ss[I] == r:
                     p.value += 1
                 elif c_ss[I] != r:
-                    c_ss[I] = toDio(dim,[C[(b1,1)], C[(d1,1)], C[(d0,0)]])
+                    c_ss[I] = toDio([C[(b1,1)], C[(d1,1)], C[(d0,0)]])
                     q.value += 1
         elif b0 == d1:
             c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],c_ss[((b0, d0), (b1+1, d1))])
             if r == 0: 
                 pass
             elif r != 0:
-                c_ss[I] = getPD(dim,[C[(b1,1)] & C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
+                c_ss[I] = getPD([C[(b1,1)] & C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
                 if c_ss[I] == r:
                     p.value += 1
                 elif c_ss[I] != r:
-                    c_ss[I] = toDio(dim,[C[(b1,1)], C[(d1,1)], C[(b0,0)], C[(d0,0)]])
+                    c_ss[I] = toDio([C[(b1,1)], C[(d1,1)], C[(b0,0)], C[(d0,0)]])
                     q.value += 1
         elif b0 == b1:
             c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
@@ -306,11 +309,11 @@ class CommutativeLadderKinjiSS():
             if r == 0: 
                 pass
             elif r != 0:
-                c_ss[I] = getPD(dim,[C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
+                c_ss[I] = getPD([C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
                 if c_ss[I] == r:
                     p.value += 1
                 elif c_ss[I] != r:
-                    c_ss[I] = toDio(dim,[C[(d1,1)], C[(b0,0)], C[(d0,0)]])
+                    c_ss[I] = toDio([C[(d1,1)], C[(b0,0)], C[(d0,0)]])
                     q.value += 1
         elif d0 == d1:
             c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))],
@@ -318,11 +321,11 @@ class CommutativeLadderKinjiSS():
             if r == 0: 
                 pass
             elif r != 0:
-                c_ss[I] = getPD(dim,[C[(b1,1)] & C[(b0,0)], C[(d1,1)]])
+                c_ss[I] = getPD([C[(b1,1)] & C[(b0,0)], C[(d1,1)]])
                 if c_ss[I] == r:
                     p.value += 1
                 elif c_ss[I] != r:
-                    c_ss[I] = toDio(dim,[C[(b1,1)], C[(d1,1)], C[(b0,0)]])
+                    c_ss[I] = toDio([C[(b1,1)], C[(d1,1)], C[(b0,0)]])
                     q.value += 1
         else:
             c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))], c_ss[((b0+1, d0), (b1, d1))],
@@ -330,11 +333,11 @@ class CommutativeLadderKinjiSS():
             if r == 0: 
                 pass
             elif r != 0:
-                c_ss[I] = getPD(dim,[C[(b1,1)] & C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
+                c_ss[I] = getPD([C[(b1,1)] & C[(b0,0)], C[(d1,1)] | C[(d0,0)]])
             if c_ss[I] == r:
                 p.value += 1
             elif c_ss[I] != r:
-                c_ss[I] = toDio(dim,[C[(b1,1)], C[(d1,1)], C[(b0,0)], C[(d0,0)]])
+                c_ss[I] = toDio([C[(b1,1)], C[(d1,1)], C[(b0,0)], C[(d0,0)]])
                 q.value += 1
 
     
@@ -388,19 +391,16 @@ class CommutativeLadderKinjiSS():
         num_intv = len(self.intv)
         self.C = self.C_compute()
         C=self.C
+        toDio=partial(self._toDio,self.dim)
+        getPD=partial(self._getPD,self.dim)
         # # print('123')
         # # with Pool(processes=4) as pool:
         # #     print(pool.map(self.f, range(10)))
         #mp_flag=True
         mp_flag=self.mproc
-        if mp_flag is True:
-            #gc.disable()
-            def getPD(*args,**kwargs):
-                return self.getPD(*args, **kwargs)
-            def toDio(*args,**kwargs):
-                return self.toDio(*args, **kwargs)
-        ### Multiprocessing
+        if mp_flag is True: ### Multiprocessing
         #attach gradings to the intervals by number of supporting vertices
+            #gc.disable()
             supp_num_list=np.array(list(map(self.intv_support_num,self.intv)))
             change_indices = np.where(supp_num_list[:-1] != supp_num_list[1:])[0] + 1
             change_indices=np.append(change_indices,num_intv)
@@ -408,11 +408,16 @@ class CommutativeLadderKinjiSS():
             c_ss = Manager().dict()
             p = Manager().Value('I',0)
             q = Manager().Value('I',0)
+            #i = Manager().Value('I',0)
             for left,right in zip(change_indices,change_indices[1:]):
                 intvs=self.intv[left:right]
                 print(self.intv_support_num(intvs[0]))
                 #params=[(I,1,self.getPD,self.toDio,self.C,self.m,self.dim,c_ss) for I in intvs]
-                params=[(I,self.intv_C_pairing(I),self.getPD,self.toDio,self.m,self.dim,c_ss,p,q) for I in intvs]
+                #parse I before sending?
+                #remove dot when using dionysus
+                #params=[(I,self.intv_C_pairing(I),getPD,toDio,self.m,c_ss,p,q) for I in intvs]
+                #params=[(i,I,self.intv_C_pairing(I),getPD,toDio,self.m,c_ss,p,q) for I in intvs]
+                params=[(I,self.intv_C_pairing(I),getPD,toDio,self.m,c_ss,p,q) for I in intvs]
                 with Pool() as pool: # the same as Pool(os.cpu_count())
                     pool.map(self.multiplicity,params)
                 print(f"\r進捗: {right}/{num_intv} | zig回避: {p.value} | zigした: {q.value}")
@@ -423,8 +428,8 @@ class CommutativeLadderKinjiSS():
         else: # single thread
             c,p,q,r = 0,0,0,0
             c_ss={}
-            getPD=partial(self.getPD,self.dim)
-            toDio=partial(self.toDio,self.dim)
+            #getPD=partial(self.getPD,self.dim)
+            #toDio=partial(self.toDio,self.dim)
             for I in self.intv:
                 #print(f"\r進捗: {c}/{num_intv} | 処理中: {I} | zig回避: {p} | zigした: {q}")
                 #\r for carriage return

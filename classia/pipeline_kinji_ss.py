@@ -70,6 +70,9 @@ class Pipeline():
         # step 3 - generate the data for PD
         self.compute_engine = CommutativeLadderKinjiSS(
             txf=filtration_fpath, **parameters)
+        print("Computation finished.")
+        print("-------------------------------------")
+        print("-------------------------------------")
 
     def plot(self, **kwargs):
         """plot using plotly python

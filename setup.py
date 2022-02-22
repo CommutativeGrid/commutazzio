@@ -28,6 +28,7 @@ INSTALL_REQUIRES = [
       'pandas',
       'fire',
       'dionysus',
+      'POT',
 ]
 
 DEPENDENCY_LINKS = [

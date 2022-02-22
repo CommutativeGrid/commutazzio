@@ -5,30 +5,29 @@ Created on Wed Dec  1 14:46:51 2021
 
 @author: kasumi
 """
-#import dionysus as d
+import dionysus as d
 import numpy as np
 import gudhi as gd
 import dionysus as d
 import homcloud.interface as hc
 
-
-from cpes import FaceCenteredCubic as fcc_stacking
-from cpes import HexagonalClosePacking as hcp_stacking
-from cpes import *
 from scipy.spatial.distance import cdist
+from gudhi.wasserstein import wasserstein_distance as wasserstein_distance_gudhi
+#from cpes import Points3D
 from gtda.externals import CechComplex
 from dataclasses import dataclass
 from math import sqrt
 
-from format_conversion import *
+from .format_conversion import *
 
-"""
-Parameters:
-    number of atoms: ~ 5000 (図6 は約5 000 原子のfcc 構造，hcp 構造から
-ランダムに原子を間引いた系についてのパーシステント
-図の変化を示したものである．)
-    radius of sphere: should be 1 (原子間距離を 2.0 とした)
-"""
+
+def wasserstein_distance(pd1,pd2,dim,order=1.,internal_p=2.):
+    """
+    Calculates the wasserstein distance at the specified dimension between two PD_Points3D object.
+    """
+    return wasserstein_distance_gudhi(pd1.pd_formatter(dim=dim,format="distance"),
+                                pd2.pd_formatter(dim=dim,format="distance"),
+                                order=order,internal_p=internal_p)
 
 @dataclass
 class pd_multiplicity:
@@ -37,45 +36,32 @@ class pd_multiplicity:
     death: float
     count: int
 
-class PD_packings:
+class PD_Points3D:
     """
     collection of persistence diagrams of the input three-dimensional data
     """
-    def __init__(self, packing, deletion_rate = 0, method='alpha',characteristic=2):
-        if type(packing) is np.ndarray:
-            self.points=packing
-            self.name="packing"
-            
-        elif packing.__class__.__bases__[0].__name__ == 'ClosePacking':
-            self.points=packing.data
-            self.name=type(packing).__name__
-        else:
-            raise NotImplementedError()
-        if deletion_rate != 0:
-            num_remained=int((1-deletion_rate)*(len(self.points)))
-            survivors=np.random.choice(range(len(self.points)),num_remained,replace=False)
-            self.points=self.points[survivors]
-            
-        self.characteristic = characteristic
-        self.method = method
+    def __init__(self, points3d, method='alpha',no_squared=False,characteristic=2):
+        self.points3d=points3d
+        self.method=method
+        self.characteristic=characteristic
         
         if method == 'alpha':
-            s_complex = gd.AlphaComplex(points=self.points)
+            s_complex = gd.AlphaComplex(points=self.points3d.xyz)
             simplex_tree = s_complex.create_simplex_tree()
             if simplex_tree.make_filtration_non_decreasing():
                 raise ValueError("Generated raw alpha filtration not valid.")
             result_str = 'Alpha complex is of dimension ' + repr(simplex_tree.dimension())
             print(result_str)
-            self.diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
+            self._diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
             self.simplex_tree=simplex_tree
         elif method == 'cech':
             max_radius = np.inf
-            s_complex = CechComplex(points=self.points,max_radius=max_radius)
+            s_complex = CechComplex(points=self.points3d.xyz,max_radius=max_radius)
             simplex_tree = s_complex.create_simplex_tree(max_dimension=3)
             simplex_tree.make_filtration_non_decreasing() # make sure that the generate filtration is valid
             result_str = 'Cech complex is of dimension ' + repr(simplex_tree.dimension())
             print(result_str)
-            self.diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
+            self._diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
             self.simplex_tree=simplex_tree
         # elif method == 'cech_dionysus':
         #     max_radius = 10
@@ -86,29 +72,34 @@ class PD_packings:
         #     cech_filtration_dionysus=filtration_g2d(simplex_tree)
         #     m=d.homology_persistence(cech_filtration_dionysus,prime=self.characteristic)
         #     dgms=d.init_diagrams(m,cech_filtration_dionysus)
-        #     self.diagrams = diagrams_d2g(dgms)
+        #     self._diagrams = diagrams_d2g(dgms)
         #     #self.simplex_tree=simplex_tree
         elif method == 'rips':
             # radius here is 2 times the radius used to construct the sphere
             max_edge_length=np.inf
-            s_complex = gd.RipsComplex(points=self.points, max_edge_length=max_edge_length)
+            s_complex = gd.RipsComplex(points=self.points3d.xyz, max_edge_length=max_edge_length)
             simplex_tree = s_complex.create_simplex_tree(max_dimension=3)
             if simplex_tree.make_filtration_non_decreasing():
                 raise ValueError("Generated raw rips filtration not valid.")
             result_str = 'Rips complex is of dimension ' + repr(simplex_tree.dimension())
             print(result_str)
-            self.diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
+            self._diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
             self.simplex_tree=simplex_tree
         elif method == 'homcloud':
             #using alpha complex
-            pdlist=hc.PDList.from_alpha_filtration(self.points,no_squared=True)
+            pdlist=hc.PDList.from_alpha_filtration(self.points3d.xyz,no_squared=no_squared)
+            if no_squared:
+                print("Radius is not squared.")
             print("Computation of pdlist finished.")
-            self.diagrams=[]
+            self._diagrams=[]
             for i in range(3):
                 pd = pdlist.dth_diagram(i)
                 for birth,death in zip(pd.births,pd.deaths):
-                    self.diagrams.append((i,(birth,death)))
-        self.reduced_diagram = self.diagram_multiplicity_count(self.diagrams,data_type="gudhi")
+                    self._diagrams.append((i,(birth,death)))
+        if no_squared is True and method != 'homcloud':
+            print("Radius is not squared.")
+            self._diagrams=[(dim,(sqrt(birth),sqrt(death))) for (dim,(birth,death)) in self._diagrams]
+        self.reduced_diagram = self.diagram_multiplicity_count(self._diagrams,data_type="gudhi")
         self.diagram_0_r = [(birth,death,count) for (dim,(birth,death),count) in self.reduced_diagram if dim==0]
         self.diagram_1_r = [(birth,death,count) for (dim,(birth,death),count) in self.reduced_diagram if dim==1]
         self.diagram_2_r = [(birth,death,count) for (dim,(birth,death),count) in self.reduced_diagram if dim==2]
@@ -155,33 +146,41 @@ class PD_packings:
                     print(f"Dimension {i}: ({b},{d}), count={c}")
 
 
+    def pd_formatter(self,dim,format="distance"):
+        """ Output dots of a persistence diagram used for computing
+        Wasserstein distance"""
+        if format=="distance":
+            return np.array([[b,d] for (i,(b,d)) in self._diagrams if i==dim])
+        else:
+            raise NotImplementedError
+
     #TODO use heat plot
     def plot_0D(self,reduced=True,plotrange=(0,3)):
         if reduced:
             diagram=self.diagram_0_r
         else:
-            diagram=[(birth,death) for (dim,(birth,death)) in self.diagrams if dim==0]
+            diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==0]
         self._plot_diagram(diagram,plotrange)
 
     def plot_1D(self,reduced=True,plotrange=(0,3)):
         if reduced:
             diagram=self.diagram_1_r
         else:
-            diagram=[(birth,death) for (dim,(birth,death)) in self.diagrams if dim==1]
+            diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==1]
         self._plot_diagram(diagram,plotrange)
 
     def plot_2D(self,reduced=True,plotrange=(0,3)):
         if reduced:
             diagram=self.diagram_2_r
         else:
-            diagram=[(birth,death) for (dim,(birth,death)) in self.diagrams if dim==2]
+            diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==2]
         self._plot_diagram(diagram,plotrange)
         
     
     def _plot_diagram(self,points,plotrange):
         points = [pt for pt in points if plotrange[0]<=pt[0]<plotrange[1]] # remove high values
-        ax = gd.plot_persistence_diagram(points,legend=True)
-        ax.set_title(f"Persistence diagram of {self.name}")
+        ax = gd.plot_persistence_diagram(points,legend=False)
+        ax.set_title(f"Persistence diagram")
         ax.set_aspect("equal")
 
     #TODO use np.around instead
@@ -230,7 +229,7 @@ class PD_packings:
         """
         Using rips complex
         """
-        points=self.points
+        points=self.points3d.xyz
         max_edge_length=4.0
         f = d.fill_rips(points, k=3, r=max_edge_length)
         p = d.homology_persistence(f,prime=self.characteristic)
@@ -251,49 +250,3 @@ class PD_packings:
         for i, pt in self.dgms_d:
             print(i, pt[0], pt[1])
 
-
-
-if __name__ == '__main__':
-    size=10
-    fcc=fcc_stacking(size,radius=1)# stacking version 
-    #hcp1=hcp_cell(17,sphere_radius=1) #cell version
-    hcp=hcp_stacking(size,radius=1) #stacking version
-    #au=PD_packings(fcc_au,method='alpha')
-    #fcc100=PD_packings(fcc,method='homcloud')
-    #hcp100=PD_packings(hcp,method='homcloud')
-    #fcc75=PD_packings(fcc,method='homcloud',deletion_rate=0.25)
-    #hcp75=PD_packings(hcp,method='homcloud',deletion_rate=0.25)
-    fcc50=PD_packings(fcc,method='homcloud',deletion_rate=0.5)
-    hcp50=PD_packings(hcp,method='homcloud',deletion_rate=0.5)
-    #fcc25=PD_packings(fcc,method='homcloud',deletion_rate=0.75)
-    #hcp25=PD_packings(hcp,method='homcloud',deletion_rate=0.75)
-    #fcc_alpha=PD_packings(fcc,method='alpha')
-    fcc_hc=PD_packings(fcc,method='homcloud')
-    #hcp_alpha=PD_packings(hcp,method='alpha')
-    #fcc_cech=PD_packings(fcc,method='cech')
-    #fcc_cech_d=PD_packings(fcc,method='cech_dionysus')
-    hcp_hc=PD_packings(hcp,method='homcloud')
-    #hcp_cech=PD_packings(hcp,method='cech')
-    #fcc_rips=PD_packings(fcc,method='rips')
-    #hcp_rips=PD_packings(hcp,method='rips')
-    #auc=PD_packings(a,method='cech')
-    #pd_fcc=PD_packings(fcc,method='alpha')
-    #pd_hcp=PD_packings(hcp)
-    #test=PD_packings(fcc,method='homcloud')
-
-    
-# =============================================================================
-#     fcc_alphas=[PD_packings(fcc1,method='alpha'),PD_packings(fcc2,method='alpha')]
-#     hcp_alphas=[PD_packings(hcp1,method='alpha'),PD_packings(hcp2,method='alpha')]
-#     fcc_rips=[PD_packings(fcc1,method='rips'),PD_packings(fcc2,method='rips')]
-#     hcp_rips=[PD_packings(hcp1,method='rips'),PD_packings(hcp2,method='rips')]
-# =============================================================================
-    
-
-    #f=PD_packings(fcc,method='rips')
-    #h=PD_packings(hcp,method='rips')
-    #f.dionysus_diagram_rips()
-    #ofp=f.omnifield_persistence()
-    
-
-    

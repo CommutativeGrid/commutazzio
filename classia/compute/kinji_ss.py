@@ -242,7 +242,7 @@ class CommutativeLadderKinjiSS():
     def multiplicity(args):
         I,Cpart,getPD,toDio,m,c_ss,p,q=args
         C=Cpart
-        print('inside multiplicity', I)
+        #print('inside multiplicity', I)
         #print(c_ss)
         b0,d0=I[0]
         b1,d1=I[1]

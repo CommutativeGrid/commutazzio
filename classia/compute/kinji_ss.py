@@ -243,6 +243,7 @@ class CommutativeLadderKinjiSS():
         I,Cpart,getPD,toDio,m,c_ss,p,q=args
         C=Cpart
         #print('inside multiplicity', I)
+        print(I)
         #print(c_ss)
         b0,d0=I[0]
         b1,d1=I[1]
@@ -502,6 +503,7 @@ class CommutativeLadderKinjiSS():
                     c_ss[I] = toDio(
                         [C[b1][1], C[d1][1], C[b0][0], C[d0][0]]); q += 1
             # last info
+            print("仕上がり中..")
             print('\r進捗: {0}/{1} | 処理中: - | zig回避: {2} | zigした: {3} '.format(c, num_intv, p, q))
         cov = self.cover_generator()
         delt_ss = {}

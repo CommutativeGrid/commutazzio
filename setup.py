@@ -29,6 +29,7 @@ INSTALL_REQUIRES = [
       'fire',
       'dionysus',
       'POT',
+      'pathos',
 ]
 
 DEPENDENCY_LINKS = [

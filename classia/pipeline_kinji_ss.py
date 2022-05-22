@@ -12,6 +12,7 @@ from .compute import CommutativeLadderKinjiSS
 from .utils import attach_level, command_generator, create_directory, radii_generator, filepath_generator
 from .plot import CommutativeLadderPdSS
 from tempfile import NamedTemporaryFile
+import uuid
 
 
 def deco_print(func):
@@ -23,6 +24,12 @@ def deco_print(func):
 print=deco_print(print)
 
 class Pipeline():
+    """
+    Input is either one of the following:
+        * a non-layered point cloud
+        * a layered point cloud
+        * a filtration
+    """
     def __init__(self, point_cloud_fpath=None, layered_point_cloud_fpath=None, filtration_fpath=None, 
                 start=None, end=None, radii = None, survival_rates=[0.5, 1], dim=1, ladder_length=50, 
                 executor='./random-cech/cech_filtration',mproc=False):
@@ -37,8 +44,10 @@ class Pipeline():
                 raise ValueError("Input data missing.")
         if point_cloud_fpath is not None and layered_point_cloud_fpath is not None:
             raise ValueError('One and only one path to either point_cloud_fp or layered_point_cloud_fp should be provided.')
-        
-        filename_prefix = f"layered_{survival_rates[0]}_{survival_rates[1]}_{ladder_length}"
+        if point_cloud_fpath is not None:
+            filename_prefix = f"layered_{survival_rates[0]}_{survival_rates[1]}_{ladder_length}"
+        else:
+            filename_prefix = f"{uuid.uuid4().hex[-5:]}_{ladder_length}"
         if point_cloud_fpath is not None:
             try:
                 point_cloud = np.load(point_cloud_fpath)
@@ -63,7 +72,8 @@ class Pipeline():
             filtration_fpath = filepath_generator(os.path.join(os.getcwd(), "filtration"),f"{filename_prefix}_filtration","fltr")
             if radii is None:
                 radii=radii_generator(start,end,ladder_length)
-            os.system(command_generator(layered_point_cloud_fpath, filtration_fpath, radii=radii, executor=executor))
+            if os.system(command_generator(layered_point_cloud_fpath, filtration_fpath, radii=radii, executor=executor)) != 0:
+                raise Exception('Error during filtration process.')
             print("Cech filtration generated.")
         else:
             print(f"Using the input filtration.")
@@ -97,7 +107,7 @@ class Pipeline():
                              ladder_length=50)
             plot_engine = CommutativeLadderPdSS(
                 title=title, **parameters)
-
+        #breakpoint()
         plot_engine.render(export_mode=export_mode, **kwargs)
 
 class PipelineClosePacking(Pipeline):

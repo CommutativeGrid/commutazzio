@@ -27,8 +27,8 @@ class CommutativeLadderPdSS():
         self.ladder_length = kwargs.get("ladder_length", None)
         self.title = title
         self.legend = True
-        self.multi_dots_min = min(self.dots.multiplicity)
-        self.multi_dots_max = max(self.dots.multiplicity)
+        self.multi_dots_min = min(self.dots.multiplicity,default=0)
+        self.multi_dots_max = max(self.dots.multiplicity,default=0)
         self.data_preprocessing_dots()
         if self.lines.empty is False:
             self.multi_lines_min = min(self.lines.multiplicity)

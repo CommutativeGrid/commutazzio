@@ -48,6 +48,8 @@ class Pipeline():
             filename_prefix = f"layered_{survival_rates[0]}_{survival_rates[1]}_{ladder_length}"
         else:
             filename_prefix = f"{uuid.uuid4().hex[-5:]}_{ladder_length}"
+        # needs either point_cloud_fpath (will then generate a layered_point_fpath automatically)
+        # or a layered_point_cloud_fpath supplied
         if point_cloud_fpath is not None:
             try:
                 point_cloud = np.load(point_cloud_fpath)
@@ -111,7 +113,7 @@ class Pipeline():
         plot_engine.render(export_mode=export_mode, **kwargs)
 
 class PipelineClosePacking(Pipeline):
-    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=[0.5, 1], 
+    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=[0.5, 1],number_removal=None,
                 dim=1, lattice_layer_size=10, ladder_length=50, 
                 executor='./random-cech/cech_filtration',mproc=False):
         # parameters = {k: v for k, v in locals().items() if k not in [
@@ -124,8 +126,8 @@ class PipelineClosePacking(Pipeline):
         print(
             f"An {crystal_type.upper()} lattice with {lattice_layer_size**3} atoms generated.")
         with  NamedTemporaryFile() as outfile:
-            np.savetxt(outfile.name, lattice.data)
-            super().__init__(point_cloud_fpath=outfile.name, layered_point_cloud_fpath=None, start=start, end=end, 
+            np.savetxt(outfile.name, lattice.thinning(number_removal=number_removal,style="homcloud"))
+            super().__init__(point_cloud_fpath=None, layered_point_cloud_fpath=outfile, start=start, end=end, 
             radii = radii, survival_rates=survival_rates, dim=dim, ladder_length=ladder_length, executor=executor,
             mproc=mproc)
 

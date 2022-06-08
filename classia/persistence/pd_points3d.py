@@ -40,12 +40,12 @@ class PD_Points3D:
     """
     collection of persistence diagrams of the input three-dimensional data
     """
-    def __init__(self, points3d, method='alpha',no_squared=False,characteristic=2):
+    def __init__(self, points3d, method='alpha',is_squared=True,characteristic=2):
         self.points3d=points3d
         self.method=method
         self.characteristic=characteristic
         
-        if method == 'alpha':
+        if method == "alpha":
             s_complex = gd.AlphaComplex(points=self.points3d.xyz)
             simplex_tree = s_complex.create_simplex_tree()
             if simplex_tree.make_filtration_non_decreasing():
@@ -54,7 +54,7 @@ class PD_Points3D:
             print(result_str)
             self._diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
             self.simplex_tree=simplex_tree
-        elif method == 'cech':
+        elif method == "cech":
             max_radius = np.inf
             s_complex = CechComplex(points=self.points3d.xyz,max_radius=max_radius)
             simplex_tree = s_complex.create_simplex_tree(max_dimension=3)
@@ -74,7 +74,7 @@ class PD_Points3D:
         #     dgms=d.init_diagrams(m,cech_filtration_dionysus)
         #     self._diagrams = diagrams_d2g(dgms)
         #     #self.simplex_tree=simplex_tree
-        elif method == 'rips':
+        elif method == "rips":
             # radius here is 2 times the radius used to construct the sphere
             max_edge_length=np.inf
             s_complex = gd.RipsComplex(points=self.points3d.xyz, max_edge_length=max_edge_length)
@@ -85,10 +85,12 @@ class PD_Points3D:
             print(result_str)
             self._diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
             self.simplex_tree=simplex_tree
-        elif method == 'homcloud':
+        elif method == "homcloud":
             #using alpha complex
-            pdlist=hc.PDList.from_alpha_filtration(self.points3d.xyz,no_squared=no_squared)
-            if no_squared:
+            pdlist=hc.PDList.from_alpha_filtration(self.points3d.xyz,no_squared=not is_squared)
+            if is_squared:
+                print("Radius is squared.")
+            else:
                 print("Radius is not squared.")
             print("Computation of pdlist finished.")
             self._diagrams=[]
@@ -96,9 +98,11 @@ class PD_Points3D:
                 pd = pdlist.dth_diagram(i)
                 for birth,death in zip(pd.births,pd.deaths):
                     self._diagrams.append((i,(birth,death)))
-        if no_squared is True and method != 'homcloud':
+        if is_squared is False and method in ["alpha","cech","rips"]:
             print("Radius is not squared.")
             self._diagrams=[(dim,(sqrt(birth),sqrt(death))) for (dim,(birth,death)) in self._diagrams]
+        else:
+            print("Radius is squared.")
         self.reduced_diagram = self.diagram_multiplicity_count(self._diagrams,data_type="gudhi")
         self.diagram_0_r = [(birth,death,count) for (dim,(birth,death),count) in self.reduced_diagram if dim==0]
         self.diagram_1_r = [(birth,death,count) for (dim,(birth,death),count) in self.reduced_diagram if dim==1]

@@ -31,11 +31,11 @@ def filepath_generator(dirname,name,suffix=None,overwrite=False):
             print(f"Overwrite mode is on. Rewriting to {file_path} .")
             return file_path
         #file_path=os.path.join(dirname,f"{name}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')}.{suffix}")
-        file_path=os.path.join(dirname,f"{name}_{str(count).zfill(2)}.{suffix}")
+        file_path=os.path.join(dirname,f"{name}_{str(count).zfill(6)}.{suffix}")
         sleep(1e-6)
         count+=1
-        if count>=100:
-            raise FileExistsError(f"{file_path} already exists. Cannot create a new file with random file name.")
+        if count>=1e5:
+            raise FileExistsError(f"{file_path} already exists. Cannot create a new file with an ordinal (within 100k) attached to the original name.")
     if count==1:
         print(f"Saving to {file_path}.")
     else:

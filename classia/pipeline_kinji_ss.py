@@ -6,6 +6,7 @@ Created on Thu Dec 23 14:47:08 2021
 @author: kasumi
 """
 import os
+import re
 from cpes import FaceCenteredCubic, HexagonalClosePacking
 import numpy as np
 from .compute import CommutativeLadderKinjiSS
@@ -113,23 +114,40 @@ class Pipeline():
         plot_engine.render(export_mode=export_mode, **kwargs)
 
 class PipelineClosePacking(Pipeline):
-    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=[0.5, 1],number_removal=None,
+    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=None,removal_vector=None,
                 dim=1, lattice_layer_size=10, ladder_length=50, 
                 executor='./random-cech/cech_filtration',mproc=False):
         # parameters = {k: v for k, v in locals().items() if k not in [
         #     'self', 'executor']}
         # step 1 - generate point cloud
+        if survival_rates is not None:
+            print("Using the given survival rates.")
+            removal_vector=(int((lattice_layer_size**3)*(1-survival_rates[0])),int((lattice_layer_size**3)*(1-survival_rates[1])))
+        print(f"Number of atoms to be removed in the upper layer: {removal_vector[1]}")
+        print(f"Number of atoms to be removed in the upper layer: {removal_vector[0]}")
         if crystal_type == 'fcc':
             lattice = FaceCenteredCubic(lattice_layer_size, radius=1)
         elif crystal_type == 'hcp':
             lattice = HexagonalClosePacking(lattice_layer_size, radius=1)
-        print(
-            f"An {crystal_type.upper()} lattice with {lattice_layer_size**3} atoms generated.")
-        with  NamedTemporaryFile() as outfile:
-            np.savetxt(outfile.name, lattice.thinning(number_removal=number_removal,style="homcloud"))
-            super().__init__(point_cloud_fpath=None, layered_point_cloud_fpath=outfile, start=start, end=end, 
+        print(f"An {crystal_type.upper()} lattice with {lattice_layer_size**3} atoms generated.")
+        print(f"Number of interior atoms: {lattice.interiorPoints_count()}.")
+        
+        create_directory(os.path.join(os.getcwd(), 'layered_point_cloud'))
+        layered_filename=f"{crystal_type}_{lattice_layer_size}_{removal_vector[0]}_{removal_vector[1]}"
+        filename_prefix=""
+        layered_point_cloud_fpath = filepath_generator(os.path.join(os.getcwd(), "layered_point_cloud"),f"{filename_prefix}_{layered_filename}","lyr")
+        print(layered_point_cloud_fpath)
+        if removal_vector[1]!=0:
+            lattice.thinning(number_removal=removal_vector[1],inplace=True)
+        lattice.thinning(number_removal=removal_vector[0],save_path=layered_point_cloud_fpath,style="homcloud")
+        super().__init__(point_cloud_fpath=None, layered_point_cloud_fpath=layered_point_cloud_fpath, start=start, end=end, 
             radii = radii, survival_rates=survival_rates, dim=dim, ladder_length=ladder_length, executor=executor,
             mproc=mproc)
+        # with  NamedTemporaryFile() as outfile:
+        #     np.savetxt(outfile.name, lattice.thinning(number_removal=number_removal,style="homcloud"))
+        #     super().__init__(point_cloud_fpath=None, layered_point_cloud_fpath=outfile, start=start, end=end, 
+        #     radii = radii, survival_rates=survival_rates, dim=dim, ladder_length=ladder_length, executor=executor,
+        #     mproc=mproc)
 
 
     # def plot_js(self):

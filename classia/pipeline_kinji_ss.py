@@ -136,12 +136,18 @@ class PipelineClosePacking(Pipeline):
         filename_prefix=""
         layered_point_cloud_fpath = filepath_generator(os.path.join(os.getcwd(), "layered_point_cloud"),f"{filename_prefix}_{layered_filename}","lyr")
         print(layered_point_cloud_fpath)
+        #only paired thinning supported for now
         if removal_vector[1]!=0:
-            lattice.thinning(number_removal=removal_vector[1],inplace=True)
-            lattice.thinning(number_removal=removal_vector[0],save_path=layered_point_cloud_fpath,style="homcloud")
+            raise NotImplementedError
         elif removal_vector[1]==0:
-            lattice.thinning(number_removal=removal_vector[0],save_path=layered_point_cloud_fpath,style="homcloud",inplace=True)
+            lattice.paired_thinning(number_removal=removal_vector[0],save_path=layered_point_cloud_fpath,style="homcloud",inplace=True)
             self.lattice=lattice
+        # if removal_vector[1]!=0:
+        #     lattice.thinning(number_removal=removal_vector[1],inplace=True)
+        #     lattice.thinning(number_removal=removal_vector[0],save_path=layered_point_cloud_fpath,style="homcloud")
+        # elif removal_vector[1]==0:
+        #     lattice.thinning(number_removal=removal_vector[0],save_path=layered_point_cloud_fpath,style="homcloud",inplace=True)
+        #     self.lattice=lattice
         super().__init__(point_cloud_fpath=None, layered_point_cloud_fpath=layered_point_cloud_fpath, start=start, end=end, 
             radii = radii, survival_rates=survival_rates, dim=dim, ladder_length=ladder_length, executor=executor,
             mproc=mproc)

@@ -114,7 +114,7 @@ class Pipeline():
         plot_engine.render(export_mode=export_mode, **kwargs)
 
 class PipelineClosePacking(Pipeline):
-    def __init__(self, crystal_type, start=None, end=None, radii = None, survival_rates=None,removal_vector=None,
+    def __init__(self, crystal_type, thinning_mode=None, start=None, end=None, radii = None, survival_rates=None,removal_vector=None,
                 dim=1, lattice_layer_size=10, ladder_length=50, 
                 executor='./random-cech/cech_filtration',mproc=False):
         # parameters = {k: v for k, v in locals().items() if k not in [
@@ -140,7 +140,7 @@ class PipelineClosePacking(Pipeline):
         if removal_vector[1]!=0:
             raise NotImplementedError
         elif removal_vector[1]==0:
-            lattice.paired_thinning(number_removal=removal_vector[0],save_path=layered_point_cloud_fpath,style="homcloud",inplace=True)
+            lattice.thinning(mode=thinning_mode,number_removal=removal_vector[0],save_path=layered_point_cloud_fpath,style="homcloud",inplace=True)
             self.lattice=lattice
         # if removal_vector[1]!=0:
         #     lattice.thinning(number_removal=removal_vector[1],inplace=True)

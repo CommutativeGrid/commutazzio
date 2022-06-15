@@ -112,6 +112,7 @@ class Pipeline():
                 title=title, **parameters)
         #breakpoint()
         plot_engine.render(export_mode=export_mode, **kwargs)
+        self.plot_engine = plot_engine
 
 class PipelineClosePacking(Pipeline):
     def __init__(self, crystal_type, thinning_mode=None, start=None, end=None, radii = None, survival_rates=None,removal_vector=None,

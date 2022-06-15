@@ -13,6 +13,14 @@ import plotly.graph_objects as go
 from ..utils import create_directory, filepath_generator
 from .colors_helper import get_color
 
+diagonal_line_color="LightSteelBlue"
+legend_background_color="WhiteSmoke"
+legend_border_color="black"
+colorscales=px.colors.sequential.Rainbow
+line_opacity=0.4
+#colorscales=px.colors.sequential.Plotly3
+#colorscales=px.colors.sequential.Plasma
+#original_colorscales = 
 
 class CommutativeLadderPdSS():
     """plot persistence diagrams of a commutative ladder
@@ -37,7 +45,8 @@ class CommutativeLadderPdSS():
         self.template = 'plotly'
         self.size_area_min = 5  # min dot size in area
         self.size_area_max = 24  # max dot size in area
-        self.compute_colorscales()
+        #self.compute_colorscales()
+        self.colorscales = colorscales
 
     def render(self, export_mode, **kwargs):
         """Combine scatter and line chart together and generate the final plot
@@ -57,7 +66,7 @@ class CommutativeLadderPdSS():
             y=[-offset_diag, self.ladder_length+offset_diag],
             mode='lines',
             line=dict(
-                color='LightSteelBlue',
+                color=diagonal_line_color,
                 width=4,
                 dash='dot'
             ),
@@ -135,12 +144,14 @@ class CommutativeLadderPdSS():
             xaxis=dict(
                 tickmode='array',
                 tickvals=tick_coords,
-                ticktext=radii_text
+                ticktext=radii_text,
+                showticklabels=False,
             ),
             yaxis=dict(
                 tickmode='array',
                 tickvals=tick_coords,
-                ticktext=radii_text
+                ticktext=radii_text,
+                showticklabels=False,
             ),
         )
         # fig.update_layout(
@@ -174,8 +185,8 @@ class CommutativeLadderPdSS():
                     # color="black"
                 ),
                 # bgcolor=pio.templates[self.template].layout.plot_bgcolor,
-                bgcolor="WhiteSmoke",
-                bordercolor='black',
+                bgcolor=legend_background_color,
+                bordercolor=legend_border_color,
                 borderwidth=2,
             ),
             legend_title='',
@@ -225,6 +236,9 @@ class CommutativeLadderPdSS():
             df.area == 'U', self.radii[df['x']-1], self.radii[df['y']-1])
         self.dots["death_radius"] = np.where(
             df.area == 'U', self.radii[df['y']-1], self.radii[df['x']-1])
+        self.dots["colorscale"] =  np.interp(
+            df.log_multi, (np.log10(self.multi_dots_min)
+            , np.log10(self.multi_dots_max)), (0, 1))
 
     def data_preprocessing_lines(self):
         """Add some auxiliary columns to lines
@@ -234,7 +248,7 @@ class CommutativeLadderPdSS():
         ribbon_width_coord_max = 0.15
         ribbon_width_pixel_min = 2
         ribbon_width_pixel_max = 8
-        self.lines["log_multi"] = df.multiplicity  # np.log10(df.multiplicity)
+        self.lines["log_multi"] = np.log10(df.multiplicity)
         # calculate the thickness of the line based on the multiplicity
         self.lines["ribbon_width_coord"] = np.interp(df.log_multi, (min(df.log_multi), max(
             df.log_multi)), (ribbon_width_coord_min, ribbon_width_coord_max))
@@ -242,12 +256,13 @@ class CommutativeLadderPdSS():
             df.log_multi)), (ribbon_width_pixel_min, ribbon_width_pixel_max))
         # compute the color scale adjusted by the dots' multiplicity
         self.lines["colorscale"] = np.interp(
-            df.multiplicity, (self.multi_dots_min, self.multi_dots_max), (0, 1))
+            df.log_multi, (np.log10(self.multi_dots_min)
+            , np.log10(self.multi_dots_max)), (0, 1))
 
     def compute_colorscales(self):
         """Specify the continuous colorscales to be used"""
-        #original_colorscales = px.colors.sequential.Plotly3
-        original_colorscales = px.colors.sequential.Plasma
+        """obsolete"""
+        original_colorscales = colorscales
         # anchor_point = np.interp(
         #     self.multi_lines_max, (self.multi_dots_min, self.multi_dots_max), (0, 1))
         # values = np.append(np.linspace(
@@ -283,7 +298,7 @@ class CommutativeLadderPdSS():
                 # see https://plotly.com/python/bubble-charts/
                 sizeref=2.*self.multi_dots_max/(self.size_area_max**2),
                 sizemin=self.size_area_min,
-                color=df.log_multi,
+                color=get_color(self.colorscales, df.colorscale),#df.log_multi,
                 colorscale=self.colorscales,
                 colorbar=dict(
                     title="multiplicity",
@@ -396,7 +411,7 @@ class CommutativeLadderPdSS():
             mode='lines',
             name='',
             fill='toself',
-            fillcolor=get_color(self.colorscales, row.colorscale),
+            fillcolor=get_color(self.colorscales, row.colorscale), #not used
             line=dict(  # border line set to zero
                 width=0,
             ),
@@ -420,7 +435,7 @@ class CommutativeLadderPdSS():
             legendgrouptitle_text=self.legend_titles[legend_index],
             legendrank=legend_index,
             showlegend=self.legend and self.legend_tracker.send(legend_index),
-            opacity=0.6,
+            opacity=line_opacity,
         ))
 
     def ribbonise(self, row):

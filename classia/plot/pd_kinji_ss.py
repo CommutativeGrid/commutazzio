@@ -236,9 +236,9 @@ class CommutativeLadderPdSS():
             df.area == 'U', self.radii[df['x']-1], self.radii[df['y']-1])
         self.dots["death_radius"] = np.where(
             df.area == 'U', self.radii[df['y']-1], self.radii[df['x']-1])
-        self.dots["colorscale"] =  np.interp(
-            df.log_multi, (np.log10(self.multi_dots_min)
-            , np.log10(self.multi_dots_max)), (0, 1))
+        # self.dots["colorscale"] =  np.interp(
+        #     df.log_multi, (np.log10(self.multi_dots_min)
+        #     , np.log10(self.multi_dots_max)), (0, 1))
 
     def data_preprocessing_lines(self):
         """Add some auxiliary columns to lines
@@ -298,7 +298,7 @@ class CommutativeLadderPdSS():
                 # see https://plotly.com/python/bubble-charts/
                 sizeref=2.*self.multi_dots_max/(self.size_area_max**2),
                 sizemin=self.size_area_min,
-                color=get_color(self.colorscales, df.colorscale),#df.log_multi,
+                color=df.log_multi,#get_color(self.colorscales, df.colorscale),#df.log_multi,
                 colorscale=self.colorscales,
                 colorbar=dict(
                     title="multiplicity",

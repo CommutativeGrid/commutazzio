@@ -219,8 +219,8 @@ class CommutativeLadder(CommutativeGrid2D):
         """
         return self.multiplicity_zigzag(*args)
     
-    @timeit
-    def tours_vector(self,dim=1,prime=2,mp_method=1):
+    #@timeit
+    def tours_vector(self,dim=1,prime=2,mp_method=0):
         """
         Returns the vector of all the tours over the simplicial complex.
         mp_method: multiprocessing method, 0 for none, 1 for pool
@@ -236,7 +236,7 @@ class CommutativeLadder(CommutativeGrid2D):
             with Pool() as pool: # the same as Pool(os.cpu_count())
                 results=pool.map(self.multiplicity_zigzag_pool,params)
                 vector_list = [[result] for result in results]
-            breakpoint()
+            #breakpoint()
         else:
             raise NotImplementedError("Incompatible mp_method.")
         vector=np.array(vector_list)
@@ -244,20 +244,22 @@ class CommutativeLadder(CommutativeGrid2D):
 
         
 
-    def multiplicity_computation(self,dim=1,prime=2,recalculate=False):
+    def multiplicity_computation(self,dim=1,prime=2,recalculate=False,mp_method=1,output_message=True):
         """Return the vector of multiplicities"""
         
         if len(self.multiplicity_vectors.dim(dim).prime(prime).vectors)!=0 and not recalculate:
             print("Already existed. Pass parameter recalculate=True to recalculate.")
         else:
-            b=self.tours_vector(dim=dim,prime=prime)
+            b=self.tours_vector(dim=dim,prime=prime,mp_method=mp_method)
             result=np.linalg.solve(self.coeff_mat,b)
             rounded=result.round().astype(int)
             error=np.linalg.norm(np.matmul(self.coeff_mat,rounded)-b)
             if error > 1e-5:
                 raise ValueError("Error in the solution of the system.")
             self.multiplicity_vectors.add(rounded,dim,prime)
-            print(f"Multiplicity vector computed (dim={dim}, prime={prime}).")
+            if output_message:
+                print(f"Multiplicity vector computed (dim={dim}, prime={prime}).")
+            
 
     
     

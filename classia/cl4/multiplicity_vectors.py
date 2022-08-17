@@ -41,9 +41,14 @@ class multiplicities:
     def __repr__(self):
         return f"array: {str(self.array)},\ndim: {str(self.dim)},\nprime: {str(self.prime)}"
 
+    @property
     def nonzero_nonintervals(self):
         """Return non-trivial non-intervals"""
         return {k:v for (k,v) in self.array.items() if v!=0 and k[0]=='N'}
+    @property
+    def nonzero_components(self):
+        """Return the nonzero components of the multiplicity vector"""
+        return {k:v for (k,v) in self.array.items() if v!=0}
 
         
 

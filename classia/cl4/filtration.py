@@ -30,7 +30,13 @@ class CLFiltration():
     #     vertices of form [(v0),(v1),...]
     #     """
     #     self.lower_sc=self.upper_sc.delete_simplices(to_be_removed)
+    def visualisation(self):
+        """
+        Visualise the filtration.
+        """
+        ...
 
+        
     def verify(self):
         """
         Verify that the two rows are indeed simplicial complexes,

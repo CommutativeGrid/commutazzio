@@ -11,7 +11,7 @@ import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 from multiprocessing import Manager
 from functools import partial
-#import gc
+#import gc garbage collection
 
 def toList(st):
     return list(map(int, st.split(',')))
@@ -19,7 +19,7 @@ def toList(st):
 class CommutativeLadderKinjiSS():
     def __init__(self, txf, **kwargs):
         # , txf=None, m=None, n=2, dim=1):
-        self.txf = txf
+        self.txf = txf # filtration file
         self.m = kwargs.get('ladder_length', 10) # default length is 10
         self.ladder_length = self.m
         self.n = 2 # two layers by default
@@ -76,12 +76,12 @@ class CommutativeLadderKinjiSS():
     def interval_generator(self):
         """Generate intervals"""
         n = self.n  # vertical height, use !n in debug mode
-        m = self.m  # horizontal length
+        m = self.m  # horizontal length, 2 by default
         intv = []
         for k in range(n):
             for birth in range(m):
                 for death in range(birth, m):
-                    I = [(m, -1) for j in range(k)]
+                    I = [(m, -1) for _ in range(k)]
                     I.append((birth, death))
                     intv.append(I)
         i = 0
@@ -96,7 +96,7 @@ class CommutativeLadderKinjiSS():
             intv[i] = tuple(I)
             i += 1
         intv.sort(key=self.sizeSupp)
-        print("全"+str(len(intv))+"個の区間表現を構築")
+        print(f"全{str(len(intv))}個の区間表現を構築")
         return intv
 
     @staticmethod
@@ -199,9 +199,13 @@ class CommutativeLadderKinjiSS():
         return tuple(Z)
 
     def C_compute(self):
+        """compute complexes"""
+        # C[j][i], j in range(m), i in range(n)
         C = [[set() for j in range(self.n)] for i in range(self.m)]
         with open(self.txf, 'r') as f:
             filt = [line.rstrip() for line in f]
+            # line is in form of
+            # dim birth n m v_0...v_dim
             # filt=f.read().rstrip().split('\n') #filtration
         if filt[0] == '':
             return

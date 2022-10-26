@@ -2,6 +2,8 @@ import os
 from datetime import datetime
 from time import sleep
 import pickle
+import json
+import uuid
 
 
 def create_directory(new_dir):
@@ -11,13 +13,32 @@ def create_directory(new_dir):
             #print("\n")
         #print(f"Saving to folder {os.path.split(new_dir)[-1]}.")
 
-def filepath_generator(dirname,name,suffix=None,overwrite=False):
+
+
+def read_data(directory,file_format="json"):
+    """
+    read all data from json files in directory data
+    """
+    data=[]
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        if filename.endswith(f".{file_format}"):
+            with open(os.path.join(directory,filename), 'r') as fp:
+                lines = (line.rstrip() for line in fp)
+                file_data=[json.loads(line) for line in lines]
+                data.extend(file_data)
+    return data
+
+
+def filepath_generator(dirname='./',name=None,suffix=None,overwrite=False):
     """
     Generate a filename with a given name and suffix.
     If the file exists, append datetime to the provided name
     """
     if not os.path.isdir(dirname):
         raise FileNotFoundError(f"{dirname} does not exist.")
+    if name is None:
+        name=f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{uuid.uuid4().hex[-5:]}'
     if '.' in name and suffix is None:
         suffix=name.split('.')[-1]
         name='.'.join(name.split('.')[:-1])

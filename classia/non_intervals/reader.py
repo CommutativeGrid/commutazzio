@@ -3,9 +3,11 @@
 import pandas as pd
 import numpy as np
 from operator import itemgetter
-from ..utils import filepath_generator
+from ..utils import filepath_generator,create_directory
 from ..plot import SC2DViz
 from plotly.subplots import make_subplots
+from .. import Pipeline
+from cachetools import cached
 
 class NonIntervalCL4():
     """Store info of a point cloud data that has a non-interval"""
@@ -38,8 +40,9 @@ class NonIntervalCL4():
         #TODOs
         # print for 2d arrays
         assert style in ['homcloud']
+        create_directory('layered_point_cloud')
         if filepath is None:
-            filepath=filepath_generator('./',suffix='out')
+            filepath=filepath_generator('./layered_point_cloud',suffix='out')
         def label_rule(i):
             if i in self.removal:
                 return 1 # removed, will be added at the first layer
@@ -48,6 +51,7 @@ class NonIntervalCL4():
 
         if self.dim==2:
             labelled_data = [(label_rule(i), *vec, 1e-5*np.random.random()-2e-5) for i, vec in enumerate(self.pt)]
+            # labelled_data = [(label_rule(i), *vec, 0.0) for i, vec in enumerate(self.pt)]
         elif self.dim==3:
             labelled_data = [(label_rule(i), *vec,) for i, vec in enumerate(self.pt)]
         else:
@@ -68,8 +72,16 @@ class NonIntervalCL4():
         print(f"File saved @ {filepath} in homcloud format.")
         return filepath
 
+    @cached(cache={})
     def cPD(self):
-        ...
+        title = ",".join([f"{k}={v}" for k,v in self.total_decomp.items()])
+        ppl=Pipeline(layered_point_cloud_fpath=self.write2file(),
+                 radii=1.000001*self.radii,
+                 ladder_length=4,
+                 dim=1,
+                 executor="../random-cech/cech_filtration")
+        ppl.plot(title=title,export_mode='full_html',file=f'{title}.html',overwrite=False)
+        return ppl
 
     def visualization(self,sub_width,sub_height):
         assert self.dim==2
@@ -110,6 +122,12 @@ class NonIntervalCL4():
 
         fig.update_layout(
             #autosize=False,
+            title={
+            'text': ",".join([f"{k}={v}" for k,v in self.total_decomp.items()]),
+            'y':0.98,
+            'x':0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'},
             width=sub_width*4,
             height=sub_height*2,
             showlegend=False,
@@ -117,8 +135,8 @@ class NonIntervalCL4():
             plot_bgcolor=SC2DViz.PLOT_BGCOLOR,
             font=dict(
                 family="Courier New, monospace",
-                size=18,
-                color="#7f7f7f"
+                size=24,
+                color="#7f7f7f",
             ),
             hovermode=False,
             # modebar_remove=['zoom','zoomIn','zoomOut']

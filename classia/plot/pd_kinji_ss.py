@@ -404,6 +404,7 @@ class CommutativeLadderPdSS():
         """add a line connecting two dots from two PDs respectively"""
         x_coords, y_coords = self.ribbonise(row)
         legend_index = self.legend_grouping(row.multiplicity)
+        fillcolor = get_color(self.colorscales, row.colorscale)
         # add a transparent rectangle for triggering the hover event
         fig.add_trace(go.Scatter(
             x=x_coords,
@@ -411,7 +412,7 @@ class CommutativeLadderPdSS():
             mode='lines',
             name='',
             fill='toself',
-            fillcolor=get_color(self.colorscales, row.colorscale), #not used
+            fillcolor=fillcolor, #not used
             line=dict(  # border line set to zero
                 width=0,
             ),
@@ -429,7 +430,7 @@ class CommutativeLadderPdSS():
             name='',
             line=dict(  # border line
                 width=row.ribbon_width_pixel,
-                color=get_color(self.colorscales, row.colorscale),
+                color=fillcolor,
             ),
             legendgroup=f"group{legend_index}",
             legendgrouptitle_text=self.legend_titles[legend_index],

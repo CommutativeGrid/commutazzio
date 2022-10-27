@@ -75,9 +75,13 @@ class NonIntervalCL4():
     @cached(cache={})
     def cPD(self):
         title = ",".join([f"{k}={v}" for k,v in self.total_decomp.items()])
+        ladder_length = 4
+        radii = 1.000001*self.radii
+        # ladder_length = 20
+        # radii = np.linspace(self.radii[0],1.1*self.radii[-1],num=ladder_length),
         ppl=Pipeline(layered_point_cloud_fpath=self.write2file(),
-                 radii=1.000001*self.radii,
-                 ladder_length=4,
+                 radii=radii,
+                 ladder_length=ladder_length,
                  dim=1,
                  executor="../random-cech/cech_filtration")
         ppl.plot(title=title,export_mode='full_html',file=f'{title}.html',overwrite=False)

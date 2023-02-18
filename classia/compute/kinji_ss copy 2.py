@@ -6,11 +6,11 @@ Created on Sun Jan  2 17:29:27 2022
 """
 import dionysus as dio
 import pandas as pd
-from ..utils import radii_generator,delete_file
+from ..utils import radii_generator
 import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 from multiprocessing import Manager
-import subprocess, os
+from functools import partial
 #import gc garbage collection
 
 def toList(st):
@@ -27,7 +27,6 @@ class CommutativeLadderKinjiSS():
         self.dim = kwargs.get('dim', 1)
         self.intv = self.interval_generator()
         self.mproc = kwargs.get('mproc')
-        self.variables={'cov':{},'c_ss':{}}
         self.delt_ss = self.deco()
         self.compute_dec_obj()
         self.compute_connecting_lines()
@@ -98,7 +97,6 @@ class CommutativeLadderKinjiSS():
             i += 1
         intv.sort(key=self.sizeSupp)
         print(f"全{str(len(intv))}個の区間表現を構築")
-        # self.intv=intv
         return intv
 
     @staticmethod
@@ -115,7 +113,6 @@ class CommutativeLadderKinjiSS():
         n = self.n
         m = self.m
         for I in self.intv:
-            self.variables['c_ss'][I]=0
             for s in range(n):
                 if I[s][1] > -1:
                     break
@@ -145,8 +142,7 @@ class CommutativeLadderKinjiSS():
                 if I[j-1][1] > I[j][1]:
                     L = list(I); L[j] = (I[j][0], I[j][1]+1)
                     cov[I].append(tuple(L))
-        self.variables['cov']=cov
-        # return cov
+        return cov
 
     @staticmethod
     def _toDio(dim, cpxList):
@@ -190,7 +186,6 @@ class CommutativeLadderKinjiSS():
 
     #@staticmethod
     def join_intv(self, X, Y):
-        """helper function to join two intervals"""
         n = self.n
         Z = list(X)
         for j in range(n):
@@ -203,7 +198,7 @@ class CommutativeLadderKinjiSS():
         if s < t and Z[t][0] > Z[t-1][0]: Z[t] = (Z[t][0]-1, Z[t][1])
         return tuple(Z)
 
-    def complexes_generator(self):
+    def C_compute(self):
         """compute complexes"""
         # C[j][i], j in range(m), i in range(n)
         C = [[set() for j in range(self.n)] for i in range(self.m)]
@@ -228,8 +223,7 @@ class CommutativeLadderKinjiSS():
         for i in range(1, self.m):
             for j in range(1, self.n):
                 C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
-        self.complexes = C
-        # return C
+        return C
 
     
 
@@ -240,13 +234,13 @@ class CommutativeLadderKinjiSS():
         return max(d1-b1+1,0)+max(d0-b0+1,0)
 
     
-    # @staticmethod
-    # def f(args):
-    #     #i,I,C,getPD,toDio,m,dim,c_ss,p,q=args
-    #     i=args[0]
-    #     print(i.value)
-    #     print('\n')
-    #     i.value+=1
+    @staticmethod
+    def f(args):
+        #i,I,C,getPD,toDio,m,dim,c_ss,p,q=args
+        i=args[0]
+        print(i.value)
+        print('\n')
+        i.value+=1
 
     @staticmethod
     def multiplicity(args):
@@ -393,266 +387,139 @@ class CommutativeLadderKinjiSS():
             return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
                     (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
 
-    def node2str_generator(self):
-        NodeToStr={} #Dictionary to store string representations of nodes
-        m=self.m
-        n=self.n
-        s=''
-        #raise error if self.complexes is not defined
-        if not hasattr(self, 'complexes'):
-            raise AttributeError("self.complexes is not defined. Please run self.complexes_generator() first.")       
-        C=self.complexes
-        for a in range(m):
-            for b in range(n):
-                L=list(C[a][b]); L.sort(key=lambda x: len(x.split(' '))) 
-                s='\ni '.join(L) 
-                NodeToStr[(a, b)]=('i '+s+'\n', len(L))
-        self.variables['NodeToStr']=NodeToStr
-        # return NodeToStr
-    
-    def path2str_generator(self):
-        PathToStr={}  #Dictionary to store string representations of paths 
-        m=self.m
-        n=self.n
-        s=''
-        if not hasattr(self, 'complexes'):
-            raise AttributeError("self.complexes is not defined. Please run self.complexes_generator() first.")       
-        C=self.complexes
-        for a in range(m):
-            L=list(C[a][1]-C[a][0]); L.sort(key=lambda x: len(x.split(' '))) 
-            if len(L)<1: 
-                PathToStr[(a, 0, a, 1)]=('', 0)
-                PathToStr[(a, 1, a, 0)]=('', 0)
-                continue
-            s='\ni '.join(L) 
-            PathToStr[(a, 0, a, 1)]=('i '+s+'\n', len(L))
-            L.reverse() 
-            s='\nd '.join(L) 
-            PathToStr[(a, 1, a, 0)]=('d '+s+'\n', len(L))
-        
-        for a in range(m-1):
-            for b in range(n):
-                L=list(C[a+1][b]-C[a][b]); L.sort(key=lambda x: len(x.split(' '))) 
-                if len(L)<1: 
-                    PathToStr[(a, b, a+1, b)]=('', 0)
-                    PathToStr[(a+1, b, a, b)]=('', 0)
-                    continue
-                s='\ni '.join(L)
-                PathToStr[(a, b, a+1, b)]=('i '+s+'\n', len(L))
-                L.reverse() 
-                s='\nd '.join(L) 
-                PathToStr[(a+1, b, a, b)]=('d '+s+'\n', len(L))
-            PathToStr[(a, 0, a+1, 1)]=(PathToStr[(a, 0, a+1, 0)][0]+PathToStr[(a+1, 0, a+1, 1)][0], PathToStr[(a, 0, a+1, 0)][1]+PathToStr[(a+1, 0, a+1, 1)][1])
-            PathToStr[(a+1, 1, a, 0)]=(PathToStr[(a+1, 1, a, 1)][0]+PathToStr[(a, 1, a, 0)][0], PathToStr[(a+1, 1, a, 1)][1]+PathToStr[(a, 1, a, 0)][1])
-        
-        for l in range(2, m):
-            a=0
-            while a+l<m:
-                for b in range(n):
-                    PathToStr[(a, b, a+l, b)]=(PathToStr[(a, b, a+l-1, b)][0]+PathToStr[(a+l-1, b, a+l, b)][0], PathToStr[(a, b, a+l-1, b)][1]+PathToStr[(a+l-1, b, a+l, b)][1])
-                    PathToStr[(a+l, b, a, b)]=(PathToStr[(a+l, b, a+1, b)][0]+PathToStr[(a+1, b, a, b)][0], PathToStr[(a+l, b, a+1, b)][1]+PathToStr[(a+1, b, a, b)][1])
-                PathToStr[(a, 0, a+l, 1)]=(PathToStr[(a, 0, a+l, 0)][0]+PathToStr[(a+l, 0, a+l, 1)][0], PathToStr[(a, 0, a+l, 0)][1]+PathToStr[(a+l, 0, a+l, 1)][1])
-                PathToStr[(a+l, 1, a, 0)]=(PathToStr[(a+l, 1, a, 1)][0]+PathToStr[(a, 1, a, 0)][0], PathToStr[(a+l, 1, a, 1)][1]+PathToStr[(a, 1, a, 0)][1])
-                a+=1
-        self.variables['PathToStr']=PathToStr
-        # return PathToStr
-
-    
-    def _fzz_executor(self, input_file_name, delete_input_file=True):
-        """https://github.com/taohou01/fzz/"""
-        subprocess.run('./fzz '+ input_file_name, shell=True)
-        # print all files in the current directory
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        print("Files in '% s' : % s" % (dir_path, os.listdir(dir_path)))
-        if delete_input_file:
-            delete_file(input_file_name)
-        return f"{input_file_name[:-4]}_pers"
-
-    def fzz_generator_1(self):
-        
-        m=self.m
-        n=self.n
-        fzz_input_file_name = f"{self.txf[:-4]}_FZZ.txt"
-        self.variables['d_ss'] = {}
-        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 1)][1]]
-        for i in range(m-1): 
-            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 1, i+1, 1)][1])
-        self.variables['S'].append(self.variables['S'][-1]+1)
-        for i in range(m):
-            for j in range(i, m): 
-                self.variables['d_ss'][(i, j)]=0
-        with open(fzz_input_file_name, 'w') as f:
-            f.write(self.variables['NodeToStr'][(0, 1)][0])
-            f.write(self.variables['PathToStr'][(0, 1, m-1, 1)][0])
-        return self._fzz_executor(fzz_input_file_name)
-    
-    def fzz_generator_2(self):
-        m=self.m
-        n=self.n
-        fzz_input_file_name = f"{self.txf[:-4]}_FZZ.txt"
-        with open(fzz_input_file_name, 'w') as f:
-            f.write(self.variables['NodeToStr'][(0, 0)][0])
-            f.write(self.variables['PathToStr'][(0, 0, m-1, 0)][0])
-        subprocess.run('./fzz '+ fzz_input_file_name, shell=True)
-        delete_file(fzz_input_file_name)
-        return self._fzz_executor(fzz_input_file_name)
-
     def deco(self):
         #n = self.n
         m = self.m
-        dim = self.dim
+        #dim = self.dim
         #getPD = self.getPD
         #toDio = self.toDio
         num_intv = len(self.intv)
-        self.complexes_generator()
-        C=self.complexes
-        self.node2str_generator()
-        self.path2str_generator()
-        print("全ての道の差分リストを構築")
-        fzz_output_1=self.fzz_generator_1()
-        with open(fzz_output_1, 'r') as f:
-            filt = [line.rstrip() for line in f]
-        
-        for i in range(len(filt)):
-            data=filt[i].rstrip().split()
-            if int(data[0])!=dim: 
-                continue
-            p=int(data[1])
-            q=int(data[2])
-            for j in range(m): 
-                if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
-                    b=j; 
-                    break
-            for j in range(m): 
-                if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
-                    d=j; 
-                    break
-            if b<=d: 
-                self.variables['d_ss'][(b, d)]+=1
-        e=(m, -1)
-        self.variables['c_ss'][(e, (-1, m))]=0
-        for i in range(m):
-            self.variables['c_ss'][(e, (i, m))]=0
-            self.variables['c_ss'][(e, (-1, i))]=0
-        for l in range(m-1, -1, -1):
-            for b in range(m-l):
-                d=b+l
-                self.variables['c_ss'][(e, (b, d))]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][(e, (b-1, d))]+self.variables['c_ss'][(e, (b, d+1))]-self.variables['c_ss'][(e, (b-1, d+1))]
-
-        self.variables['d_ss']={}
-        self.variables['S']=[0, self.variables['NodeToStr'][(0, 0)][1]]
-        for i in range(m-1): 
-            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 0, i+1, 0)][1])
-        self.variables['S'].append(self.variables['S'][-1]+1)
-        for i in range(m):
-            for j in range(i, m): self.variables['d_ss'][(i, j)]=0
-
-        fzz_output_2=self.fzz_generator_2()
-        with open(fzz_output_2, 'r') as f:
-            filt = [line.rstrip() for line in f]
-        for i in range(len(filt)):
-            data=filt[i].rstrip().split()
-            if int(data[0])!=dim: 
-                continue
-            p=int(data[1])
-            q=int(data[2])
-            for j in range(m): 
-                if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
-                    b=j; 
-                    break
-            for j in range(m): 
-                if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
-                    d=j; 
-                    break
-            if b<=d: 
-                self.variables['d_ss'][(b, d)]+=1
-        self.variables['c_ss'][((-1, m), e)]=0
-        for i in range(m): 
-            self.variables['c_ss'][((i, m), e)]=0
-            self.variables['c_ss'][((-1, i), e)]=0
-        for l in range(m-1, -1, -1):
-            for b in range(m-l):
-                d=b+l
-                self.variables['c_ss'][((b, d), e)]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][((b-1, d), e)]+self.variables['c_ss'][((b, d+1), e)]-self.variables['c_ss'][((b-1, d+1), e)]
-
-        c=0
-        for b0 in range(m):
-            for d1 in range(b0, m):
-                print('\r進捗率: {0:.2f}％ '.format(100*c/((m+1)*m/2)), end='')
-                if self.variables['c_ss'][((b0, d1), e)]==0 or self.variables['c_ss'][(e, (b0, d1))]==0: 
-                    c+=1
-                    continue 
-                self.variables['d_ss']={}
-                self.variables['S']=[0, self.variables['NodeToStr'][(0, 1)][1]]
-                for i in range(d1): 
-                    self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 1, i+1, 1)][1])
-                self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(d1, 1, b0, 0)][1])
-                for i in range(b0, m-1): 
-                    self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 0, i+1, 0)][1])
-                self.variables['S'].append(self.variables['S'][-1]+1)
-                for b1 in range(b0+1):
-                    for d0 in range(d1, m): 
-                        self.variables['d_ss'][((b0, d0), (b1, d1))]=0
-    
-                fzz_input_file_name = f"{self.txf[:-4]}_FZZ.txt"
-                with open(fzz_input_file_name, 'w') as f:
-                    f.write(self.variables['NodeToStr'][(0, 1)][0])
-                    if 0<d1:
-                        f.write(self.variables['PathToStr'][(0, 1, d1, 1)][0])
-                    f.write(self.variables['PathToStr'][(d1, 1, b0, 0)][0])
-                    if b0<m-1:
-                        f.write(self.variables['PathToStr'][(b0, 0, m-1, 0)][0])
-                fzz_output_3=self.fzz_generator_3()
-                with open(fzz_output_3, 'r') as f:
-                    filt = [line.rstrip() for line in f]
-                for i in range(len(filt)):
-                    data=filt[i].rstrip().split()
-                    if int(data[0])!=dim: 
-                        continue
-                    p=int(data[1])
-                    q=int(data[2])
-                    if self.variables['S'][d1+1]<p or q<self.variables['S'][d1+2]: 
-                        continue
-                    for j in range(d1+1): 
-                        if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
-                            b1=j
-                            break
-                    for j in range(b0, m): 
-                        if self.variables['S'][d1+2+j-b0]<=q and q<self.variables['S'][d1+3+j-b0]: 
-                            d0=j
-                            break
-                    if b1<=d0: 
-                        self.variables['d_ss'][(b0, d0), (b1, d1)]+=1
-                self.variables['c_ss'][((b0, m), (-1, d1))]=0
-                for i in range(d1, m): 
-                    self.variables['c_ss'][((b0, i), (-1, d1))]=0
-                for i in range(b0+1): 
-                    self.variables['c_ss'][((b0, m), (i, d1))]=0
-                for l in range(m-1, d1-b0-1, -1):
-                    for b1 in range(m-l):
-                        if b0<b1: 
-                            break
-                        d0=b1+l
-                        if d0<d1 or m-1<d0: 
-                            continue
-                        self.variables['c_ss'][((b0, d0), (b1, d1))]=self.variables['d_ss'][((b0, d0), (b1, d1))]+self.variables['c_ss'][((b0, d0), (b1-1, d1))]+self.variables['c_ss'][((b0, d0+1), (b1, d1))]-self.variables['c_ss'][((b0, d0+1), (b1-1, d1))]
-                c+=1
-        print('\r進捗率: {0:.2f}％ '.format(100*c/((m+1)*m/2)))
-        # last info
-        print("仕上がり中..")
-        delt_ss={}
+        self.C = self.C_compute()
+        C=self.C
+        toDio=partial(self._toDio,self.dim)
+        getPD=partial(self._getPD,self.dim)
+        # # print('123')
+        # # with Pool(processes=4) as pool:
+        # #     print(pool.map(self.f, range(10)))
+        #mp_flag=True
+        mp_flag=self.mproc
+        if mp_flag is True: ### Multiprocessing
+        #attach gradings to the intervals by number of supporting vertices
+            #gc.disable()
+            supp_num_list=np.array(list(map(self.intv_support_num,self.intv)))
+            change_indices = np.where(supp_num_list[:-1] != supp_num_list[1:])[0] + 1
+            change_indices=np.append(change_indices,num_intv)
+            change_indices=np.insert(change_indices,0,0)
+            c_ss = Manager().dict()
+            p = Manager().Value('I',0)
+            q = Manager().Value('I',0)
+            #i = Manager().Value('I',0)
+            for left,right in zip(change_indices,change_indices[1:]):
+                intvs=self.intv[left:right]
+                print(self.intv_support_num(intvs[0]))
+                #params=[(I,1,self.getPD,self.toDio,self.C,self.m,self.dim,c_ss) for I in intvs]
+                #parse I before sending?
+                #remove dot when using dionysus
+                #params=[(I,self.intv_C_pairing(I),getPD,toDio,self.m,c_ss,p,q) for I in intvs]
+                #params=[(i,I,self.intv_C_pairing(I),getPD,toDio,self.m,c_ss,p,q) for I in intvs]
+                params=[(I,self.intv_C_pairing(I),getPD,toDio,self.m,c_ss,p,q) for I in intvs]
+                with Pool() as pool: # the same as Pool(os.cpu_count())
+                    pool.map(self.multiplicity,params)
+                print(f"\r進捗: {right}/{num_intv} | zig回避: {p.value} | zigした: {q.value}")
+            #gc.enable()
+            # last info
+            print('\r進捗: {0}/{1} | 処理中: - | zig回避: {2} | zigした: {3} '.format(num_intv, num_intv, p.value, q.value))
+        # ###
+        else: # single thread
+            c,p,q,r = 0,0,0,0
+            c_ss={}
+            #getPD=partial(self.getPD,self.dim)
+            #toDio=partial(self.toDio,self.dim)
+            for I in self.intv:
+                #print(f"\r進捗: {c}/{num_intv} | 処理中: {I} | zig回避: {p} | zigした: {q}")
+                #\r for carriage return
+                print('\r進捗: {0}/{1} | 処理中: {2} | zig回避: {3} | zigした: {4} '.format(c, num_intv, I, p, q), end='')
+                b0, d0 = I[0]; b1, d1 = I[1]; c += 1;
+                if d1 == -1 and b0 == d0:
+                    c_ss[I] = getPD([C[b0][0]])
+                elif d0 == -1 and b1 == d1:
+                    c_ss[I] = getPD([C[b1][1]])
+                elif d1 == -1:
+                    c_ss[I] = getPD([C[b0][0], C[d0][0]]) if c_ss[(
+                        (b0, d0-1), (m, -1))] >= 1 and c_ss[((b0+1, d0), (m, -1))] >= 1 else 0
+                elif d0 == -1:
+                    c_ss[I] = getPD([C[b1][1], C[d1][1]]) if c_ss[(
+                        (m, -1), (b1, d1-1))] >= 1 and c_ss[((m, -1), (b1+1, d1))] >= 1 else 0
+                elif b0 == d0 and b1 == d1:
+                    c_ss[I] = getPD([C[b0][0], C[b1][1]]) if c_ss[(
+                        (b0, b0), (m, -1))] >= 1 and c_ss[((m, -1), (b1, b1))] >= 1 else 0
+                elif b0 == b1 and d0 == d1:
+                    c_ss[I] = getPD([C[b0][0], C[d1][1]]) if c_ss[(
+                        (b0, d0), (b1, d1-1))] >= 1 and c_ss[((b0+1, d0), (b1, d1))] >= 1 else 0
+                elif b1 == d1:
+                    c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, b1))],
+                                    c_ss[((b0, d0), (m, -1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio([C[b1][1], C[b0][0], C[d0][0]]); q += 1
+                elif b0 == d0:
+                    c_ss[I] = r = min(c_ss[((m, -1), (b1, d1))],
+                                    c_ss[((d0, d0), (b1+1, d1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[d0][0]]); q += 1
+                elif b0 == d1:
+                    c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
+                                    c_ss[((b0, d0), (b1+1, d1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio(
+                        [C[b1][1], C[d1][1], C[b0][0], C[d0][0]]); q += 1
+                elif b0 == b1:
+                    c_ss[I] = r = min(c_ss[((b0, d0-1), (b1, d1))],
+                                    c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0+1, d0), (b1, d1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b0][0], C[d1][1] | C[d0][0]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio([C[d1][1], C[b0][0], C[d0][0]]); q += 1
+                elif d0 == d1:
+                    c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))],
+                                    c_ss[((b0+1, d0), (b1, d1))], c_ss[((b0, d0), (b1, d1-1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio([C[b1][1], C[d1][1], C[b0][0]]); q += 1
+                else:
+                    c_ss[I] = r = min(c_ss[((b0, d0), (b1+1, d1))], c_ss[((b0+1, d0), (b1, d1))],
+                                    c_ss[((b0, d0), (b1, d1-1))], c_ss[((b0, d0-1), (b1, d1))])
+                    if r == 0: continue
+                    c_ss[I] = getPD([C[b1][1] & C[b0][0], C[d1][1] | C[d0][0]])
+                    if c_ss[I] == r:
+                        p += 1; continue
+                    c_ss[I] = toDio(
+                        [C[b1][1], C[d1][1], C[b0][0], C[d0][0]]); q += 1
+            # last info
+            print("仕上がり中..")
+            print('\r進捗: {0}/{1} | 処理中: - | zig回避: {2} | zigした: {3} '.format(c, num_intv, p, q))
+        cov = self.cover_generator()
+        delt_ss = {}
         for I in self.intv:
-            t = len(self.variables['cov'][I]); 
-            subs = 1 << t
-            ans_ss = 0
+            t = len(cov[I]); subs = 1 << t; ans_ss = 0
             for s in range(subs):
-                js = I
-                sl = 0
+                js = I; sl = 0
                 for j in range(t):
                     if (1 << j) & s:
                         sl += 1
-                        js = self.join_intv(js, self.variables['cov'][I][j])
-                ans_ss += ((-1)**sl)*self.variables['c_ss'][js]
+                        js = self.join_intv(js, cov[I][j])
+                ans_ss += ((-1)**sl)*c_ss[js]
             delt_ss[I] = ans_ss
         return delt_ss
 

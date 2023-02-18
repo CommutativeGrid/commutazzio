@@ -117,11 +117,17 @@ def clean(directory):
     """delete all files in a folder"""
     for file in os.listdir(directory):
         file_path = os.path.join(directory, file)
-        try:
-            if os.path.isfile(file_path):
-                os.unlink(file_path)
-        except Exception as e:
-            print(e)
+        delete_file(file_path)
+
+def delete_file(file_path):
+    try:
+        if os.path.isfile(file_path):
+            os.unlink(file_path)
+    except Exception as e:
+        print(e)
+
+
+
 
 def clean_all():
     clean('layered_point_cloud')

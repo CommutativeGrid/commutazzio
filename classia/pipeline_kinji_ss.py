@@ -74,6 +74,8 @@ class Pipeline():
             create_directory(os.path.join(os.getcwd(), 'filtration'))
             filtration_fpath = filepath_generator(os.path.join(os.getcwd(), "filtration"),f"{filename_prefix}_filtration","fltr")
             if radii is None:
+                if start is None or end is None or ladder_length is None:
+                    raise ValueError("Missing parameters for radii generation.")
                 radii=radii_generator(start,end,ladder_length)
             if os.system(command_generator(layered_point_cloud_fpath, filtration_fpath, radii=radii, executor=executor)) != 0:
                 raise Exception('Error during filtration process.')

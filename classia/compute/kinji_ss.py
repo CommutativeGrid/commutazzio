@@ -10,7 +10,7 @@ from ..utils import radii_generator,delete_file
 import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 from multiprocessing import Manager
-import subprocess, os, json
+import subprocess, os, json, sys
 #import gc garbage collection
 
 def toList(st):
@@ -28,6 +28,7 @@ class CommutativeLadderKinjiSS():
         self.intv = self.interval_generator()
         self.mproc = kwargs.get('mproc')
         self.variables={'cov':{},'c_ss':{}}
+        self.cover_generator()
         self.delt_ss = self.deco()
         self.compute_dec_obj()
         self.compute_connecting_lines()
@@ -220,7 +221,7 @@ class CommutativeLadderKinjiSS():
             if data[0] == '#': continue
             if self.dim < 1 and data[0] == '2': continue
             if self.dim < 2 and data[0] == '3': continue
-            C[int(data[3])][int(data[2])].add(','.join(sorted(data[4:])))
+            C[int(data[3])][int(data[2])].add(' '.join(sorted(data[4:])))
         for i in range(1, self.m):
             C[i][0] = C[i][0] | C[i-1][0]
         for j in range(1, self.n):
@@ -404,10 +405,12 @@ class CommutativeLadderKinjiSS():
         C=self.complexes
         for a in range(m):
             for b in range(n):
-                L=list(C[a][b]); L.sort(key=lambda x: len(x.split(' '))) 
+                L=list(C[a][b])
+                L.sort(key=lambda x: len(x.split(' '))) #Q: does the order of same length objects matter?
                 s='\ni '.join(L) 
                 NodeToStr[(a, b)]=('i '+s+'\n', len(L))
         self.variables['NodeToStr']=NodeToStr
+        # print(self.variables['NodeToStr'])
         # return NodeToStr
     
     def path2str_generator(self):
@@ -458,12 +461,12 @@ class CommutativeLadderKinjiSS():
         # return PathToStr
 
     
-    def _fzz_executor(self, input_file_name, delete_input_file=False):
+    def _fzz_executor(self, input_file_name, delete_input_file=True):
         """https://github.com/taohou01/fzz/"""
-        subprocess.run('./fzz '+ input_file_name, shell=True)
-        # print all files in the current directory
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        print("Files in '% s' : % s" % (dir_path, os.listdir(dir_path)))
+        if sys.platform == 'darwin':
+            subprocess.run('./fzz_mac '+ input_file_name, shell=True)
+        elif sys.platform == 'linux':
+            subprocess.run('./fzz_wsl '+ input_file_name, shell=True)
         if delete_input_file:
             delete_file(input_file_name)
         return f"{input_file_name[:-4]}_pers"
@@ -493,9 +496,26 @@ class CommutativeLadderKinjiSS():
         with open(fzz_input_file_name, 'w') as f:
             f.write(self.variables['NodeToStr'][(0, 0)][0])
             f.write(self.variables['PathToStr'][(0, 0, m-1, 0)][0])
-        subprocess.run('./fzz '+ fzz_input_file_name, shell=True)
-        delete_file(fzz_input_file_name)
         return self._fzz_executor(fzz_input_file_name)
+
+    @staticmethod
+    def write_list_of_lists_of_sets_to_file(file_path, list_of_lists_of_sets):
+        with open(file_path, 'w') as file:
+            for list_of_sets in list_of_lists_of_sets:
+                for index, s in enumerate(list_of_sets):
+                    sorted_set = sorted(s)
+                    if index == len(list_of_sets) - 1:
+                        file.write(f"{sorted_set}\n")
+                    else:
+                        file.write(f"{sorted_set}, ")
+
+
+
+    @staticmethod
+    def write_node_to_str(NodeToStr, file_path):
+        with open(file_path, 'w') as file:
+            for key, value in NodeToStr.items():
+                file.write(f"{key}: {value[0]}")
 
     def deco(self):
         #n = self.n
@@ -503,13 +523,15 @@ class CommutativeLadderKinjiSS():
         dim = self.dim
         #getPD = self.getPD
         #toDio = self.toDio
-        num_intv = len(self.intv)
+        # num_intv = len(self.intv)
         self.complexes_generator()
-        C=self.complexes
+        # C=self.complexes
+        # breakpoint()
+        # self.write_list_of_lists_of_sets_to_file("complexes.txt", C)
+        # print(C)
         self.node2str_generator()
+        # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
         self.path2str_generator()
-        print(self.variables["NodeToStr"])
-        print(self.variables["PathToStr"])
         print("全ての道の差分リストを構築")
         fzz_output_1=self.fzz_generator_1()
         with open(fzz_output_1, 'r') as f:

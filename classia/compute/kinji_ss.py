@@ -10,7 +10,7 @@ from ..utils import radii_generator,delete_file
 import numpy as np
 from pathos.multiprocessing import ProcessingPool as Pool
 from multiprocessing import Manager
-import subprocess, os
+import subprocess, os, json
 #import gc garbage collection
 
 def toList(st):
@@ -96,18 +96,18 @@ class CommutativeLadderKinjiSS():
             I.extend([(m, -1) for j in range(n-len(I))])
             intv[i] = tuple(I)
             i += 1
-        intv.sort(key=self.sizeSupp)
+        # intv.sort(key=self.sizeSupp)
         print(f"全{str(len(intv))}個の区間表現を構築")
         # self.intv=intv
         return intv
 
-    @staticmethod
-    def sizeSupp(X):
-        s = 0
-        for i in range(len(X)):
-            if X[i][1] == -1: continue
-            s += X[i][1]-X[i][0]+1
-        return s
+    # @staticmethod
+    # def sizeSupp(X):
+    #     s = 0
+    #     for i in range(len(X)):
+    #         if X[i][1] == -1: continue
+    #         s += X[i][1]-X[i][0]+1
+    #     return s
 
     def cover_generator(self):
         """generate interval covers"""
@@ -352,46 +352,46 @@ class CommutativeLadderKinjiSS():
                 q.value += 1
 
     
-    def intv_C_pairing(self,I):
-        C=self.C
-        b0,d0=I[0]
-        b1,d1=I[1]
-        if d1 == -1 and b0 == d0:
-            return {(b0,0):C[b0][0]}
-            #return [C[b0][0]]
-        elif d0 == -1 and b1 == d1:
-            return {(b1,1):C[b1][1]}
-            #return [C[b1][1]]
-        elif d1 == -1:
-            return {(b0,0):C[b0][0],(d0,0):C[d0][0]}
-            #return [C[b0][0], C[d0][0]]
-        elif d0 == -1:
-            return {(b1,1):C[b1][1],(d1,1):C[d1][1]}
-            #return [C[b1][1], C[d1][1]]
-        elif b0 == d0 and b1 == d1:
-            return {(b0,0):C[b0][0],(b1,1):C[b1][1]}
-            #return [C[b0][0], C[b1][1]]
-        elif b0 == b1 and d0 == d1:
-            return {(b0,0):C[b0][0],(d1,1):C[d1][1]}
-            #return [C[b0][0], C[d1][1]]
-        elif b1 == d1:
-            return {(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
-                    (b1,1):C[b1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
-        elif b0 == d0:
-            return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],
-                    (b1,1):C[b1][1],(d1,1):C[d1][1],(d0,0):C[d0][0],}
-        elif b0 == d1:
-            return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
-                    (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
-        elif b0 == b1:
-            return {(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
-                    (d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
-        elif d0 == d1:
-            return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],
-                    (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0]}
-        else:
-            return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
-                    (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
+    # def intv_C_pairing(self,I):
+    #     C=self.C
+    #     b0,d0=I[0]
+    #     b1,d1=I[1]
+    #     if d1 == -1 and b0 == d0:
+    #         return {(b0,0):C[b0][0]}
+    #         #return [C[b0][0]]
+    #     elif d0 == -1 and b1 == d1:
+    #         return {(b1,1):C[b1][1]}
+    #         #return [C[b1][1]]
+    #     elif d1 == -1:
+    #         return {(b0,0):C[b0][0],(d0,0):C[d0][0]}
+    #         #return [C[b0][0], C[d0][0]]
+    #     elif d0 == -1:
+    #         return {(b1,1):C[b1][1],(d1,1):C[d1][1]}
+    #         #return [C[b1][1], C[d1][1]]
+    #     elif b0 == d0 and b1 == d1:
+    #         return {(b0,0):C[b0][0],(b1,1):C[b1][1]}
+    #         #return [C[b0][0], C[b1][1]]
+    #     elif b0 == b1 and d0 == d1:
+    #         return {(b0,0):C[b0][0],(d1,1):C[d1][1]}
+    #         #return [C[b0][0], C[d1][1]]
+    #     elif b1 == d1:
+    #         return {(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
+    #                 (b1,1):C[b1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
+    #     elif b0 == d0:
+    #         return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],
+    #                 (b1,1):C[b1][1],(d1,1):C[d1][1],(d0,0):C[d0][0],}
+    #     elif b0 == d1:
+    #         return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
+    #                 (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
+    #     elif b0 == b1:
+    #         return {(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
+    #                 (d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
+    #     elif d0 == d1:
+    #         return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],
+    #                 (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0]}
+    #     else:
+    #         return {(b1,1):C[b1][1],(b0,0):C[b0][0],(d1,1):C[d1][1],(d0,0):C[d0][0],
+    #                 (b1,1):C[b1][1],(d1,1):C[d1][1],(b0,0):C[b0][0],(d0,0):C[d0][0]}
 
     def node2str_generator(self):
         NodeToStr={} #Dictionary to store string representations of nodes
@@ -458,7 +458,7 @@ class CommutativeLadderKinjiSS():
         # return PathToStr
 
     
-    def _fzz_executor(self, input_file_name, delete_input_file=True):
+    def _fzz_executor(self, input_file_name, delete_input_file=False):
         """https://github.com/taohou01/fzz/"""
         subprocess.run('./fzz '+ input_file_name, shell=True)
         # print all files in the current directory
@@ -508,6 +508,8 @@ class CommutativeLadderKinjiSS():
         C=self.complexes
         self.node2str_generator()
         self.path2str_generator()
+        print(self.variables["NodeToStr"])
+        print(self.variables["PathToStr"])
         print("全ての道の差分リストを構築")
         fzz_output_1=self.fzz_generator_1()
         with open(fzz_output_1, 'r') as f:

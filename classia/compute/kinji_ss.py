@@ -406,7 +406,7 @@ class CommutativeLadderKinjiSS():
         for a in range(m):
             for b in range(n):
                 L=list(C[a][b])
-                L.sort(key=lambda x: len(x.split(' '))) #Q: does the order of same length objects matter?
+                L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  #Q: does the order of same length objects matter?
                 s='\ni '.join(L) 
                 NodeToStr[(a, b)]=('i '+s+'\n', len(L))
         self.variables['NodeToStr']=NodeToStr
@@ -422,7 +422,8 @@ class CommutativeLadderKinjiSS():
             raise AttributeError("self.complexes is not defined. Please run self.complexes_generator() first.")       
         C=self.complexes
         for a in range(m):
-            L=list(C[a][1]-C[a][0]); L.sort(key=lambda x: len(x.split(' '))) 
+            L=list(C[a][1]-C[a][0]); 
+            L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
             if len(L)<1: 
                 PathToStr[(a, 0, a, 1)]=('', 0)
                 PathToStr[(a, 1, a, 0)]=('', 0)
@@ -435,7 +436,8 @@ class CommutativeLadderKinjiSS():
         
         for a in range(m-1):
             for b in range(n):
-                L=list(C[a+1][b]-C[a][b]); L.sort(key=lambda x: len(x.split(' '))) 
+                L=list(C[a+1][b]-C[a][b]); 
+                L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
                 if len(L)<1: 
                     PathToStr[(a, b, a+1, b)]=('', 0)
                     PathToStr[(a+1, b, a, b)]=('', 0)
@@ -461,7 +463,7 @@ class CommutativeLadderKinjiSS():
         # return PathToStr
 
     
-    def _fzz_executor(self, input_file_name, delete_input_file=True):
+    def _fzz_executor(self, input_file_name, delete_input_file=False):
         """https://github.com/taohou01/fzz/"""
         if sys.platform == 'darwin':
             subprocess.run('./fzz_mac '+ input_file_name, shell=True)
@@ -533,6 +535,8 @@ class CommutativeLadderKinjiSS():
         # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
         self.path2str_generator()
         print("全ての道の差分リストを構築")
+        self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
+        self.write_node_to_str(self.variables['PathToStr'], "PathToStr.txt")
         fzz_output_1=self.fzz_generator_1()
         with open(fzz_output_1, 'r') as f:
             filt = [line.rstrip() for line in f]
@@ -551,7 +555,7 @@ class CommutativeLadderKinjiSS():
                 if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
                     d=j; 
                     break
-            if b<=d: 
+            if b<=d:
                 self.variables['d_ss'][(b, d)]+=1
         e=(m, -1)
         self.variables['c_ss'][(e, (-1, m))]=0
@@ -570,6 +574,7 @@ class CommutativeLadderKinjiSS():
         self.variables['S'].append(self.variables['S'][-1]+1)
         for i in range(m):
             for j in range(i, m): self.variables['d_ss'][(i, j)]=0
+
 
         fzz_output_2=self.fzz_generator_2()
         with open(fzz_output_2, 'r') as f:

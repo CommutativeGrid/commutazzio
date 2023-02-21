@@ -275,8 +275,10 @@ class CommutativeLadderPdSS():
         """generate the scatter plot, which is a joint of two one-parameter persistence diagrams
         """
         df = self.dots
-
-        color_tick_vals = list(range(0, int(np.log10(self.multi_dots_max))+1))
+        if self.multi_dots_max <= 1:
+            color_tick_vals = [0, 1]
+        else:
+            color_tick_vals = list(range(0, int(np.log10(self.multi_dots_max))+1))
         color_tick_text = [str(10**i) for i in color_tick_vals]
         # ref on custom_data https://stackoverflow.com/questions/67190756/plotly-scatter-customdata-oare-only-nan
         custom_data = np.stack(

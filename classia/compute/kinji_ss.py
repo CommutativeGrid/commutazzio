@@ -535,8 +535,8 @@ class CommutativeLadderKinjiSS():
         # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
         self.path2str_generator()
         print("全ての道の差分リストを構築")
-        self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
-        self.write_node_to_str(self.variables['PathToStr'], "PathToStr.txt")
+        # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
+        # self.write_node_to_str(self.variables['PathToStr'], "PathToStr.txt")
         fzz_output_1=self.fzz_generator_1()
         with open(fzz_output_1, 'r') as f:
             filt = [line.rstrip() for line in f]

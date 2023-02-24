@@ -8,6 +8,7 @@ from ..plot import SC2DViz
 from plotly.subplots import make_subplots
 from .. import Pipeline
 from cachetools import cached
+import plotly.graph_objects as go
 
 class NonIntervalCL4():
     """Store info of a point cloud data that has a non-interval"""
@@ -99,6 +100,8 @@ class NonIntervalCL4():
                         subplot_titles=[f"Radius: {r:.4f}" for r in self.radii],
                         horizontal_spacing = 0.05,
                         vertical_spacing=0.05,
+                        shared_xaxes=True,
+                        shared_yaxes=True,
         )
         fig.update_annotations(xshift=50) # move the subplot titles to the right by a little
 
@@ -182,18 +185,52 @@ class StatisticsNonIntervalsCL4():
         columns.extend([f"I{k}" for k in range(1,56)])
         self.df_components=pd.DataFrame(columns=columns)
         for row in self.container:
-            self.df_components=pd.concat([self.df_components,row.df_repr()],axis=0)
+            self.df_components=pd.concat([self.df_components,row.df_repr],axis=0)
         self.df_components.reset_index(inplace=True)
         self.df_components.fillna(0,inplace=True)
     
+
+    
+    def bar_plot_plotly(self,data,xaxis_title):
+        total_obs = data.sum()
+        fig = go.Figure(data=[go.Bar(
+                    x=data.index,
+                    y=data.values/total_obs,
+                    marker_color='steelblue'
+            )])
+        fig.update_layout(
+            title="",
+            xaxis=dict(
+                title=xaxis_title,
+                tickangle=45,
+                tickfont=dict(size=17),
+                titlefont=dict(size=20)
+            ),
+            yaxis=dict(
+                title="Frequency",
+                titlefont=dict(size=20)
+            ),
+            width=800,
+            height=500,
+            template="plotly_white"
+        )
+        return fig
+        # fig.show()
+
+    # https://community.plotly.com/t/plotly-colours-list/11730/3
     def barchart(self,target="non-intervals"):
         if not hasattr(self,'df_components'):
             print("No dataframe available. Running data2df() first.")
             self.data2df()
         if target=="non-intervals":
-            self.df_components[[f"N{i}" for i in range(1,22)]].sum().plot.bar(figsize=(18,6))
+            data = self.df_components[[f"N{i}" for i in range(1,22)]].sum()
+            fig = self.bar_plot_plotly(data,"Non-interval")
+            # self.df_components[[f"N{i}" for i in range(1,22)]].sum().plot.bar(figsize=(18,6))
         elif target=="intervals":
-            self.df_components[[f"I{i}" for i in range(1,56)]].sum().plot.bar(figsize=(18,6))
+            data = self.df_components[[f"I{i}" for i in range(1,56)]].sum()
+            fig = self.bar_plot_plotly(data,"Interval")
+            # self.df_components[[f"I{i}" for i in range(1,56)]].sum().plot.bar(figsize=(18,6))
+        fig.show() 
 
     def dim_counts(self):
         return self.df_components[['dim']].value_counts()

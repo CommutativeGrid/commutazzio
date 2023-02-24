@@ -127,7 +127,6 @@ class SC2DViz():
             ),
             hovermode=False
         )
-        
         axis_limit=max(list(map(abs,itertools.chain.from_iterable(self.points))))
         plot_range=1.2*axis_limit
         fig.update_xaxes(visible=False,

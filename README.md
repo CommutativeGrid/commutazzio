@@ -9,7 +9,10 @@ Using this module smoothly requires the installation of [random-cech](https://bi
 
 ## Installation
 
-`python3.9` is required for installing this module.
+`python3.10` is required for installing this module.
+
+For installing dionysus2 (MacOS):
+* brew install boost
 
 ```
 git clone https://github.com/Commutative-Ladder/classia.git

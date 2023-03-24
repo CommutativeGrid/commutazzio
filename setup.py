@@ -29,7 +29,9 @@ INSTALL_REQUIRES = [
       'fire',
       'dionysus',
       'POT',
-      'pathos',
+      # 'pathos',
+      'gudhi',
+      'giotto-tda',
 ]
 
 DEPENDENCY_LINKS = [

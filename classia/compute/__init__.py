@@ -1,1 +1,1 @@
-from .kinji_ss import CommutativeLadderKinjiSS
+from .kinji_ss_slim import CommutativeLadderKinjiSS

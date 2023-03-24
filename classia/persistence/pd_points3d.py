@@ -8,7 +8,7 @@ Created on Wed Dec  1 14:46:51 2021
 import dionysus as d
 import numpy as np
 import gudhi as gd
-import dionysus as d
+# import dionysus as d
 import homcloud.interface as hc
 
 from scipy.spatial.distance import cdist
@@ -229,16 +229,16 @@ class PD_Points3D:
         reduced_diagram.extend([(2,*elt) for elt in reduced_diagram_2])
         return reduced_diagram
     
-    def dionysus_diagram_rips(self):
-        """
-        Using rips complex
-        """
-        points=self.points3d.xyz
-        max_edge_length=4.0
-        f = d.fill_rips(points, k=3, r=max_edge_length)
-        p = d.homology_persistence(f,prime=self.characteristic)
-        dgms = d.init_diagrams(p, f)
-        self.dgms_d=self.diagram_roundup(dgms,data_type="dionysus")
+    # def dionysus_diagram_rips(self):
+    #     """
+    #     Using rips complex
+    #     """
+    #     points=self.points3d.xyz
+    #     max_edge_length=4.0
+    #     f = d.fill_rips(points, k=3, r=max_edge_length)
+    #     p = d.homology_persistence(f,prime=self.characteristic)
+    #     dgms = d.init_diagrams(p, f)
+    #     self.dgms_d=self.diagram_roundup(dgms,data_type="dionysus")
     
     def omnifield_persistence_primes(self):
         """
@@ -250,7 +250,7 @@ class PD_Points3D:
         print("Outstanding primes:")
         return ofp.primes()
         
-    def dionysus_result(self):
-        for i, pt in self.dgms_d:
-            print(i, pt[0], pt[1])
+    # def dionysus_result(self):
+    #     for i, pt in self.dgms_d:
+    #         print(i, pt[0], pt[1])
 

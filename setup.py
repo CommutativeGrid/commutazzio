@@ -27,7 +27,6 @@ INSTALL_REQUIRES = [
       'plotly',
       'pandas',
       'fire',
-      'dionysus',
       'POT',
       # 'pathos',
       'gudhi',

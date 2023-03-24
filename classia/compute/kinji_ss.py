@@ -466,7 +466,7 @@ class CommutativeLadderKinjiSS():
     def _fzz_executor(self, input_file_name, delete_input_file=False):
         """https://github.com/taohou01/fzz/"""
         if sys.platform == 'darwin':
-            subprocess.run('./fzz_mac '+ input_file_name, shell=True)
+            subprocess.run('/Users/hina/Library/CloudStorage/OneDrive-Personal/Documents/KU/commutative-grid/working_dir_cl50/fzz_sandbox/fzz_mac '+ input_file_name, shell=True)
         elif sys.platform == 'linux':
             subprocess.run('./fzz_wsl '+ input_file_name, shell=True)
         if delete_input_file:

@@ -176,14 +176,14 @@ class CommutativeLadder(CommutativeGrid2D):
         up_sc=top_right
         down_sc=top_right.random_delete_vertices()
         values={
-            (right,upper):up_sc.info_node(),
-            (right,lower):down_sc.info_node()
+            (right,upper):up_sc.info_node(), # fill (4,2)
+            (right,lower):down_sc.info_node() # fill (4,1)
             }
         nx.set_node_attributes(self.G, values=values)
   
-        for right in counter:
-            new_up_sc=up_sc.random_delete_vertices()
-            new_down_sc=lower_left_completion(up_sc, new_up_sc, down_sc)
+        for right in counter: 
+            new_up_sc=up_sc.random_delete_vertices() # fill the rest of the nodes in the upper row, x = 3,2,1
+            new_down_sc=lower_left_completion(up_sc, new_up_sc, down_sc) # fill the rest of the nodes in the lower row, x = 3,2,1
             values={
                 (right,upper):new_up_sc.info_node(),
                 (right,lower):new_down_sc.info_node()

@@ -204,11 +204,11 @@ class StatisticsNonIntervalsCL4():
                 title=xaxis_title,
                 tickangle=45,
                 tickfont=dict(size=17),
-                titlefont=dict(size=20)
+                titlefont=dict(size=20,color='black')
             ),
             yaxis=dict(
                 title="Frequency",
-                titlefont=dict(size=20)
+                titlefont=dict(size=20,color='black')
             ),
             width=800,
             height=500,
@@ -224,13 +224,14 @@ class StatisticsNonIntervalsCL4():
             self.data2df()
         if target=="non-intervals":
             data = self.df_components[[f"N{i}" for i in range(1,22)]].sum()
-            fig = self.bar_plot_plotly(data,"Non-interval")
+            fig = self.bar_plot_plotly(data,xaxis_title="Non-intervals")
             # self.df_components[[f"N{i}" for i in range(1,22)]].sum().plot.bar(figsize=(18,6))
         elif target=="intervals":
             data = self.df_components[[f"I{i}" for i in range(1,56)]].sum()
-            fig = self.bar_plot_plotly(data,"Interval")
+            fig = self.bar_plot_plotly(data,xaxis_title="Intervals")
             # self.df_components[[f"I{i}" for i in range(1,56)]].sum().plot.bar(figsize=(18,6))
-        fig.show() 
+        return fig
+        # fig.show() 
 
     def dim_counts(self):
         return self.df_components[['dim']].value_counts()

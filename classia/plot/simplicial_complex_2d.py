@@ -69,7 +69,7 @@ class SC2DViz():
         self.radii=sorted(self.radii)
         return self.radii
 
-    def render_all(self,width=330,height=600):
+    def render_all(self,width=330,height=600,with_circles=True):
         #self.figures=[]
         self.radii_critical()
         total_num=len(self.radii)
@@ -83,7 +83,7 @@ class SC2DViz():
                         vertical_spacing=0.05,
         )
         for i,radius in enumerate(self.radii_critical()):
-            subplot=self.render_sc((1+SC2DViz.EPSILON)*radius)
+            subplot=self.render_sc((1+SC2DViz.EPSILON)*radius,with_circles=with_circles)
             for trace in subplot.data:
                 #print(trace)
                 row=i//num_cols+1

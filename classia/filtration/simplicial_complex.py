@@ -13,25 +13,27 @@ import gudhi as gd
 from gtda.externals import CechComplex
     
 class SimplicialComplex(SimplexTree):
-    # cannot override __cinit__ in Cython
-    # it is called even before __init__
-    # https://stackoverflow.com/questions/18260095/cant-override-init-of-class-from-cython-extension
     def __init__(self):
+        # cannot override __cinit__ in Cython
+        # it is called even before __init__
+        # https://stackoverflow.com/questions/18260095/cant-override-init-of-class-from-cython-extension
         super().__init__()
         
-    def from_simplexes(self, sc):
-        if isinstance(sc, list) and len(sc) > 0: # if the input is not empty, verify whether the form complies with the standard
-            if not isinstance(sc[0], tuple):
+    def from_simplices(self, simplices):
+        if isinstance(simplices, list) and len(simplices) > 0: # if the input is not empty, verify whether the form complies with the standard
+            if not isinstance(simplices[0], tuple):
                 raise ValueError('Each simplex should be represented by a tuple.')
-            for s in sc:
-                print(s)
-                self.insert(list(s))
+            for simplex in simplices:
+                print(simplex)
+                self.insert(list(simplex))
         else:
             raise TypeError('Invalid input type. Must be a SimplexTree or list of tuples.')
     
     @property
-    def sc(self):
-        return list([tuple(_[0]) for _ in self.get_filtration()])
+    def simplices(self):
+        ss=[_[0] for _ in list(self.get_simplices())]
+        ss.sort(key=lambda x: (len(x),tuple(x)))
+        return [tuple(_) for _ in ss]
     
     def __str__(self):
         sf_pairs=list(self.get_filtration())
@@ -44,15 +46,13 @@ class SimplicialComplex(SimplexTree):
     def __repr__(self):
         description = f"a simplicial complex with {len(list(self.get_simplices()))} simplices"
         return description
-    
-    def value(self):
-        return self.sc
+
     
     def dionysus_form(self):
-        return [list(s) for s in self.sc]
+        return [list(s) for s in self.simplices]
     
     def info_node(self):
-        return {'sc':self,'sc_size':len(self.sc)}
+        return {'sc':self,'sc_size':len(self.simplices)}
 
     def from_point_cloud(self,pt_cloud,method='cech',sc_dim_ceil='auto',radius_max=np.inf):
         """

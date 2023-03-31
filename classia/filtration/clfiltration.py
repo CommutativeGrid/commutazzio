@@ -11,57 +11,64 @@ from functools import cache
 import numpy as np
 
 from .simplicial_complex import SimplicialComplex
+from gudhi import SimplexTree
 
 class CLFiltration():
     def __init__(self,length=4):
-        X_n2 = SimplicialComplex()
-        X_n1 = SimplicialComplex()
+        self.upper = SimplexTree()
+        self.lower = SimplexTree()
         self.ladder_length=length
-        self.diff_list_upper=[]
-        self.diff_list_lower=[]
+        self.metadata = {}
 
-    @cache
-    def X(self,x,y):
+    def __repr__(self) -> str:
         """
-        Return the simplicial complex at coordinate (x,y).
+        returns both the upper and lower rows
         """
-        if x==n:
-            if y==2:
-                return self.X_n2
-            elif y==1:
-                return self.X_n1
-            else:
-                raise ValueError(f'y={y} is out of range')
-            
-        if y == 2:
-            X_temp = self.X_n2
-            for i,to_be_removed in reversed(enumerate(self.diff_list_upper)):
-                X_temp = X_temp.delete_simplices(to_be_removed)
-                if i+1 == x:
-                    break
-        elif y == 1:
-            X_temp = self.X_n1
-            for i,to_be_removed in reversed(enumerate(self.diff_list_lower)):
-                X_temp = X_temp.delete_simplices(to_be_removed)
-                if i+1 == x:
-                    break
-        else:
-            raise ValueError(f'y={y} is out of range')
-        return X_temp
+        return f'Upper row: {list(self.upper.get_filtration())}, \
+                    Lower row: {list(self.lower.get_filtration())}'
+
+
+    def from_database_item(self, item):
+        #add a verification function somewhere else
+        self.ladder_length = item['ladder_length']
+        self.upper = self.incremental_filtration_creation(item['upper'])
+        self.lower = self.incremental_filtration_creation(item['lower'])
+        self.metadata = item['metadata']
+    
+    def incremental_filtration_creation(self,increments:list):
+        """
+        Create the filtration by adding simplices one by one.
+        """
+        filtration=SimplexTree()
+        for i,increment in enumerate(increments):
+            for simplex in increment:
+                filtration.insert(simplex,i)
+        return filtration
+    
+    def serialize(self):
+        """
+        Convert the filtration to a dictionary.
+        """
+        return {'ladder_length':self.ladder_length,
+                'upper':self.upper.get_filtration(),
+                'lower':self.lower.get_filtration(),
+                'metadata':self.metadata}
+
+    def verify(self):
+        """
+        Verify that the two rows are indeed simplicial complexes,
+        and the lower row is contained in the upper row for each filtration value
+        """
+        ...
 
     def visualisation(self):
         """
-        Visualise the filtration.
+        Visualise the filtration, using networkx?
         """
         ...
 
         
-    def verify(self):
-        """
-        Verify that the two rows are indeed simplicial complexes,
-        and the lower row is contained in the upper row.
-        """
-        ...
+
     
 
     

@@ -18,15 +18,61 @@ class CLFiltration():
         self.upper = SimplexTree()
         self.lower = SimplexTree()
         self.ladder_length=length
+        self.horizontal_parameters = list(range(1,length+1)) # horizontal parameters, a list of length ladder_length,
+        # for example, it can be a list of radii 
         self.metadata = {}
+        self.Epsilon = 1e-6 # for numerical comparison
 
+    @property
+    def h_params(self):
+        return self.horizontal_parameters
+    
     def __repr__(self) -> str:
         """
         returns both the upper and lower rows
         """
         return f'Upper row: {list(self.upper.get_filtration())}, \
                     Lower row: {list(self.lower.get_filtration())}'
+    
 
+    def get_simplicial_complex(self, coordinate:tuple[int,int]):
+        """
+        return the simplicial complex of the given coordinate (x,y)
+        """
+        x,y = coordinate
+        if y == 2:
+            filtration = self.upper.get_filtration()
+        elif y == 1:
+            filtration = self.lower.get_filtration()
+        else:
+            raise ValueError('The y-coordinate must be either 1 or 2')
+        # return all simplicies in filtration up to (inclusive) x
+        sc=SimplicialComplex()
+        sc.from_simplices([tuple(s) for s,fv in filtration if fv <= x+self.Epsilon])
+        return sc
+    
+    @staticmethod
+    def _sort(nested_list):
+        return sorted(nested_list,key=lambda x: (len(x),tuple(x)))
+    
+    def get_filtration_as_nested_list(self,layer='upper'):
+        """
+        return the filtration as a nested list
+        """
+        if layer in ['u','upper']:
+            filtration = list(self.upper.get_filtration())
+        elif layer in ['l','lower']:
+            filtration =  list(self.lower.get_filtration())
+        else:
+            raise ValueError('layer must be either upper or lower')
+        return [self._sort([s for s,fv in filtration if abs(fv-i)<self.Epsilon ]) for i in range(1,self.ladder_length+1)]
+    
+    def num_simplices(self):
+        ...
+
+    def dimension(self):
+        """return both dimensions  of the final simplicial complexes"""
+        return {'upper':self.upper.dimension(),'lower':self.lower.dimension()}
 
     def from_database_item(self, item):
         #add a verification function somewhere else
@@ -42,7 +88,7 @@ class CLFiltration():
         filtration=SimplexTree()
         for i,increment in enumerate(increments):
             for simplex in increment:
-                filtration.insert(simplex,i)
+                filtration.insert(simplex,i+1)
         return filtration
     
     def serialize(self):
@@ -50,8 +96,9 @@ class CLFiltration():
         Convert the filtration to a dictionary.
         """
         return {'ladder_length':self.ladder_length,
-                'upper':self.upper.get_filtration(),
-                'lower':self.lower.get_filtration(),
+                'upper':self.get_filtration_as_nested_list(layer='upper'),
+                'lower':self.get_filtration_as_nested_list(layer='lower'),
+                'horizontal_parameters':self.horizontal_parameters,
                 'metadata':self.metadata}
 
     def verify(self):

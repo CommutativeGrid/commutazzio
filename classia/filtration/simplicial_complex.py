@@ -24,7 +24,6 @@ class SimplicialComplex(SimplexTree):
             if not isinstance(simplices[0], tuple):
                 raise ValueError('Each simplex should be represented by a tuple.')
             for simplex in simplices:
-                print(simplex)
                 self.insert(list(simplex))
         else:
             raise TypeError('Invalid input type. Must be a SimplexTree or list of tuples.')
@@ -41,7 +40,7 @@ class SimplicialComplex(SimplexTree):
         last_filtration_value = sf_pairs[-1][1]
         if first_filtration_value != last_filtration_value:
             raise ValueError('Filtration should be a list of length 1.')
-        return str(self.sc)
+        return str(self.simplices)
 
     def __repr__(self):
         description = f"a simplicial complex with {len(list(self.get_simplices()))} simplices"

@@ -9,11 +9,15 @@ Created on Thu Oct 28 22:01:47 2021
 from warnings import warn
 from functools import cache
 import numpy as np
+import networkx as nx
 
 from .simplicial_complex import SimplicialComplex
 from gudhi import SimplexTree
+import matplotlib.pyplot as plt
 
 class CLFiltration():
+    Epsilon = 1e-6 # for numerical comparison
+
     def __init__(self,length=4):
         self.upper = SimplexTree()
         self.lower = SimplexTree()
@@ -21,7 +25,6 @@ class CLFiltration():
         self.horizontal_parameters = list(range(1,length+1)) # horizontal parameters, a list of length ladder_length,
         # for example, it can be a list of radii 
         self.metadata = {}
-        self.Epsilon = 1e-6 # for numerical comparison
 
     @property
     def h_params(self):
@@ -48,7 +51,7 @@ class CLFiltration():
             raise ValueError('The y-coordinate must be either 1 or 2')
         # return all simplicies in filtration up to (inclusive) x
         sc=SimplicialComplex()
-        sc.from_simplices([tuple(s) for s,fv in filtration if fv <= x+self.Epsilon])
+        sc.from_simplices([tuple(s) for s,fv in filtration if fv <= x+CLFiltration.Epsilon])
         return sc
     
     @staticmethod
@@ -65,10 +68,11 @@ class CLFiltration():
             filtration =  list(self.lower.get_filtration())
         else:
             raise ValueError('layer must be either upper or lower')
-        return [self._sort([s for s,fv in filtration if abs(fv-i)<self.Epsilon ]) for i in range(1,self.ladder_length+1)]
+        return [self._sort([s for s,fv in filtration if abs(fv-i)<CLFiltration.Epsilon ]) for i in range(1,self.ladder_length+1)]
     
     def num_simplices(self):
-        ...
+        pass
+        
 
     def dimension(self):
         """return both dimensions  of the final simplicial complexes"""
@@ -101,18 +105,67 @@ class CLFiltration():
                 'horizontal_parameters':self.horizontal_parameters,
                 'metadata':self.metadata}
 
-    def verify(self):
+    def validation(self):
         """
-        Verify that the two rows are indeed simplicial complexes,
-        and the lower row is contained in the upper row for each filtration value
+        Verify that the lower row is contained in the upper row for each filtration value
         """
-        ...
+        for i in range(1,self.ladder_length+1):
+            upper = self.get_simplicial_complex((i,2))
+            lower = self.get_simplicial_complex((i,1))
+            if not lower.is_subcomplex_of(upper):
+                raise ValueError(f'Lower row is not a subcomplex of the upper row at filtration value {i}')
+        return True
 
-    def visualisation(self):
+    
+
+    def visualization(self):
         """
-        Visualise the filtration, using networkx?
+        Visualise the filtration, using networkx
+        draw a commutative ladder graph, with number of simplicial complexes on each node
+        which looks like below
+        *--*--*--*--*--*
+        |  |  |  |  |  | 
+        *--*--*--*--*--*
         """
-        ...
+        # Create a directed graph
+        G = nx.DiGraph()
+
+        # Add nodes for each layer and filtration value
+        for x in range(1,self.ladder_length+1):
+            for y in [1,2]:
+                G.add_node((x, y))
+
+        # Add horizontal edges
+        for x in range(1,self.ladder_length):
+            G.add_edge((x, 2), (x+1, 2), arrowstyle='->')
+            G.add_edge((x, 1), (x+1, 1), arrowstyle='->')
+        
+        # Add vertical edges
+        for x in range(1,self.ladder_length+1):
+            G.add_edge((x, 1), (x, 2), arrowstyle='->')
+
+        # Add labels to nodes
+        node_labels = {}
+        for x in range(1,self.ladder_length+1):
+            node_labels[(x, 2)] = str(len(self.get_simplicial_complex((x+1,2))))
+            node_labels[(x, 1)] = str(len(self.get_simplicial_complex((x+1,1))))
+
+        # Draw the graph
+        pos = {node: (node[0], node[1]) for node in G.nodes()}
+        nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=14)
+        nx.draw_networkx_nodes(G, pos, nodelist=[(i, 2) for i in range(1,self.ladder_length+1)], node_color='lightcyan', node_shape='o', node_size=500)
+        nx.draw_networkx_nodes(G, pos, nodelist=[(i, 1) for i in range(1,self.ladder_length+1)], node_color='lightcyan', node_shape='o', node_size=500)
+        nx.draw_networkx_edges(G, pos, arrows=True,arrowsize=20)
+        plt.axis('off')
+        plt.show()
+        return G
+
+
+
+
+
+        
+
 
         
 

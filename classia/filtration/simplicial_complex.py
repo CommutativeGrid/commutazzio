@@ -45,6 +45,12 @@ class SimplicialComplex(SimplexTree):
     def __repr__(self):
         description = f"a simplicial complex with {len(list(self.get_simplices()))} simplices"
         return description
+    
+    def __eq__(self, other):
+        return self.simplices == other.simplices
+    
+    def __len__(self):
+        return len(self.simplices)
 
     
     def dionysus_form(self):
@@ -134,11 +140,14 @@ class SimplicialComplex(SimplexTree):
         pt_cloud=np.random.random([nb_pts,space_dim]) # generate a random point cloud
         self.from_point_cloud(pt_cloud,method=method,sc_dim_ceil=sc_dim_ceil,radius_max=radius_max)
     
-    def issubset(self,external_sc):
+    def issimplicialComplex(self):
+        ...
+
+    def is_subcomplex_of(self,external_sc):
         if type(external_sc).__name__ == 'list':
-            return set(self.sc).issubset(external_sc)
+            return set(self.simplices).issubset(external_sc)
         elif type(external_sc).__name__ == 'SimplicialComplex':
-            return set(self.sc).issubset(external_sc.sc)
+            return set(self.simplices).issubset(external_sc.simplices)
         
     def issuperset(self,external_sc):
         if type(external_sc).__name__ == 'list':

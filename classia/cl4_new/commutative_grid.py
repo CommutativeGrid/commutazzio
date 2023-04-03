@@ -8,7 +8,7 @@ Created on Mon Oct 25 18:03:10 2021
 import networkx as nx
 import numpy as np
 
-from .filtration import ZigzagFiltration
+from ..filtration import ZigzagFiltration
 import dionysus as d
 from warnings import warn
 

@@ -11,7 +11,7 @@ import numpy as np
 import random
 from .commutative_grid import CommutativeGrid2D
 from .random_point_cloud_square import RandomPointCloudSquare
-from .simplicial_complex import SimplicialComplex, lower_left_completion
+from ..filtration import SimplicialComplex
 from .tours import tours_cl3,tours_cl4,coeff_mat
 from .multiplicity_vectors import MultiplicityVectors
 from ..utils import timeit
@@ -40,19 +40,23 @@ class CommutativeLadder(CommutativeGrid2D):
         self.tours=OrderedDict((f"t_{i+1}",tour) for (i,tour) in enumerate(self.tours_list))
         del(self.tours_list)
 
+    #TODO:move to another class
     @property
     def pc(self):
         """alias to point cloud"""
         return self.point_cloud
 
+    #TODO:move to another class
     @pc.setter
     def pc(self,value):
         self.point_cloud=value
     
+    #TODO:move to another class
     def sc_fill(self,*args,**kwargs):
         """an alias points to simplicial_complex_fill"""
         self.simplicial_complex_fill(*args,**kwargs)
     
+    #TODO:move to another class
     def point_cloud_from_crystal(self,crystal_type,num=10,radius=1):
         """Associate a point cloud of coordinates of atoms to this commutative ladder"""
         if crystal_type=='fcc':
@@ -63,6 +67,7 @@ class CommutativeLadder(CommutativeGrid2D):
             raise NotImplementedError('Lattice type not defined/supported.')
         self.point_cloud = lattice.data
 
+    #TODO:move to another class
     def sc_filtration_input(self,upper_row,lower_row):
         """
         """
@@ -76,6 +81,7 @@ class CommutativeLadder(CommutativeGrid2D):
             nx.set_node_attributes(self.G, values=values)
         self.plot() 
 
+    #TODO:move to another class
     def thinning_fill(self,parameter_array='auto',parameter_type='vanilla',method='alpha',deletion_rate=0.05):
         """Based on the point of a finite lattice, generate a CL(4)-filtration of simplicial complex.
         Horizontal direction: radius
@@ -152,46 +158,20 @@ class CommutativeLadder(CommutativeGrid2D):
             }
             nx.set_node_attributes(self.G, values=values)
         self.plot() 
-        
+
+    #TODO:move to another class
     @staticmethod
     def truncation(ceiling,simplex_tree):
         return SimplicialComplex([tuple(s[0]) for s in simplex_tree.get_filtration() if s[1]<=ceiling])
     
+    #TODO:move to another class
     @staticmethod
     def indices_dist_four(n):
         #return [int(n/4)-1,int(2*n/4)-1,int(3*n/4)-1,int(n)-1]
         return [0,int(n/3),int(2*n/3),n-1]
 
-    @timeit
-    def simplicial_complex_fill(self,size=100,pc_dim=3,radius_max=0.3,method='alpha'):
-        if set(self.orientation)!={'f'}:# only for the equioriented case currently
-            raise NotImplementedError("Incompatible orientation.")
-        # set up the counter, from the right-most side
-        counter = reversed(range(self.offset,self.shape[0]+self.offset))
-        lower=self.offset # y-axis coordinate of the lower row
-        upper=self.offset+1 # y-axis coordinate of the upper row
-        top_right=SimplicialComplex() 
-        top_right.from_random_point_cloud(nb_pts=size,space_dim=pc_dim,sc_dim_ceil='auto',radius_max=radius_max,method=method) # generate a simplicial complex from a random point cloud
-        right=next(counter) # right-most column, starting case
-        up_sc=top_right
-        down_sc=top_right.random_delete_vertices()
-        values={
-            (right,upper):up_sc.info_node(), # fill (4,2)
-            (right,lower):down_sc.info_node() # fill (4,1)
-            }
-        nx.set_node_attributes(self.G, values=values)
-  
-        for right in counter: 
-            new_up_sc=up_sc.random_delete_vertices() # fill the rest of the nodes in the upper row, x = 3,2,1
-            new_down_sc=lower_left_completion(up_sc, new_up_sc, down_sc) # fill the rest of the nodes in the lower row, x = 3,2,1
-            values={
-                (right,upper):new_up_sc.info_node(),
-                (right,lower):new_down_sc.info_node()
-                }
-            nx.set_node_attributes(self.G, values=values)
-            up_sc=new_up_sc
-            down_sc=new_down_sc
 
+    #TODO:move to another class
     def sc_verification_fill(self):
         single_vertex=SimplicialComplex([(0,)])
         for node in self.G.nodes:
@@ -199,7 +179,8 @@ class CommutativeLadder(CommutativeGrid2D):
                 node:single_vertex.info_node()
             }
             nx.set_node_attributes(self.G, values=values)
-    
+
+    #TODO:move to another class
     def sc_verification_single_fill(self):
         empty_vertex=SimplicialComplex([])
         single_vertex=SimplicialComplex([(0,)])
@@ -263,10 +244,11 @@ class CommutativeLadder(CommutativeGrid2D):
 
     
     
-
+    #TODO:move to another class
     def rpc_fill(self):
         self.random_point_cloud_fill()   
     
+    #TODO:move to another class
     def random_point_cloud_fill(self):
         """Associate nodes with point clouds"""
         
@@ -311,7 +293,7 @@ class CommutativeLadder(CommutativeGrid2D):
         #breakpoint()
         labels=nx.get_node_attributes(self.G,'sc_size')
         nx.draw(self.G,pos=layout,with_labels=True,labels=labels)
-        
+    
     def info(self,index=0):
         print(f"Dimension: {self.multiplicity_vectors[index].dim}")
         #print(f"Characteristic: {self.multiplicity_vectors[index].prime}.")

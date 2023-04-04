@@ -40,32 +40,7 @@ class CommutativeLadder(CommutativeGrid2D):
         self.tours=OrderedDict((f"t_{i+1}",tour) for (i,tour) in enumerate(self.tours_list))
         del(self.tours_list)
 
-    #TODO:move to another class
-    @property
-    def pc(self):
-        """alias to point cloud"""
-        return self.point_cloud
 
-    #TODO:move to another class
-    @pc.setter
-    def pc(self,value):
-        self.point_cloud=value
-    
-    #TODO:move to another class
-    def sc_fill(self,*args,**kwargs):
-        """an alias points to simplicial_complex_fill"""
-        self.simplicial_complex_fill(*args,**kwargs)
-    
-    #TODO:move to another class
-    def point_cloud_from_crystal(self,crystal_type,num=10,radius=1):
-        """Associate a point cloud of coordinates of atoms to this commutative ladder"""
-        if crystal_type=='fcc':
-            lattice=FaceCenteredCubic(num=num,radius=radius)
-        elif crystal_type=='hcp':
-            lattice=HexagonalClosePacking(num=num,radius=radius)
-        else:
-            raise NotImplementedError('Lattice type not defined/supported.')
-        self.point_cloud = lattice.data
 
     #TODO:move to another class
     def sc_filtration_input(self,upper_row,lower_row):
@@ -81,104 +56,7 @@ class CommutativeLadder(CommutativeGrid2D):
             nx.set_node_attributes(self.G, values=values)
         self.plot() 
 
-    #TODO:move to another class
-    def thinning_fill(self,parameter_array='auto',parameter_type='vanilla',method='alpha',deletion_rate=0.05):
-        """Based on the point of a finite lattice, generate a CL(4)-filtration of simplicial complex.
-        Horizontal direction: radius
-        Vertical direction: addition of atoms
-        For alpha complex radius is actually expressed squared
-        """
-        if hasattr(self,'point_cloud'):
-            pt_cloud=self.point_cloud
-            #pt_cloud=np.random.random([200,3])*5
-        else:
-            AttributeError("Lattice data not defined. Run point_cloud_from_crystal first.")
-        max_radius = np.inf
-        print(f"Using {method} complex.")
-        if method == 'rips':
-            rips_complex = gd.RipsComplex(pt_cloud,max_edge_length=max_radius)
-            simplex_tree = rips_complex.create_simplex_tree(max_dimension=3)
-            if simplex_tree.make_filtration_non_decreasing():
-                print("Filtration values modified.") 
-            #in https://gudhi.inria.fr/python/latest/rips_complex_user.html
-            # A vertex name corresponds to the index of the point in the given range (aka. the point cloud).
-            #simplices_list = [tuple(s[0]) for s in simplex_tree.get_simplices()]
-        elif method == 'alpha':
-            alpha_complex = gd.AlphaComplex(points=pt_cloud)
-            #in https://gudhi.inria.fr/python/latest/alpha_complex_user.html
-            #The vertices in the output simplex tree are not guaranteed to match the order of the input points. One can use get_point() to get the initial point back.
-            simplex_tree = alpha_complex.create_simplex_tree()
-            if simplex_tree.make_filtration_non_decreasing():
-                print("Filtration values modified.") 
-            #simplices_list = [tuple(s[0]) for s in simplex_tree.get_simplices()]
-        elif method == 'cech':
-            cech_complex = CechComplex(points=pt_cloud,max_radius=max_radius)
-            simplex_tree = cech_complex.create_simplex_tree(max_dimension=3)
-            if simplex_tree.make_filtration_non_decreasing():
-                print("Filtration values modified.")
-        else:
-            raise NotImplementedError('Method not supported.')
-
-        vertices = [tuple(s[0]) for s in simplex_tree.get_filtration() if len(s[0])==1]
-        num_deletion=int(len(vertices)*deletion_rate)
-        vertices_to_be_deleted = random.sample(vertices, num_deletion)
-        if parameter_array=='auto':
-            radius_values=np.sort(list(set([item[1] for item in simplex_tree.get_filtration()])))
-            indices = self.indices_dist_four(len(radius_values))
-            upper_row = [self.truncation(radius_values[i],simplex_tree) for i in indices]
-            lower_row = [sc.delete_simplices(vertices_to_be_deleted) for sc in upper_row]
-        else:
-            if len(parameter_array)!=4:
-                raise ValueError('parameter_array must be of length 4')
-            if parameter_type == 'vanilla':
-                radii=parameter_array # input is radius
-            elif parameter_type == 'squared':
-                radii=np.sqrt(parameter_array) # input is radius squared
-            elif parameter_type == 'twofold':
-                radii=parameter_array/2 # input is radius doubled
-            else:
-                raise NotImplementedError('parameter_type not supported.')
-            if method == 'alpha':
-                if parameter_type == 'vanilla':
-                    truncation_parameters = [r**2 for r in radii] #squared radius
-                elif parameter_type == 'squared':
-                    truncation_parameters = parameter_array
-            elif method == 'cech':
-                truncation_parameters = radii
-            elif method == 'rips':
-                truncation_parameters = radii*2
-            upper_row = [self.truncation(r,simplex_tree) for r in truncation_parameters]
-            lower_row = [sc.delete_simplices(vertices_to_be_deleted) for sc in upper_row]
-        horizontal_counter = range(0,self.shape[0])
-        #vertical_counter = range(self.offset,self.shape[1]+self.offset)
-        for i in horizontal_counter:
-            values = {
-                (i+self.offset,1+self.offset):upper_row[i].info_node(), #fill nodes in the upper row
-                (i+self.offset,0+self.offset):lower_row[i].info_node() #fill nodes in the lower row
-            }
-            nx.set_node_attributes(self.G, values=values)
-        self.plot() 
-
-    #TODO:move to another class
-    @staticmethod
-    def truncation(ceiling,simplex_tree):
-        return SimplicialComplex([tuple(s[0]) for s in simplex_tree.get_filtration() if s[1]<=ceiling])
-    
-    #TODO:move to another class
-    @staticmethod
-    def indices_dist_four(n):
-        #return [int(n/4)-1,int(2*n/4)-1,int(3*n/4)-1,int(n)-1]
-        return [0,int(n/3),int(2*n/3),n-1]
-
-
-    #TODO:move to another class
-    def sc_verification_fill(self):
-        single_vertex=SimplicialComplex([(0,)])
-        for node in self.G.nodes:
-            values={
-                node:single_vertex.info_node()
-            }
-            nx.set_node_attributes(self.G, values=values)
+        
 
     #TODO:move to another class
     def sc_verification_single_fill(self):
@@ -242,47 +120,6 @@ class CommutativeLadder(CommutativeGrid2D):
                 print(f"Multiplicity vector computed (dim={dim}, prime={prime}).")
             
 
-    
-    
-    #TODO:move to another class
-    def rpc_fill(self):
-        self.random_point_cloud_fill()   
-    
-    #TODO:move to another class
-    def random_point_cloud_fill(self):
-        """Associate nodes with point clouds"""
-        
-        counter = iter(range(self.offset,self.shape[0]+self.offset))
-        for direction in self.orientation[:1]:
-            square=RandomPointCloudSquare(direction)
-            square.new_random_square()
-            left=next(counter)
-            right=left+1
-            lower=self.offset
-            upper=self.offset+1
-            values={
-                (left,lower):square.info_pc(1),
-                (right,lower):square.info_pc(3),
-                (left,upper):square.info_pc(7),
-                (right,upper):square.info_pc(9),
-                }
-            nx.set_node_attributes(self.G, values=values)
-            del(square)
-        for direction in self.orientation[1:]:
-            square=RandomPointCloudSquare(direction)
-            left=next(counter)
-            right=left+1
-            lower=self.offset
-            upper=self.offset+1
-            pc_1=self.G.nodes[(left,lower)]['pc']
-            pc_7=self.G.nodes[(left,upper)]['pc']
-            square.fill_right(pc_1=pc_1,pc_7=pc_7)
-            values={
-                (right,lower):square.info_pc(3),
-                (right,upper):square.info_pc(9),
-                }
-            nx.set_node_attributes(self.G, values=values)
-            del(square)
             
     def plot(self):
         # overrides the function in commutative grid

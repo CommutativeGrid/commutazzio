@@ -20,7 +20,7 @@ class NonIntervalCL4():
         self.dim = self.pt.shape[1]
     
     def __repr__(self) -> str:
-        return f"NonIntervalCL4(\npt={self.pt},\nremoval={self.removal},\nradii={self.radii},\ntotal_decomp={self.total_decomp})"
+        return f"NonIntervalCL4(\npt={self.pt.__repr__()},\nremoval={self.removal},\nradii={self.radii.__repr__()},\ntotal_decomp={self.total_decomp})"
 
     @property
     def upper(self):

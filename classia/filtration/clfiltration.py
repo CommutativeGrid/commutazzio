@@ -8,51 +8,67 @@ Created on Thu Oct 28 22:01:47 2021
 #import dionysus as d
 from warnings import warn
 from functools import cache
-import numpy as np
 import networkx as nx
 
 from .simplicial_complex import SimplicialComplex
-from gudhi import SimplexTree
+from .simplex_tree import SimplexTree
 import matplotlib.pyplot as plt
 
 class CLFiltration():
     Epsilon = 1e-6 # for numerical comparison
 
-    def __init__(self,length=4):
-        self.upper = SimplexTree()
-        self.lower = SimplexTree()
+    def __init__(self,upper=SimplexTree(),lower=SimplexTree(),length=4,h_params=None,metadata={}):
+        self.upper = upper # a SimplexTree, filtration values are 1,2,3,...,length
+        self.lower = lower # a SimplexTree, filtration values are 1,2,3,...,length
         self.ladder_length=length
-        self.horizontal_parameters = list(range(1,length+1)) # horizontal parameters, a list of length ladder_length,
+        if h_params is None: 
+            # horizontal parameters, a list of length ladder_length, maps an index to a parameter
+            self.horizontal_parameters = list(range(1,length+1))
+        else:
+            self.horizontal_parameters = h_params
         # for example, it can be a list of radii 
-        self.metadata = {}
+        self.metadata = metadata
 
     @property
     def h_params(self):
         return self.horizontal_parameters
     
+    def set_metadata(self,metadata):
+        self.metadata = metadata
+    
+    def metadata_update(self,kv_dict):
+        self.metadata.update(kv_dict)
+    
     def __repr__(self) -> str:
         """
-        returns both the upper and lower rows
+        returns both the upper and lower rows,
+        filtration values to integers
         """
-        return f'Upper row: {list(self.upper.get_filtration())}, \
-                    Lower row: {list(self.lower.get_filtration())}'
+        upper = list(self.upper.get_filtration())
+        upper = [(tuple(s), int(fv)) for s,fv in upper]
+        lower = list(self.lower.get_filtration())
+        lower = [(tuple(s), int(fv)) for s,fv in lower]
+        return f'Upper row:\n{str(upper)},\nLower row:\n{str(lower)}'
     
-
-    def get_simplicial_complex(self, coordinate:tuple[int,int]):
+    @cache
+    def get_simplicial_complex(self,x:int,y:int):
         """
         return the simplicial complex of the given coordinate (x,y)
         """
-        x,y = coordinate
         if y == 2:
             filtration = self.upper.get_filtration()
         elif y == 1:
             filtration = self.lower.get_filtration()
         else:
             raise ValueError('The y-coordinate must be either 1 or 2')
+        if x>self.ladder_length and x!=float('inf'): #if x is larger than the ladder length, raise a warning
+            warn('The x-coordinate is larger than the ladder length')
+
         # return all simplicies in filtration up to (inclusive) x
         sc=SimplicialComplex()
         sc.from_simplices([tuple(s) for s,fv in filtration if fv <= x+CLFiltration.Epsilon])
         return sc
+    
     
     @staticmethod
     def _sort(nested_list):
@@ -110,8 +126,8 @@ class CLFiltration():
         Verify that the lower row is contained in the upper row for each filtration value
         """
         for i in range(1,self.ladder_length+1):
-            upper = self.get_simplicial_complex((i,2))
-            lower = self.get_simplicial_complex((i,1))
+            upper = self.get_simplicial_complex(*(i,2))
+            lower = self.get_simplicial_complex(*(i,1))
             if not lower.is_subcomplex_of(upper):
                 raise ValueError(f'Lower row is not a subcomplex of the upper row at filtration value {i}')
         return True
@@ -161,16 +177,6 @@ class CLFiltration():
         return G
 
 
-
-
-
-        
-
-
-        
-
-    
-
     
 
 
@@ -184,7 +190,7 @@ class ZigzagFiltration:
             raise NotImplementedError('Each variable must be a simplicial complex object')
         #if type(args[0][0][0]) is list and len(args)==1:
         #    args=tuple(args[0]) # dealing with the case when the input is not spread
-        self.sequence=[simplicial_complex_object.sc for simplicial_complex_object in args]
+        self.sequence=[simplicial_complex_object.simplices for simplicial_complex_object in args]
         for simplicial_complex_list in self.sequence:
             for simplex in simplicial_complex_list:
                 if simplex not in self.ensemble:

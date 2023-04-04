@@ -7,12 +7,10 @@ Created on Wed Oct 27 16:21:47 2021
 """
 import dionysus as d
 import numpy as np
-from scipy.spatial import distance
-from gudhi import SimplexTree
-import gudhi as gd
-from gtda.externals import CechComplex
+from gudhi import SimplexTree as gudhi_SimplexTree
+
     
-class SimplicialComplex(SimplexTree):
+class SimplicialComplex(gudhi_SimplexTree):
     def __init__(self):
         # cannot override __cinit__ in Cython
         # it is called even before __init__
@@ -33,6 +31,10 @@ class SimplicialComplex(SimplexTree):
         ss=[_[0] for _ in list(self.get_simplices())]
         ss.sort(key=lambda x: (len(x),tuple(x)))
         return [tuple(_) for _ in ss]
+    
+    @simplices.setter
+    def simplices(self, value):
+        self.from_simplices(value)
     
     def __str__(self):
         sf_pairs=list(self.get_filtration())
@@ -58,87 +60,6 @@ class SimplicialComplex(SimplexTree):
     
     def info_node(self):
         return {'sc':self,'sc_size':len(self.simplices)}
-
-    def from_point_cloud(self,pt_cloud,method='cech',sc_dim_ceil='auto',radius_max=np.inf):
-        """
-        Create a simplicial complex from a point cloud.
-        """
-        space_dim,num_pts=pt_cloud.shape
-        if sc_dim_ceil == 'auto':
-            sc_dim_ceil = space_dim-1  # maximum dimension of the simplicial complex.
-        if method == 'rips':
-            rips_complex = gd.RipsComplex(pt_cloud,max_edge_length=radius_max)
-            simplex_tree = rips_complex.create_simplex_tree(max_dimension=sc_dim_ceil)
-            simplex_tree.make_filtration_non_decreasing()
-            simplices_list = [tuple(s[0]) for s in simplex_tree.get_filtration()]
-        elif method == 'alpha':
-            alpha_complex = gd.AlphaComplex(points=pt_cloud)
-            simplex_tree = alpha_complex.create_simplex_tree()
-            simplex_tree.make_filtration_non_decreasing()
-            simplices_list = [tuple(s[0]) for s in simplex_tree.get_filtration()]
-        elif method == 'cech':
-            cech_complex = CechComplex(points=pt_cloud,max_radius=np.inf)
-            simplex_tree = cech_complex.create_simplex_tree(max_dimension=sc_dim_ceil)
-            simplex_tree.make_filtration_non_decreasing()
-            simplices_list = [tuple(s[0]) for s in simplex_tree.get_filtration()]
-        elif method == 'weak-witness':
-            diameter = max(distance.cdist(pt_cloud,pt_cloud,'euclidean').flatten())
-            witnesses=pt_cloud
-            w_l_ratio=5
-            n_landmarks=int(len(pt_cloud)/w_l_ratio) # vertices consist of landmarks. A too low value may cause zero candidates available for being deleted.
-            landmarks=gd.pick_n_random_points(points=pt_cloud,nb_points=n_landmarks)
-            witness_complex = gd.EuclideanWitnessComplex(witnesses=witnesses, landmarks=landmarks)
-            max_alpha_square = diameter/50.0
-            simplex_tree = witness_complex.create_simplex_tree(max_alpha_square=max_alpha_square,limit_dimension=sc_dim_ceil)
-            simplex_tree.make_filtration_non_decreasing()
-            simplices_list = [tuple(s[0]) for s in simplex_tree.get_filtration()]
-            print(len(simplices_list))
-        elif method == 'strong-witness':
-            diameter = max(distance.cdist(pt_cloud,pt_cloud,'euclidean').flatten())
-            witnesses=pt_cloud
-            w_l_ratio=5
-            n_landmarks=int(len(pt_cloud)/w_l_ratio)
-            landmarks=gd.pick_n_random_points(points=pt_cloud,nb_points=n_landmarks)
-            witness_complex = gd.EuclideanStrongWitnessComplex(witnesses=witnesses, landmarks=landmarks)
-            max_alpha_square = diameter/50.0
-            simplex_tree = witness_complex.create_simplex_tree(max_alpha_square=max_alpha_square,limit_dimension=sc_dim_ceil)
-            simplex_tree.make_filtration_non_decreasing()
-            simplices_list = [tuple(s[0]) for s in simplex_tree.get_filtration()]
-        else:
-            raise NotImplementedError('Method not supported.')
-        #filtration = d.fill_rips(points,sc_dim_ceil,radius_max) obsolete, too slow
-        self.simplex_tree = simplex_tree
-        self.sc=simplices_list
-    
-    @property
-    def radii_list(self):
-        return np.sort(list(set([item[1] for item in self.simplex_tree.get_filtration()])))
-
-    def from_random_point_cloud(self,nb_pts=100,space_dim=3,sc_dim_ceil='auto',radius_max=np.inf,method='alpha'):
-        """
-        Generate a simplicial complex out of a random point cloud,
-        using the given method.
-
-        Parameters
-        ----------
-        nb_pts : 
-            Number of points in the point cloud. The default is 100.
-        space_dim : TYPE, optional
-            Dimension of the point cloud. The default is 3.
-        sc_dim_ceil : TYPE, optiona, the default is pc_dim - 1
-           
-        method : TYPE, optional
-            Method to be used. Supported methods are 'rips', 'alpha', 'weak-witness' and 'strong-witness'.
-            Using gudhi library to generate the array of simplices.
-            https://geometrica.saclay.inria.fr/team/Fred.Chazal/slides/Intro_TDA_with_GUDHI_Part_1.html
-
-        Returns
-        -------
-        A simplicial complex represented by a list of tuples.
-
-        """
-        pt_cloud=np.random.random([nb_pts,space_dim]) # generate a random point cloud
-        self.from_point_cloud(pt_cloud,method=method,sc_dim_ceil=sc_dim_ceil,radius_max=radius_max)
     
     def issimplicialComplex(self):
         ...
@@ -166,18 +87,18 @@ class SimplicialComplex(SimplexTree):
         else:
             raise NotImplementedError
         return simplex
-    
-    def truncation(self,ceiling):
-        return SimplicialComplex([tuple(s[0]) for s in self.simplex_tree.get_filtration() if s[1]<=ceiling])
+
 
     def deleteOne(self,simplex,inplace=False):
         """Delete one simplex, together with its superset"""
         simplex=self.simplexify(simplex)    
         new_sc=[s for s in self.sc if not set(simplex).issubset(set(s))]
         if inplace:
-            self.sc=new_sc
+            self.simplices=new_sc
         else:
-            return SimplicialComplex(new_sc)
+            temp = SimplicialComplex()
+            temp.from_simplices(new_sc)
+            return temp
         
     def __delete_from(self,simplex,from_sc):
         """Delete one simplex, together with its superset"""
@@ -187,13 +108,15 @@ class SimplicialComplex(SimplexTree):
 
     def delete_simplices(self,simplices,inplace=False):
         """Delete vertices"""
-        intermediate_agent=self.sc
+        intermediate_agent=self.simplices
         for simplex in simplices:
             intermediate_agent=self.__delete_from(simplex,intermediate_agent)
         if inplace:
             self.sc=intermediate_agent
         else:
-            return SimplicialComplex(intermediate_agent)
+            temp = SimplicialComplex()
+            temp.from_simplices(intermediate_agent)
+            return temp
                         
     def add(self,simplex,inplace=False):
         """Add a simplex, together with all of its faces"""

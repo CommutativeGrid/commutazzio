@@ -1,15 +1,14 @@
 from classia.filtration import CLFiltration,SimplicialComplex
-from gudhi import SimplexTree
+from gudhi import SimplexTree as gudhi_SimplexTree
 import pytest
 
 
 @pytest.fixture
 def clf_example():
     cc=CLFiltration()
-    f2=SimplexTree()
-    f1=SimplexTree()
+    f2=gudhi_SimplexTree()
+    f1=gudhi_SimplexTree()
     f2.insert([1,2],1)
-    f2.insert([1,2],2)
     f2.insert([2,3],2)
     f2.insert([3,1],2)
     f2.insert([1,2,3],3)
@@ -51,5 +50,31 @@ def test_ladder_length(clf_example):
 
 def test_metadata(clf_example):
     assert clf_example.metadata == {'test':[[1,2,3]]}
+
+def test_get_simplicial_complex(clf_example):
+    # Test some coordinates from the upper row
+    temp = SimplicialComplex()
+    temp.from_simplices([(1,),(2,),(3,),(1,2),(2,3),(1,3)])
+    assert clf_example.get_simplicial_complex(2, 2) == temp
+     # Test some coordinates from the lower row
+    temp = SimplicialComplex()
+    temp.from_simplices([(1,),(2,),(3,),(1,2),(2,3),(1,3)])
+    assert clf_example.get_simplicial_complex(3, 1) == temp
+     # Test for an invalid y-coordinate
+    with pytest.raises(ValueError):
+        clf_example.get_simplicial_complex(1, 3)
+    # Test for x-coordinate larger than the ladder length
+    with pytest.warns(UserWarning):
+        clf_example.get_simplicial_complex(4, 2)
+
+def test_dimension(clf_example):
+    assert clf_example.dimension() == {'upper': 2, 'lower': 1}
+
+def test_validation(clf_example):
+    # This should not raise an exception
+    assert clf_example.validation()
+
+
+
 
 

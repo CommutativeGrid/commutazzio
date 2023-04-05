@@ -7,17 +7,14 @@ Created on Mon Oct 25 18:03:10 2021
 """
 import networkx as nx
 import numpy as np
-
 from ..filtration import ZigzagFiltration
 import dionysus as d
-from warnings import warn
-
 from itertools import product
 
 def one_based_numbering(dim_vector):
     """
         Returns the mapping rules for converting from 0-based vector to 1-based vector.
-        For examle, if dim_vector = [2, 2], then first we generate all 0-based points within this range,
+        For example, if dim_vector = [2, 2], then first we generate all 0-based points within this range,
         Then we convert them to 1-based points.
         The result will be {(0, 0): (1, 1), (0, 1): (1, 2), (1, 0): (2, 1), (1, 1): (2, 2)}
     """
@@ -48,7 +45,7 @@ class CommutativeGrid:
         # https://networkx.org/documentation/stable/reference/drawing.html
         nx.draw(self.G,with_labels=True)
         
-    def attribute_sequence(self,nodes,attribute="sc"):
+    def attribute_sequence(self,nodes,attribute="simplicial_complex"):
         """
         Generate a list of attributes of the given nodes.
         """
@@ -71,7 +68,7 @@ class CommutativeGrid:
         Compute the multiplicity of the longest interval in the given
         zigzag filtration of simplicial complexes
         """
-        sc_filtration=self.attribute_sequence(zigzag_filtration_nodes,"sc")
+        sc_filtration=self.attribute_sequence(zigzag_filtration_nodes,"simplicial_complex")
         tour=ZigzagFiltration(*sc_filtration)
         filtration_dionysus=d.Filtration(tour.ensemble)
         times=tour.all_time_sequences()
@@ -177,15 +174,16 @@ class CommutativeGrid2D(CommutativeGrid):
         self.G.add_edges_from(edges)
         
     def plot(self):
-        # overrides the function in commutative grid
+        # this function is overridden in commutative grid
         nodes=list(self.G.nodes)
         layout={}
         for node in nodes: # coordinates of nodes in accordance with its position in the grid
             layout.update({node:node})
         #breakpoint()
-        nx.draw(self.G,pos=layout,with_labels=False)
-        
+        nx.draw(self.G,pos=layout,with_labels=False,node_color='lightcyan', node_shape='o')
+
+
 # node attributes
 # https://networkx.org/documentation/stable/tutorial.html
-#np.random.random((100,2))    
+
 

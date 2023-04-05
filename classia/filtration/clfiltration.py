@@ -48,6 +48,7 @@ class CLFiltration():
         upper = [(tuple(s), int(fv)) for s,fv in upper]
         lower = list(self.lower.get_filtration())
         lower = [(tuple(s), int(fv)) for s,fv in lower]
+        print(f'CL({self.ladder_length}) filtration {object.__repr__(self)}\n')
         return f'Upper row:\n{str(upper)},\nLower row:\n{str(lower)}'
     
     @cache
@@ -134,7 +135,7 @@ class CLFiltration():
 
     
 
-    def visualization(self):
+    def plot(self):
         """
         Visualise the filtration, using networkx
         draw a commutative ladder graph, with number of simplicial complexes on each node
@@ -163,8 +164,8 @@ class CLFiltration():
         # Add labels to nodes
         node_labels = {}
         for x in range(1,self.ladder_length+1):
-            node_labels[(x, 2)] = str(len(self.get_simplicial_complex((x+1,2))))
-            node_labels[(x, 1)] = str(len(self.get_simplicial_complex((x+1,1))))
+            node_labels[(x, 2)] = str(len(self.get_simplicial_complex(*(x,2))))
+            node_labels[(x, 1)] = str(len(self.get_simplicial_complex(*(x,1))))
 
         # Draw the graph
         pos = {node: (node[0], node[1]) for node in G.nodes()}

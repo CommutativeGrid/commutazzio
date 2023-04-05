@@ -59,7 +59,7 @@ class SimplicialComplex(gudhi_SimplexTree):
         return [list(s) for s in self.simplices]
     
     def info_node(self):
-        return {'sc':self,'sc_size':len(self.simplices)}
+        return {'simplicial_complex':self,'num_simplices':len(self.simplices)}
     
     def issimplicialComplex(self):
         ...

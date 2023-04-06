@@ -1,6 +1,6 @@
 import numpy as np
-from classia.filtration import pointCloud2Filtration
-from classia.commutative_ladder import CommutativeLadder as CL4
+from camelia.filtration import pointCloud2Filtration
+from camelia.compute import CommutativeLadderQuiver as CL4
 
 pts=np.array([[0.94677524, 0.96718804],
        [0.76039062, 0.19894666],

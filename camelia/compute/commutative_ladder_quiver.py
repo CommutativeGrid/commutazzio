@@ -8,7 +8,7 @@ Created on Sun Oct 31 19:20:11 2021
 
 import networkx as nx
 import numpy as np
-from .commutative_grid import CommutativeGrid2D
+from .commutative_grid_quiver import CommutativeGrid2DQuiver
 # from ..filtration import SimplicialComplex
 from .tours import tours_cl3,tours_cl4,coeff_mat
 from .multiplicity_vectors import MultiplicityVectors
@@ -22,7 +22,7 @@ from cpes import *
 cl4_equi_isoclasses=[f"N{i}" for i in range(1,22)]+[f"I{i}" for i in range(1,56)]
 
 
-class CommutativeLadder(CommutativeGrid2D):
+class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
     """
     Equi-oriented by default
     """

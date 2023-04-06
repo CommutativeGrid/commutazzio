@@ -1,4 +1,4 @@
-from classia.filtration import CLFiltration,CLFiltrationDB
+from camelia.filtration import CLFiltration,CLFiltrationDB
 import json
 import pytest
 

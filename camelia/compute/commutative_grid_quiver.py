@@ -26,7 +26,7 @@ def one_based_numbering(dim_vector):
     return mapping
 
 
-class CommutativeGrid:
+class CommutativeGridQuiver:
     def __init__(self,dim_vector,one_based=True):
         H=nx.grid_graph(dim_vector[::-1]).to_directed() # reverse the order,xyz-coordinate convention
         
@@ -84,7 +84,7 @@ class CommutativeGrid:
                     count+=1
         return count
 
-class CommutativeGrid2D(CommutativeGrid):
+class CommutativeGrid2DQuiver(CommutativeGridQuiver):
 
     def __init__(self,m:int,n:int,orientation:str='equi',one_based=True):
         """

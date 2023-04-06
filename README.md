@@ -1,11 +1,10 @@
-# Commutative Ladder Source-Sink Interval Approximation
+# Camélia
 
-[日本語](README_ja.md) (Translated by DeepL)
+** Camélia ** is a python package for computing topological invariants of commutative ladders.
 
-**C**ommutative **la**dder **s**ource-**s**ink **i**nterval **a**pproximation is a python module providing an integrated computational tool for computing source-sink type interval approximation of commutative ladders of arbitrary length obtained.
-It features a streamlined process from an user input of parameters of fcc/hcp lattice to decorated persistence diagram.
+~~It features a streamlined process from an user input of parameters of fcc/hcp lattice to decorated persistence diagram.~~
 
-Using this module smoothly requires the installation of [random-cech](https://bitbucket.org/tda-homcloud/random-cech/src/master/) in the working directory. See [below](##Basic-usage) for details.
+~~Using this module smoothly requires the installation of [random-cech](https://bitbucket.org/tda-homcloud/random-cech/src/master/) in the working directory. See [below](##Basic-usage) for details.~~
 
 ## Installation
 

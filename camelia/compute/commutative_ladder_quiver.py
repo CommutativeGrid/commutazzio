@@ -11,7 +11,7 @@ import numpy as np
 from .commutative_grid_quiver import CommutativeGrid2DQuiver
 # from ..filtration import SimplicialComplex
 from .tours import tours_cl3,tours_cl4,coeff_mat
-from .multiplicity_vectors import MultiplicityVectors
+from .decomposition_container import DecompositionCollection
 from ..utils import timeit
 from pathos.multiprocessing import ProcessingPool as Pool
 from collections import OrderedDict
@@ -34,7 +34,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
             elif m==4:
                 self.tours_list=tours_cl4(one_based=one_based)
                 self.coeff_mat=coeff_mat
-        self.multiplicity_vectors=MultiplicityVectors()
+        self.decomp_collection=DecompositionCollection()
         self.tours=OrderedDict((f"t_{i+1}",tour) for (i,tour) in enumerate(self.tours_list))
         del(self.tours_list)
 
@@ -52,7 +52,8 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
                 (i+self.offset,0+self.offset):lower_row[i].info_node() #fill nodes in the lower row
             }
             nx.set_node_attributes(self.G, values=values)
-        self.plot() 
+        # self.plot() 
+        print("Filtration updated.")
 
 
     def multiplicity_zigzag_pool(self,args):
@@ -91,7 +92,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
         if mp_method == 1:
             raise NotImplementedError("Multiprocessing computation not implemented yet.")
         
-        if len(self.multiplicity_vectors.dim(dim).prime(prime).vectors)!=0 and not recalculate:
+        if len(self.decomp_collection.dim(dim).prime(prime).collection)!=0 and not recalculate:
             print("Already existed. Pass parameter recalculate=True to recalculate.")
         else:
             b=self.tours_vector(dim=dim,prime=prime,mp_method=mp_method)
@@ -100,7 +101,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
             error=np.linalg.norm(np.matmul(self.coeff_mat,rounded)-b)
             if error > 1e-5:
                 raise ValueError("Error in the solution of the system.")
-            self.multiplicity_vectors.add(rounded,dim,prime)
+            self.decomp_collection.add(rounded.reshape(-1),dim,prime)
             if output_message:
                 print(f"Multiplicity vector computed (dim={dim}, prime={prime}).")
             

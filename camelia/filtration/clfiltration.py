@@ -39,7 +39,18 @@ class CLFiltration():
     def metadata_update(self,kv_dict):
         self.metadata.update(kv_dict)
     
+    def __len__(self):
+        return self.ladder_length
+    
     def __repr__(self) -> str:
+        """
+        returns both the upper and lower rows,
+        filtration values to integers
+        """
+        return f'CL({self.ladder_length}) filtration {object.__repr__(self)}\n'
+
+    
+    def __str__(self) -> str:
         """
         returns both the upper and lower rows,
         filtration values to integers
@@ -48,7 +59,6 @@ class CLFiltration():
         upper = [(tuple(s), int(fv)) for s,fv in upper]
         lower = list(self.lower.get_filtration())
         lower = [(tuple(s), int(fv)) for s,fv in lower]
-        print(f'CL({self.ladder_length}) filtration {object.__repr__(self)}\n')
         return f'Upper row:\n{str(upper)},\nLower row:\n{str(lower)}'
     
     @cache

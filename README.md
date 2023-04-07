@@ -1,6 +1,6 @@
 # Camélia
 
-** Camélia ** is a python package for computing topological invariants of commutative ladders.
+**Camélia** is a python package for computing topological invariants of commutative ladders.
 
 ~~It features a streamlined process from an user input of parameters of fcc/hcp lattice to decorated persistence diagram.~~
 

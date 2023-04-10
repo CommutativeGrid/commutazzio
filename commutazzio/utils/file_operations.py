@@ -30,21 +30,21 @@ def read_data(directory,file_format="json"):
     return data
 
 
-def filepath_generator(dirname='./',name=None,suffix=None,overwrite=False):
+def filepath_generator(dirname='./',filename=None,suffix=None,overwrite=False):
     """
     Generate a filename with a given name and suffix.
     If the file exists, append datetime to the provided name
     """
     if not os.path.isdir(dirname):
         raise FileNotFoundError(f"{dirname} does not exist.")
-    if name is None:
-        name=f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{uuid.uuid4().hex[-5:]}'
-    if '.' in name and suffix is None:
-        suffix=name.split('.')[-1]
-        name='.'.join(name.split('.')[:-1])
+    if filename is None:
+        filename=f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{uuid.uuid4().hex[-5:]}'
+    if '.' in filename and suffix is None:
+        suffix=filename.split('.')[-1]
+        filename='.'.join(filename.split('.')[:-1])
     if 'suffix' not in locals():
         raise ValueError("Suffix of the file not defined.")
-    file_path=os.path.join(dirname,f"{name}.{suffix}")
+    file_path=os.path.join(dirname,f"{filename}.{suffix}")
     original_file_path=file_path
     count=1
     while os.path.isfile(file_path):
@@ -52,7 +52,7 @@ def filepath_generator(dirname='./',name=None,suffix=None,overwrite=False):
             print(f"Overwrite mode is on. Rewriting to {file_path} .")
             return file_path
         #file_path=os.path.join(dirname,f"{name}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')}.{suffix}")
-        file_path=os.path.join(dirname,f"{name}_{str(count).zfill(6)}.{suffix}")
+        file_path=os.path.join(dirname,f"{filename}_{str(count).zfill(6)}.{suffix}")
         sleep(1e-6)
         count+=1
         if count>=1e5:

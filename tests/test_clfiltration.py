@@ -1,4 +1,4 @@
-from camelia.filtration import CLFiltration,SimplicialComplex
+from commutazzio.filtration import CLFiltration,SimplicialComplex
 from gudhi import SimplexTree as gudhi_SimplexTree
 import pytest
 

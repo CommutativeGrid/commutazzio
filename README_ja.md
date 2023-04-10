@@ -6,6 +6,8 @@ fcc/hcp格子のパラメータ入力から、装飾されたパーシスタン�
 このモジュールを円滑に利用するためには、作業ディレクトリに [random-cech](https://bitbucket.org/tda-homcloud/random-cech/src/master/) をインストールする必要があります。詳しくは[以下](##基本的な使い方)をご覧下さい。
 
 
+Using this module smoothly requires the installation of [random-cech](https://bitbucket.org/tda-homcloud/random-cech/src/master/) in the working directory. See [below](##Basic-usage) for details.
+
 ## インストール
 
 このモジュールをインストールするには、`python3.9`が必要です。

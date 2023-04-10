@@ -1,6 +1,6 @@
 import numpy as np
-from camelia.filtration import pointCloud2Filtration
-from camelia.compute import CommutativeLadderQuiver as CL4
+from commutazzio.filtration import pointCloud2Filtration
+from commutazzio.compute import CommutativeLadderQuiver as CL4
 
 pts=np.array([[0.94677524, 0.96718804],
        [0.76039062, 0.19894666],
@@ -46,4 +46,4 @@ def test_commutative_ladder():
     cl_engine.multiplicity_computation(dim=1)
     
     # assert that the output of the multiplicity computation is as expected
-    assert cl_engine.multiplicity_vectors[0].nonzero_components == {'N1': 1}
+    assert cl_engine.decomp_collection[0].nonzero_components == {'N1': 1}

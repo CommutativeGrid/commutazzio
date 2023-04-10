@@ -1,4 +1,4 @@
-from camelia.filtration import CLFiltration,CLFiltrationDB
+from commutazzio.filtration import CLFiltration,CLFiltrationDB
 import json
 import pytest
 

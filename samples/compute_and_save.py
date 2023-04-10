@@ -5,8 +5,8 @@ Created on Thu Jan  6 19:48:02 2022
 
 @author: kasumi
 """
-from classia import Pipeline
-from classia.utils import pickle_save, pickle_load
+from commutazzio import Pipeline
+from commutazzio.utils import pickle_save, pickle_load
 
 if __name__ == '__main__':
     size=5

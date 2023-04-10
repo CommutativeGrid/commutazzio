@@ -9,6 +9,7 @@ Created on Thu Oct 28 22:01:47 2021
 from warnings import warn
 from functools import cache
 import networkx as nx
+from ..utils import filepath_generator
 
 from .simplicial_complex import SimplicialComplex
 from .simplex_tree import SimplexTree
@@ -85,7 +86,7 @@ class CLFiltration():
     def _sort(nested_list):
         return sorted(nested_list,key=lambda x: (len(x),tuple(x)))
     
-    def get_filtration_as_nested_list(self,layer='upper'):
+    def get_filtration_as_a_nested_list(self,layer='upper'):
         """
         return the filtration as a nested list
         """
@@ -99,7 +100,61 @@ class CLFiltration():
     
     def num_simplices(self):
         pass
-        
+
+
+    def random_cech_format_output_list(self):
+        """print the filtration in the format as described in 
+        https://bitbucket.org/tda-homcloud/random-cech/src/master/
+        # dim birth n m v_0 .. v_dim (CECH_RANDOM)
+        * 1番目のカラム: 単体の次元 
+        * 2番目のカラム: その単体の発生時刻(h_params) 
+        * 3番目のカラム: n 0 or 1, corresponding to 1(lower) or 2(upper) here
+        * 4番目のカラム: 0...ladder_length-1, corresponding to the index of the filtration value subtracted by 1
+        * 5番目以降のカラム: 頂点のインデックス，(dim + 1)個
+        ordered by birth time (h_params)
+        -----------------------------------
+        add the lines from left to right, lower then upper.
+        for each fixed m,
+        if a simplex is seen in the lower row first,
+        do not need to add it from the upper row
+        """
+        # create a dict from .get_filtration()
+        # key: filtration value
+        # value: list of simplices
+        upper = [(tuple(s), round(fv)) for s,fv in self.upper.get_filtration()]
+        lower = [(tuple(s), round(fv)) for s,fv in self.lower.get_filtration()]
+        upper_dict = {}
+        lower_dict = {}
+        for s,fv in upper:
+            if fv not in upper_dict:
+                upper_dict[fv] = [s]
+            else:
+                upper_dict[fv].append(s)
+        for s,fv in lower:
+            if fv not in lower_dict:
+                lower_dict[fv] = [s]
+            else:
+                lower_dict[fv].append(s)
+        output = ["# dim birth n m v_0 .. v_dim (CECH_RANDOM)"]
+        for i in range(1,self.ladder_length+1):
+            seen = set()
+            if i in lower_dict.keys():
+                for s in sorted(lower_dict[i],key=lambda x: len(x)):
+                    output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 0 {i-1} {" ".join(map(str,s))}')
+                    seen.add(s)
+            for s in sorted(upper_dict[i],key=lambda x: len(x)):
+                if s not in seen:
+                    output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 1 {i-1} {" ".join(map(str,s))}')
+        return output
+    
+    def random_cech_format_output_file(self,**kwargs):
+        filepath = filepath_generator(**kwargs)
+        with open(filepath,'w') as f:
+            for line in self.random_cech_format_output_list():
+                f.write(f'{line}\n')
+        # print(f'Output written to {filepath}')
+
+
 
     def dimension(self):
         """return both dimensions  of the final simplicial complexes"""
@@ -127,8 +182,8 @@ class CLFiltration():
         Convert the filtration to a dictionary.
         """
         return {'ladder_length':self.ladder_length,
-                'upper':self.get_filtration_as_nested_list(layer='upper'),
-                'lower':self.get_filtration_as_nested_list(layer='lower'),
+                'upper':self.get_filtration_as_a_nested_list(layer='upper'),
+                'lower':self.get_filtration_as_a_nested_list(layer='lower'),
                 'horizontal_parameters':self.horizontal_parameters,
                 'metadata':self.metadata}
 

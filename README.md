@@ -1,10 +1,6 @@
-# Camélia
+# Commutazzio
 
-**Camélia** is a python package for computing topological invariants of commutative ladders.
-
-~~It features a streamlined process from an user input of parameters of fcc/hcp lattice to decorated persistence diagram.~~
-
-~~Using this module smoothly requires the installation of [random-cech](https://bitbucket.org/tda-homcloud/random-cech/src/master/) in the working directory. See [below](##Basic-usage) for details.~~
+**Commutazzio** is a python package for computing topological invariants of commutative ladders.
 
 ## Installation
 

@@ -1,6 +1,6 @@
 import dionysus as d
 import pytest
-from camelia.filtration import SimplicialComplex, ZigzagFiltration
+from commutazzio.filtration import SimplicialComplex, ZigzagFiltration
 
 
 def test_zigzag_homology_persistence():

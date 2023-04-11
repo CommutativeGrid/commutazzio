@@ -1,4 +1,4 @@
 from .commutative_ladder_quiver import CommutativeLadderQuiver
 from .compute_engine import CLInvariants
-from .kinji_ss_slim import CommutativeLadderKinjiSS
+from .kinji_ss_new import CommutativeLadderKinjiSS
 from .decomposition_container import Decomposition

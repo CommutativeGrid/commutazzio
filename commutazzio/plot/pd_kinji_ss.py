@@ -228,7 +228,9 @@ class CommutativeLadderPdSS():
         # dot_size_min=10 #obsolete
         # dot_size_max=26
         # avoid 0, which will make the dot be of size 0
-        self.dots["log_multi"] = np.log10(df.multiplicity)
+        self.dots["log_multi"] = np.log10(np.abs(df.multiplicity)) 
+        # TODO: WARNING!! 
+        # df.multiplicity can be negative, which causes NaN in log10.
         #self.dots["dot_size"] = np.interp(df.log_multi,(min(df.log_multi),max(df.log_multi)),(dot_size_min,dot_size_max))
         self.dots["birth_num"] = np.where(df.area == 'U', df['x'], df['y'])
         self.dots["death_num"] = np.where(df.area == 'U', df['y'], df['x'])
@@ -248,7 +250,8 @@ class CommutativeLadderPdSS():
         ribbon_width_coord_max = 0.15
         ribbon_width_pixel_min = 2
         ribbon_width_pixel_max = 8
-        self.lines["log_multi"] = np.log10(df.multiplicity)
+        self.lines["log_multi"] = np.log10(np.abs(df.multiplicity))
+        #TODO: WARNING!!
         # calculate the thickness of the line based on the multiplicity
         self.lines["ribbon_width_coord"] = np.interp(df.log_multi, (min(df.log_multi), max(
             df.log_multi)), (ribbon_width_coord_min, ribbon_width_coord_max))

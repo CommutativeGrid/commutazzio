@@ -52,6 +52,8 @@ def get_continuous_color(colorscale, intermed):
         c = colorscale[-1][1]
         return c if c[0] != "#" else hex_to_rgb(c)
 
+    init_cutoff, init_color = colorscale[0]
+    low_cutoff, low_color, high_cutoff, high_color = init_cutoff, init_color, init_cutoff, init_color
     for cutoff, color in colorscale:
         if intermed > cutoff:
             low_cutoff, low_color = cutoff, color
@@ -59,18 +61,21 @@ def get_continuous_color(colorscale, intermed):
             high_cutoff, high_color = cutoff, color
             break
 
-    if (low_color[0] == "#") or (high_color[0] == "#"):
+    if low_color and high_color and  (low_color[0] == "#") or (high_color[0] == "#"):
         # some color scale names (such as cividis) returns:
         # [[loc1, "hex1"], [loc2, "hex2"], ...]
         low_color = hex_to_rgb(low_color)
         high_color = hex_to_rgb(high_color)
 
-    return plotly.colors.find_intermediate_color(
-        lowcolor=low_color,
-        highcolor=high_color,
-        intermed=((intermed - low_cutoff) / (high_cutoff - low_cutoff)),
-        colortype="rgb",
-    )
+    if high_cutoff == low_cutoff:
+        return high_color #in the denominator high_cutoff - low_cutoff = 0 
+    else:
+        return plotly.colors.find_intermediate_color(
+            lowcolor=low_color,
+            highcolor=high_color,
+            intermed=((intermed - low_cutoff) / (high_cutoff - low_cutoff)),
+            colortype="rgb",
+        )
 
 
 

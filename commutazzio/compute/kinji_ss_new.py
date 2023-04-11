@@ -9,19 +9,33 @@ from ..utils import radii_generator,delete_file
 import numpy as np
 import subprocess, os, json, sys
 #import gc garbage collection
+import configparser
+
+# Get the path to the parent directory of this module
+parent_dir = os.path.dirname(os.path.abspath(__file__)) + '/../..'
+# Initialize the configparser object and read the configuration file
+config = configparser.ConfigParser()
+config.read(os.path.join(parent_dir, 'config.ini'))
+
+#output all contents
+print(config.sections())
+
+if sys.platform == 'darwin':
+    FZZ_BINARY_PATH=config.get('FZZ','binary_path_darwin')
+elif sys.platform == 'linux':
+    FZZ_BINARY_PATH=config.get('FZZ','binary_path_linux')
 
 def toList(st):
     return list(map(int, st.split(',')))
 
 class CommutativeLadderKinjiSS():
     def __init__(self, txf, **kwargs):
-        # , txf=None, m=None, n=2, dim=1):
         self.txf = txf # filtration file
         self.m = kwargs.get('ladder_length', 10) # default length is 10
         self.ladder_length = self.m
         self.n = 2 # two layers by default
-        self.radii = ...
-        self.dim = ...
+        self.dim = kwargs.get('dim')
+        self.radii=np.arange(1,self.m+1)
         self.intv = self.interval_generator()
         self.variables={'cov':{},'c_ss':{}}
         self.cover_generator()
@@ -267,10 +281,7 @@ class CommutativeLadderKinjiSS():
         original_dir = os.getcwd()
         input_dir = os.path.dirname(input_file_name)
         os.chdir(input_dir)
-        if sys.platform == 'darwin':
-            subprocess.run(['/Users/hina/Library/CloudStorage/OneDrive-Personal/Documents/KU/commutative-grid/working_dir_cl50/fzz_sandbox/fzz_mac', input_file_name])
-        elif sys.platform == 'linux':
-            subprocess.run(['./fzz_wsl', input_file_name])
+        subprocess.run([FZZ_BINARY_PATH,input_file_name])
         if delete_input_file:
             delete_file(input_file_name)
         os.chdir(original_dir)
@@ -555,8 +566,8 @@ class CommutativeLadderKinjiSS():
                 D= self.dotdec[f"{i},{j},{m},-1"]
                 U= self.dotdec[f"{m},-1,{i},{j}"]
                 if D != 0:
-                    container.loc[len(container)] = [j+1, i+1, D, 'D',] #self.radii[i], self.radii[j]]
+                    container.loc[len(container)] = [j+1, i+1, D, 'D',] 
                 if U != 0:
-                    container.loc[len(container)] = [i+1, j+1, U, 'U',] #self.radii[i], self.radii[j]]
+                    container.loc[len(container)] = [i+1, j+1, U, 'U',]
         self.dots= container
 

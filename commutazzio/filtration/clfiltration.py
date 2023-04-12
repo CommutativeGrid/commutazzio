@@ -87,17 +87,6 @@ class CLFiltration():
     def _sort(nested_list):
         return sorted(nested_list,key=lambda x: (len(x),tuple(x)))
     
-    def get_filtration_as_a_nested_list(self,layer='upper'):
-        """
-        return the filtration as a nested list
-        """
-        if layer in ['u','upper']:
-            filtration = list(self.upper.get_filtration())
-        elif layer in ['l','lower']:
-            filtration =  list(self.lower.get_filtration())
-        else:
-            raise ValueError('layer must be either upper or lower')
-        return [self._sort([s for s,fv in filtration if abs(fv-i)<CLFiltration.Epsilon ]) for i in range(1,self.ladder_length+1)]
     
     def num_simplices(self):
         pass
@@ -173,10 +162,25 @@ class CLFiltration():
         self.upper = self.incremental_filtration_creation(item['upper'])
         self.lower = self.incremental_filtration_creation(item['lower'])
         self.metadata = item['metadata']
+
+    def get_filtration_as_a_nested_list(self,layer):
+        """
+        return the filtration as a nested list
+        """
+        if layer in ['u','upper']:
+            filtration = list(self.upper.get_filtration())
+        elif layer in ['l','lower']:
+            filtration =  list(self.lower.get_filtration())
+        else:
+            raise ValueError('layer must be either upper or lower')
+        return [self._sort([s for s,fv in filtration if abs(fv-i)<CLFiltration.Epsilon ]) for i in range(1,self.ladder_length+1)]
+
     
     def incremental_filtration_creation(self,increments:list):
         """
         Create the filtration by adding simplices one by one.
+        increments: a list of lists of simplices,
+        can be the output of get_filtration_as_a_nested_list()
         """
         filtration=SimplexTree()
         for i,increment in enumerate(increments):

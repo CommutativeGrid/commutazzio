@@ -10,32 +10,38 @@ import numpy as np
 import subprocess, os, json, sys
 #import gc garbage collection
 import configparser
+from warnings import warn
 
+#---------Get the path to the binary file of FZZ----------------
 # Get the path to the parent directory of this module
 parent_dir = os.path.dirname(os.path.abspath(__file__)) + '/../..'
 # Initialize the configparser object and read the configuration file
 config = configparser.ConfigParser()
 config.read(os.path.join(parent_dir, 'config.ini'))
 
-#output all contents
-print(config.sections())
-
 if sys.platform == 'darwin':
     FZZ_BINARY_PATH=config.get('FZZ','binary_path_darwin')
 elif sys.platform == 'linux':
     FZZ_BINARY_PATH=config.get('FZZ','binary_path_linux')
 
-def toList(st):
-    return list(map(int, st.split(',')))
+#raise warning if the path is not set, say that connected persistence diagram is not available
+if FZZ_BINARY_PATH == '':
+    warn("The path to the binary file of FZZ is not set. Connected persistence diagram is not available.")
 
-class CommutativeLadderKinjiSS():
-    def __init__(self, txf, **kwargs):
-        self.txf = txf # filtration file
-        self.m = kwargs.get('ladder_length', 10) # default length is 10
+
+#-----------------End of getting the path----------------------
+
+# def toList(st):
+#     return list(map(int, st.split(',')))
+
+class ConnectedPersistenceDiagram():
+    def __init__(self, filtration_filepath,ladder_length,dim,radii,**kwargs ):
+        self.txf = filtration_filepath # filtration file
+        self.m = ladder_length # default length is 10
         self.ladder_length = self.m
         self.n = 2 # two layers by default
-        self.dim = kwargs.get('dim')
-        self.radii=np.arange(1,self.m+1)
+        self.dim = dim
+        self.radii=np.asarray(radii)
         self.intv = self.interval_generator()
         self.variables={'cov':{},'c_ss':{}}
         self.cover_generator()
@@ -44,14 +50,16 @@ class CommutativeLadderKinjiSS():
         self.compute_connecting_lines()
         self.compute_dotdec()
         self.compute_plot_dots()
-        self.parameters = self.parameter_setup(**kwargs)
 
-    def parameter_setup(self,**kwargs):
-        parameters={k:v for k,v in kwargs.items()}
-        parameters.update({'radii': self.radii})
-        parameters.update({'dots': self.dots})
-        parameters.update({'lines': self.lines})
-        return parameters
+    @property
+    def plot_data(self):
+        plot_data_dict = {}
+        plot_data_dict.update({'ladder_length': self.ladder_length})
+        plot_data_dict.update({'dim': self.dim})
+        plot_data_dict.update({'radii': self.radii})
+        plot_data_dict.update({'dots': self.dots})
+        plot_data_dict.update({'lines': self.lines})
+        return plot_data_dict
 
     def temp(self):
         ttt = {'1,1,10,-1': 5,
@@ -107,14 +115,6 @@ class CommutativeLadderKinjiSS():
         print(f"全{str(len(intv))}個の区間表現を構築")
         # self.intv=intv
         return intv
-
-    # @staticmethod
-    # def sizeSupp(X):
-    #     s = 0
-    #     for i in range(len(X)):
-    #         if X[i][1] == -1: continue
-    #         s += X[i][1]-X[i][0]+1
-    #     return s
 
     def cover_generator(self):
         """generate interval covers"""
@@ -276,7 +276,7 @@ class CommutativeLadderKinjiSS():
         # return PathToStr
 
     
-    def _fzz_executor(self, input_file_name, delete_input_file=False):
+    def _fzz_executor(self, input_file_name, delete_input_file=True):
         """https://github.com/taohou01/fzz/"""
         original_dir = os.getcwd()
         input_dir = os.path.dirname(input_file_name)

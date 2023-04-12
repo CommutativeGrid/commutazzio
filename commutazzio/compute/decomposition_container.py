@@ -27,18 +27,27 @@ class Decomposition:
         elif isinstance(item, int) and 0<=item<len(cl4_equi_isoclasses):
             return self._mult[cl4_equi_isoclasses[item]]
 
-    def to_dict(self,skip_zero=True):
-        """Return a json-serializable dictionary
-        if compact, then only return the nonzero components
+    def to_dict(self,skip_zero:bool=True,verbose=True):
+        """Return a json-serializable dictionary of the decomposition 
+            Parameters:
+                skip_zero (bool): If True, only include nonzero components in the dictionary.
+                    Default is True.
+            Returns:
+                dict: A dictionary with keys 'mult', 'dim', and 'prime'.
         """
+        if not isinstance(skip_zero, bool):
+            raise TypeError("skip_zero must be a boolean")
         if skip_zero:
-            print("skip_zero is True, only nonzero components are returned.")
+            if verbose:
+                print("to_dict() called with skip_zero=True, only nonzero components are returned.")
             return {
                 "mult": {k: int(v) for k, v in self.nonzero_components.items()},
                 "dim": int(self.dim),
                 "prime": int(self.prime)
             }
         else:
+            if verbose:
+                print("to_dict() called with skip_zero=False, returning all components.")
             return {
                 "mult": {k: int(v) for k, v in self.mult.items()},
                 "dim": int(self.dim),

@@ -1,4 +1,4 @@
 from .commutative_ladder_quiver import CommutativeLadderQuiver
 from .compute_engine import CLInvariants
-from .kinji_ss_new import CommutativeLadderKinjiSS
+from .connected_persistence_diagram import ConnectedPersistenceDiagram
 from .decomposition_container import Decomposition

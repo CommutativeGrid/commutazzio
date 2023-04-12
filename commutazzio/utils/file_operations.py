@@ -58,7 +58,7 @@ def filepath_generator(dirname='./',filename=None,suffix=None,overwrite=False):
         if count>=1e5:
             raise FileExistsError(f"{file_path} already exists. Cannot create a new file with an ordinal (within 100k) attached to the original name.")
     if count==1:
-        print(f"Saving to {file_path}.")
+        print(f"Saving to {file_path}")
     else:
         print(f"File {original_file_path} already exists. Saving to {file_path}.")
     return file_path

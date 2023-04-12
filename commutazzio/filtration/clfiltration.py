@@ -14,6 +14,7 @@ from ..utils import filepath_generator
 from .simplicial_complex import SimplicialComplex
 from .simplex_tree import SimplexTree
 import matplotlib.pyplot as plt
+from os.path import abspath
 
 class CLFiltration():
     Epsilon = 1e-6 # for numerical comparison
@@ -147,12 +148,18 @@ class CLFiltration():
                     output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 1 {i-1} {" ".join(map(str,s))}')
         return output
     
-    def random_cech_format_output_file(self,**kwargs):
-        filepath = filepath_generator(**kwargs)
+    def random_cech_format_output_file(self,new_file=True,**kwargs):
+        if new_file:
+            # kwargs:
+            # def filepath_generator(dirname='./',filename=None,suffix=None,overwrite=False):
+            filepath = filepath_generator(**kwargs)
+        else:
+            filepath = kwargs['filepath']
         with open(filepath,'w') as f:
             for line in self.random_cech_format_output_list():
                 f.write(f'{line}\n')
-        # print(f'Output written to {filepath}')
+        # return the absolute path of the file
+        return abspath(filepath)
 
 
 

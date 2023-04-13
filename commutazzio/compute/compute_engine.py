@@ -13,9 +13,9 @@ from functools import cache
 class CLInvariants:
     def __init__(self, clf: CLFiltration):
         self.clf = clf
-        self.quiver = CLQ(len(clf))
-        self.repr_filled = False
         if len(clf) in [3,4]:
+            self.quiver = CLQ(len(clf))
+            self.repr_filled = False
             self.ladder_type = "finite"
         else:
             self.ladder_type = "infinite"
@@ -72,11 +72,18 @@ class CLInvariants:
         """
         return self.quiver.decomp_collection.collection
     
-    @property
-    def decompositions_nonzero(self):
-        """
-        Return a list of all nonzero components in decompositions computed.
-        """
-        return [decomp.nonzero_components_with_info for decomp in self.decompositions_all]
+    # @property
+    # def decompositions_nonzero(self):
+    #     """
+    #     Return a list of all nonzero components in decompositions computed.
+    #     """
+    #     return [decomp.nonzero_components_with_info for decomp in self.decompositions_all]
+    
+    # @property
+    # def decompositions_nonzero_noninterval(self):
+    #     """
+    #     Return a list of all nonzero components in decompositions computed.
+    #     """
+    #     ...
     
 

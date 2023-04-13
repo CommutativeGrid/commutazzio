@@ -3,8 +3,11 @@ from .simplicial_complex import SimplicialComplex
 import numpy as np
 from scipy.spatial import distance
 from gtda.externals import CechComplex
+from gudhi import RipsComplex, AlphaComplex
 
 class SimplexTree(gudhi_SimplexTree):
+    Epsilon = 1e-6 # for numerical comparison
+
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
 
@@ -26,46 +29,52 @@ class SimplexTree(gudhi_SimplexTree):
     def filtration_values(self):
         return np.sort(list(set([item[1] for item in self.get_filtration()])))
     
+    
+    def critical_radii(self,dimension):
+        self.compute_persistence()
+        bdpairs=self.persistence_intervals_in_dimension(dimension)
+        return sorted((1+SimplexTree.Epsilon)*bdpairs.flatten())
+        
 
     def from_point_cloud(self,pt_cloud,method='cech',sc_dim_ceil='auto',radius_max=np.inf):
         """
         Create a simplex tree from a point cloud.
         """
-        space_dim,num_pts=pt_cloud.shape
+        num_pts,space_dim = pt_cloud.shape
         if sc_dim_ceil == 'auto':
             sc_dim_ceil = space_dim-1  # maximum dimension of the simplicial complex.
         if method == 'rips':
-            rips_complex = gd.RipsComplex(pt_cloud,max_edge_length=radius_max)
+            rips_complex = RipsComplex(pt_cloud,max_edge_length=radius_max)
             simplex_tree = rips_complex.create_simplex_tree(max_dimension=sc_dim_ceil)
             simplex_tree.make_filtration_non_decreasing()
         elif method == 'alpha':
-            alpha_complex = gd.AlphaComplex(points=pt_cloud)
+            alpha_complex = AlphaComplex(points=pt_cloud)
             simplex_tree = alpha_complex.create_simplex_tree()
             simplex_tree.make_filtration_non_decreasing()
         elif method == 'cech':
             cech_complex = CechComplex(points=pt_cloud,max_radius=np.inf)
             simplex_tree = cech_complex.create_simplex_tree(max_dimension=sc_dim_ceil)
             simplex_tree.make_filtration_non_decreasing()
-        elif method == 'weak-witness':
-            diameter = max(distance.cdist(pt_cloud,pt_cloud,'euclidean').flatten())
-            witnesses=pt_cloud
-            w_l_ratio=5
-            n_landmarks=int(len(pt_cloud)/w_l_ratio) # vertices consist of landmarks. A too low value may cause zero candidates available for being deleted.
-            landmarks=gd.pick_n_random_points(points=pt_cloud,nb_points=n_landmarks)
-            witness_complex = gd.EuclideanWitnessComplex(witnesses=witnesses, landmarks=landmarks)
-            max_alpha_square = diameter/50.0
-            simplex_tree = witness_complex.create_simplex_tree(max_alpha_square=max_alpha_square,limit_dimension=sc_dim_ceil)
-            simplex_tree.make_filtration_non_decreasing()
-        elif method == 'strong-witness':
-            diameter = max(distance.cdist(pt_cloud,pt_cloud,'euclidean').flatten())
-            witnesses=pt_cloud
-            w_l_ratio=5
-            n_landmarks=int(len(pt_cloud)/w_l_ratio)
-            landmarks=gd.pick_n_random_points(points=pt_cloud,nb_points=n_landmarks)
-            witness_complex = gd.EuclideanStrongWitnessComplex(witnesses=witnesses, landmarks=landmarks)
-            max_alpha_square = diameter/50.0
-            simplex_tree = witness_complex.create_simplex_tree(max_alpha_square=max_alpha_square,limit_dimension=sc_dim_ceil)
-            simplex_tree.make_filtration_non_decreasing()
+        # elif method == 'weak-witness':
+        #     diameter = max(distance.cdist(pt_cloud,pt_cloud,'euclidean').flatten())
+        #     witnesses=pt_cloud
+        #     w_l_ratio=5
+        #     n_landmarks=int(len(pt_cloud)/w_l_ratio) # vertices consist of landmarks. A too low value may cause zero candidates available for being deleted.
+        #     landmarks=gd.pick_n_random_points(points=pt_cloud,nb_points=n_landmarks)
+        #     witness_complex = gd.EuclideanWitnessComplex(witnesses=witnesses, landmarks=landmarks)
+        #     max_alpha_square = diameter/50.0
+        #     simplex_tree = witness_complex.create_simplex_tree(max_alpha_square=max_alpha_square,limit_dimension=sc_dim_ceil)
+        #     simplex_tree.make_filtration_non_decreasing()
+        # elif method == 'strong-witness':
+        #     diameter = max(distance.cdist(pt_cloud,pt_cloud,'euclidean').flatten())
+        #     witnesses=pt_cloud
+        #     w_l_ratio=5
+        #     n_landmarks=int(len(pt_cloud)/w_l_ratio)
+        #     landmarks=gd.pick_n_random_points(points=pt_cloud,nb_points=n_landmarks)
+        #     witness_complex = gd.EuclideanStrongWitnessComplex(witnesses=witnesses, landmarks=landmarks)
+        #     max_alpha_square = diameter/50.0
+        #     simplex_tree = witness_complex.create_simplex_tree(max_alpha_square=max_alpha_square,limit_dimension=sc_dim_ceil)
+        #     simplex_tree.make_filtration_non_decreasing()
         else:
             raise NotImplementedError('Method not supported.')
         for simplex,value in simplex_tree.get_filtration():

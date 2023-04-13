@@ -18,6 +18,8 @@ class SimplicialComplex(gudhi_SimplexTree):
         super().__init__()
         
     def from_simplices(self, simplices):
+        if len(simplices) == 0:
+            return SimplicialComplex()
         if isinstance(simplices, list) and len(simplices) > 0: # if the input is not empty, verify whether the form complies with the standard
             if not isinstance(simplices[0], tuple):
                 raise ValueError('Each simplex should be represented by a tuple.')
@@ -138,7 +140,7 @@ class SimplicialComplex(gudhi_SimplexTree):
         diff_low=5
         diff_high=10
         if num is None:
-            num=np.random.randint(diff_low,diff_high)
+            num=np.random.randint(diff_low,diff_high+1) #np.random.randint is exclusive of the upper bound
         to_be_deleted=np.random.choice(self.vertices(),num,replace=False)
         new_sc=self.delete_simplices(to_be_deleted,inplace)
         return new_sc

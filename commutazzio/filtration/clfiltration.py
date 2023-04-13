@@ -10,6 +10,7 @@ from warnings import warn
 from functools import cache
 import networkx as nx
 from ..utils import filepath_generator
+from random import sample
 
 from .simplicial_complex import SimplicialComplex
 from .simplex_tree import SimplexTree
@@ -29,7 +30,7 @@ class CLFiltration():
         else:
             self.horizontal_parameters = h_params
         # for example, it can be a list of radii 
-        self.metadata = metadata
+        self.metadata = dict(**metadata)
 
     @property
     def h_params(self):
@@ -40,6 +41,61 @@ class CLFiltration():
     
     def metadata_update(self,kv_dict):
         self.metadata.update(kv_dict)
+
+    def metadata_key_append(self,key,value):
+        if key not in self.metadata:
+            self.metadata[key] = []
+        self.metadata[key].append(value)
+
+    def set_new_length(self,new_length,indices=None):
+        """
+        This method allows the user to refactor the length of the ladder.
+        new_length shall be strictly shorter than the current length.
+        indices will be randomized to be a list of length new_length
+        if not given.
+        """
+        if new_length >= self.ladder_length:
+            raise ValueError("new_length must be strictly shorter than the current length")
+        if indices is None: 
+            # will be a strictly increasing list of length new_length, picking values from 1,...,self.ladder_length
+            indices = sorted(sample(range(1,self.ladder_length+1),new_length))
+    
+        if len(indices) != new_length:
+            raise ValueError("indices must be a list of length new_length")
+        if len(set(indices)) != new_length:
+            raise ValueError("indices must be a list of distinct integers")
+        if max(indices) > self.ladder_length:
+            raise ValueError("indices must be a list of integers between 1 and the current ladder length")
+
+        new_upper = SimplexTree(self.upper)
+        new_lower = SimplexTree(self.lower)
+        # Reassign filtration values
+        for simplex, original_fv in self.upper.get_simplices():
+            # new filtration value is determined by its relative position in indices
+            # for example, if indices = [2,4,6], then the filtration value of a simplex with original filtration value 4 is 2
+            # and the new filtration value of a simplex with original filtration value 3 is also 2,
+            # and the new filtration value of simplex with original filtration value 2 is 1
+            new_fv = len(indices)
+            for i in range(len(indices)):
+                if original_fv <= indices[i]:
+                    new_fv = i+1
+                    break
+            new_upper.assign_filtration(simplex,new_fv)
+        for simplex, original_fv in self.lower.get_simplices():
+            new_fv = len(indices)
+            for i in range(len(indices)):
+                if original_fv <= indices[i]:
+                    new_fv = i+1
+                    break
+            new_lower.assign_filtration(simplex,new_fv)
+        if new_upper.make_filtration_non_decreasing() or new_lower.make_filtration_non_decreasing():
+            raise ValueError("There is a bug in the code, please report it to the developer")
+        # return a new CLFiltration object
+        new_horizontal_parameters = [self.horizontal_parameters[i-1] for i in indices]
+        new_metadata = dict(**self.metadata)
+        new_metadata.update(ladder_length_refactored=dict(old_length=self.ladder_length,new_length=new_length,indices=indices))
+        return CLFiltration(new_upper,new_lower,new_length,new_horizontal_parameters,new_metadata)
+
     
     def __len__(self):
         return self.ladder_length
@@ -132,9 +188,10 @@ class CLFiltration():
                 for s in sorted(lower_dict[i],key=lambda x: len(x)):
                     output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 0 {i-1} {" ".join(map(str,s))}')
                     seen.add(s)
-            for s in sorted(upper_dict[i],key=lambda x: len(x)):
-                if s not in seen:
-                    output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 1 {i-1} {" ".join(map(str,s))}')
+            if i in upper_dict.keys():
+                for s in sorted(upper_dict[i],key=lambda x: len(x)):
+                    if s not in seen:
+                        output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 1 {i-1} {" ".join(map(str,s))}')
         return output
     
     def random_cech_format_output_file(self,new_file=True,**kwargs):

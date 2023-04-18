@@ -36,7 +36,7 @@ def random_vertical_removal_points_only(num_pts,ladder_length,max_removal_per_ti
     
     return result[::-1]
 
-def pointCloud2Filtration(pts:np.array,vertical_removal:list,radii:list,max_simplex_dim:int):
+def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,max_simplex_dim:int):
     """
     Convert a point cloud to a commutative ladder filtration.
     pts: a numpy array of shape (n,d), where n is the number of points, d is the dimension of the points
@@ -48,14 +48,15 @@ def pointCloud2Filtration(pts:np.array,vertical_removal:list,radii:list,max_simp
     # add simplices in sc to upper row, at the designated radius
     # add simplices in sc.delete(vertical_removal[i]) to lower row, at the designated radius
     # return necessary infos
-    if isinstance(vertical_removal[0],(int, np.int64)): #[2,3,4,5,6,7]
-        vertical_removal=[[(vertex,) for vertex in vertical_removal]]*len(radii)
-        print(vertical_removal)
+    if isinstance(vertical_removal_input[0],(int, np.int64)): #[2,3,4,5,6,7]
+        vertical_removal=[[(vertex,) for vertex in vertical_removal_input]]*len(radii)
+        # print(vertical_removal)
     else:
         #example: [[(2,),(3,)],[(2,),(3,),(4,)],[(2,),(3,),(4,),(5,)]
         # canonically, vertical_removal is a list of list of simplices
         # each entry of vertical_removal is a list of simplices to be removed, for example [(1,),(2,3)]
-        assert len(vertical_removal)==len(radii)
+        assert len(vertical_removal_input)==len(radii)
+        vertical_removal = [*vertical_removal_input]
     #check that radii is sorted
     assert all(radii[i]<=radii[i+1] for i in range(len(radii)-1))
     parentalST=SimplexTree()
@@ -81,4 +82,4 @@ def pointCloud2Filtration(pts:np.array,vertical_removal:list,radii:list,max_simp
     # ic(parentalST.maximum_simplices)
     # ic(upper.maximum_simplices)
     # ic(lower.maximum_simplices)
-    return CLFiltration(upper=upper,lower=lower,length=len(radii),h_params=radii,info={'vertical_removal':vertical_removal})
+    return CLFiltration(upper=upper,lower=lower,length=len(radii),h_params=radii,info={'vertical_removal':vertical_removal_input})

@@ -20,7 +20,7 @@ from os.path import abspath
 class CLFiltration():
     Epsilon = 1e-6 # for numerical comparison
 
-    def __init__(self,upper=SimplexTree(),lower=SimplexTree(),length=4,h_params=None,metadata={}):
+    def __init__(self,upper=SimplexTree(),lower=SimplexTree(),length=4,h_params=None,info={}):
         self.upper = upper # a SimplexTree, filtration values are 1,2,3,...,length
         self.lower = lower # a SimplexTree, filtration values are 1,2,3,...,length
         self.ladder_length=length
@@ -30,22 +30,22 @@ class CLFiltration():
         else:
             self.horizontal_parameters = h_params
         # for example, it can be a list of radii 
-        self.metadata = dict(**metadata)
+        self.info = dict(**info)
 
     @property
     def h_params(self):
         return self.horizontal_parameters
     
-    def set_metadata(self,metadata):
-        self.metadata = metadata
+    def set_info(self,info):
+        self.info = info
     
-    def metadata_update(self,kv_dict):
-        self.metadata.update(kv_dict)
+    def info_update(self,kv_dict):
+        self.info.update(kv_dict)
 
-    def metadata_key_append(self,key,value):
-        if key not in self.metadata:
-            self.metadata[key] = []
-        self.metadata[key].append(value)
+    def info_key_append(self,key,value):
+        if key not in self.info:
+            self.info[key] = []
+        self.info[key].append(value)
 
     def set_new_length(self,new_length,indices=None):
         """
@@ -92,9 +92,9 @@ class CLFiltration():
             raise ValueError("There is a bug in the code, please report it to the developer")
         # return a new CLFiltration object
         new_horizontal_parameters = [self.horizontal_parameters[i-1] for i in indices]
-        new_metadata = dict(**self.metadata)
-        new_metadata.update(ladder_length_refactored=dict(old_length=self.ladder_length,new_length=new_length,indices=indices))
-        return CLFiltration(new_upper,new_lower,new_length,new_horizontal_parameters,new_metadata)
+        new_info = dict(**self.info)
+        new_info.update(ladder_length_refactored=dict(old_length=self.ladder_length,new_length=new_length,indices=indices))
+        return CLFiltration(new_upper,new_lower,new_length,new_horizontal_parameters,new_info)
 
     
     def __len__(self):
@@ -218,7 +218,7 @@ class CLFiltration():
         self.ladder_length = item['ladder_length']
         self.upper = self.incremental_filtration_creation(item['upper'])
         self.lower = self.incremental_filtration_creation(item['lower'])
-        self.metadata = item['metadata']
+        self.info = item['info']
 
     def get_filtration_as_a_nested_list(self,layer):
         """
@@ -253,7 +253,7 @@ class CLFiltration():
                 'upper':self.get_filtration_as_a_nested_list(layer='upper'),
                 'lower':self.get_filtration_as_a_nested_list(layer='lower'),
                 'horizontal_parameters':self.horizontal_parameters,
-                'metadata':self.metadata}
+                'info':self.info}
 
     def validation(self):
         """

@@ -40,9 +40,9 @@ class SimplexTree(gudhi_SimplexTree):
         """
         Create a simplex tree from a point cloud.
         """
-        num_pts,space_dim = pt_cloud.shape
+        num_pts,space_dim = pt_cloud.shape # number of points and dimension of the space.
         if sc_dim_ceil == 'auto':
-            sc_dim_ceil = space_dim-1  # maximum dimension of the simplicial complex.
+            sc_dim_ceil = space_dim  # maximum dimension of the simplicial complex.
         if method == 'rips':
             rips_complex = RipsComplex(pt_cloud,max_edge_length=radius_max)
             simplex_tree = rips_complex.create_simplex_tree(max_dimension=sc_dim_ceil)

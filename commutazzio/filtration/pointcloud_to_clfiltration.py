@@ -39,6 +39,8 @@ def random_vertical_removal_points_only(num_pts,ladder_length,max_removal_per_ti
 def pointCloud2Filtration(pts:np.array,vertical_removal:list,radii:list,max_simplex_dim:int):
     """
     Convert a point cloud to a commutative ladder filtration.
+    pts: a numpy array of shape (n,d), where n is the number of points, d is the dimension of the points
+    vertical_removal: a list of list of simplices to be removed at each radius, notice that it is the name of the simplices, not the indices of the simplices
     """
     # create a simplex tree
     # truncation it using radius in radii, get a sc
@@ -48,6 +50,7 @@ def pointCloud2Filtration(pts:np.array,vertical_removal:list,radii:list,max_simp
     # return necessary infos
     if isinstance(vertical_removal[0],(int, np.int64)): #[2,3,4,5,6,7]
         vertical_removal=[[(vertex,) for vertex in vertical_removal]]*len(radii)
+        print(vertical_removal)
     else:
         #example: [[(2,),(3,)],[(2,),(3,),(4,)],[(2,),(3,),(4,),(5,)]
         # canonically, vertical_removal is a list of list of simplices
@@ -74,4 +77,8 @@ def pointCloud2Filtration(pts:np.array,vertical_removal:list,radii:list,max_simp
         for simplex in sc.delete_simplices(vertical_removal[i]).simplices:
             if len(simplex)<=max_simplex_dim+1:
                 lower.insert(simplex,x_coord)
-    return CLFiltration(upper=upper,lower=lower,length=len(radii),h_params=radii,metadata={'vertical_removal':vertical_removal})
+    # from icecream import ic
+    # ic(parentalST.maximum_simplices)
+    # ic(upper.maximum_simplices)
+    # ic(lower.maximum_simplices)
+    return CLFiltration(upper=upper,lower=lower,length=len(radii),h_params=radii,info={'vertical_removal':vertical_removal})

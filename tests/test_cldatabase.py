@@ -21,7 +21,7 @@ def clf_db():
     cc1.lower.insert([1, 3], 2)
     cc1.lower.insert([1, 2], 3)
     cc1.lower.insert([2, 3], 3)
-    cc1.metadata = {'test': [[1, 2, 3]]}
+    cc1.info = {'test': [[1, 2, 3]]}
     # add the filtration to the database
     db.add_filtration(cc1)
 
@@ -43,7 +43,7 @@ def clf_db():
     cc2.lower.insert([1, 3], 2)
     cc2.lower.insert([1, 2], 3)
     cc2.lower.insert([2, 3], 3)
-    cc2.metadata = {'test': [[1, 2, 3, 4]]}
+    cc2.info = {'test': [[1, 2, 3, 4]]}
     # add the filtration to the database
     db.add_filtration(cc2)
 
@@ -57,12 +57,13 @@ def clf_db():
 def test_read_filtration(clf_db):
     # read all the filtrations from the database
     filtrations = clf_db.read_all()
-    # check that there are two filtrations
-    assert len(filtrations) == 2
+    # ~check that there are two filtrations~
+    f0= next(filtrations)
+    f1= next(filtrations)
     # check that the ladder length of the first filtration is 3
-    assert filtrations[0].ladder_length == 3
+    assert f0.ladder_length == 3
+    # check that the info of the first filtration is correct
+    assert f0.info == {'test': [[1, 2, 3]]}
     # check that the ladder length of the second filtration is 4
-    assert filtrations[1].ladder_length == 4
-    # check that the metadata of the first filtration is correct
-    assert filtrations[0].metadata == {'test': [[1, 2, 3]]}
+    assert f1.ladder_length == 4
     # check that the h-parameters of the

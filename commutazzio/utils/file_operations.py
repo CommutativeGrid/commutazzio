@@ -30,29 +30,29 @@ def read_data(directory,file_format="json"):
     return data
 
 
-def filepath_generator(dirname='./',filename=None,suffix=None,overwrite=False):
+def filepath_generator(dirname='./',filename=None,extension=None,overwrite=False):
     """
-    Generate a filename with a given name and suffix.
+    Generate a filename with a given name and extension.
     If the file exists, append datetime to the provided name
     """
     if not os.path.isdir(dirname):
         raise FileNotFoundError(f"{dirname} does not exist.")
     if filename is None:
         filename=f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{uuid.uuid4().hex[-5:]}'
-    if '.' in filename and suffix is None:
-        suffix=filename.split('.')[-1]
+    if '.' in filename and extension is None:
+        extension=filename.split('.')[-1]
         filename='.'.join(filename.split('.')[:-1])
-    if 'suffix' not in locals():
-        raise ValueError("Suffix of the file not defined.")
-    file_path=os.path.join(dirname,f"{filename}.{suffix}")
+    if 'extension' not in locals():
+        raise ValueError("extension of the file not defined.")
+    file_path=os.path.join(dirname,f"{filename}.{extension}")
     original_file_path=file_path
     count=1
     while os.path.isfile(file_path):
         if overwrite is True:
             print(f"Overwrite mode is on. Rewriting to {file_path} .")
             return file_path
-        #file_path=os.path.join(dirname,f"{name}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')}.{suffix}")
-        file_path=os.path.join(dirname,f"{filename}_{str(count).zfill(6)}.{suffix}")
+        #file_path=os.path.join(dirname,f"{name}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')}.{extension}")
+        file_path=os.path.join(dirname,f"{filename}_{str(count).zfill(6)}.{extension}")
         sleep(1e-6)
         count+=1
         if count>=1e5:

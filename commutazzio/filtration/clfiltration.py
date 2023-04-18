@@ -11,6 +11,8 @@ from functools import cache
 import networkx as nx
 from ..utils import filepath_generator
 from random import sample
+from collections import defaultdict
+from orjson import dumps, OPT_SERIALIZE_NUMPY
 
 from .simplicial_complex import SimplicialComplex
 from .simplex_tree import SimplexTree
@@ -36,7 +38,8 @@ class CLFiltration():
     def h_params(self):
         return self.horizontal_parameters
     
-    def set_info(self,info):
+    def set_info(self,info:dict):
+        # make sure that the stored format is json-serializable
         self.info = info
     
     def info_update(self,kv_dict):
@@ -169,29 +172,35 @@ class CLFiltration():
         # value: list of simplices
         upper = [(tuple(s), round(fv)) for s,fv in self.upper.get_filtration()]
         lower = [(tuple(s), round(fv)) for s,fv in self.lower.get_filtration()]
-        upper_dict = {}
-        lower_dict = {}
+        # from icecream import ic
+        # ic(upper)
+        # ic(lower)
+        upper_dict = defaultdict(list)
+        lower_dict = defaultdict(list)
         for s,fv in upper:
-            if fv not in upper_dict:
-                upper_dict[fv] = [s]
-            else:
-                upper_dict[fv].append(s)
+            upper_dict[fv].append(s)
+            # if fv not in upper_dict:
+            #     upper_dict[fv] = [s]
+            # else:
+            #     upper_dict[fv].append(s)
         for s,fv in lower:
-            if fv not in lower_dict:
-                lower_dict[fv] = [s]
-            else:
-                lower_dict[fv].append(s)
+            lower_dict[fv].append(s)
+            # if fv not in lower_dict:
+            #     lower_dict[fv] = [s]
+            # else:
+            #     lower_dict[fv].append(s)
         output = ["# dim birth n m v_0 .. v_dim (CECH_RANDOM)"]
+        warn("Functionality under construction")
         for i in range(1,self.ladder_length+1):
-            seen = set()
+            # seen = set()
             if i in lower_dict.keys():
                 for s in sorted(lower_dict[i],key=lambda x: len(x)):
                     output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 0 {i-1} {" ".join(map(str,s))}')
-                    seen.add(s)
+                    # seen.add(s)
             if i in upper_dict.keys():
                 for s in sorted(upper_dict[i],key=lambda x: len(x)):
-                    if s not in seen:
-                        output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 1 {i-1} {" ".join(map(str,s))}')
+                    # if s not in seen:
+                    output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 1 {i-1} {" ".join(map(str,s))}')
         return output
     
     def random_cech_format_output_file(self,new_file=True,**kwargs):
@@ -252,8 +261,8 @@ class CLFiltration():
         return {'ladder_length':self.ladder_length,
                 'upper':self.get_filtration_as_a_nested_list(layer='upper'),
                 'lower':self.get_filtration_as_a_nested_list(layer='lower'),
-                'horizontal_parameters':self.horizontal_parameters,
-                'info':self.info}
+                'horizontal_parameters':dumps(self.horizontal_parameters,option=OPT_SERIALIZE_NUMPY),
+                'info':dumps(self.info, option=OPT_SERIALIZE_NUMPY)}
 
     def validation(self):
         """

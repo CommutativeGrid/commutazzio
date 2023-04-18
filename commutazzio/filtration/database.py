@@ -1,18 +1,22 @@
 import sqlite3
 from .clfiltration import CLFiltration
-import json
 """
 creating and managing a SQLite database 
 for storing and retrieving instances of CLFiltration.
 """
+from orjson import loads
+from ast import literal_eval
 
 class CLFiltrationDB:
     def __init__(self, filename='clf_database.db'):
         """
-         initializes the database by connecting to the database file, 
-         and calls create_table() method which creates a table 
-         if it doesn't exist in the database.
-         """
+        initializes the database by connecting to the database file, 
+        and calls create_table() method which creates a table 
+        if it doesn't exist in the database.
+        """
+        # add .db if no .db in filename
+        if '.db' not in filename:
+            filename = filename + '.db'
         self.filename = filename
         self.conn = sqlite3.connect(self.filename)
         print(f"Connected to {self.filename} database.")
@@ -55,7 +59,7 @@ class CLFiltrationDB:
                             str(serialized_filtration['upper']),
                             str(serialized_filtration['lower']),
                             str(serialized_filtration['horizontal_parameters']),
-                            json.dumps(serialized_filtration['info'])))
+                            str(serialized_filtration['info'])))
         # Save the changes
         self.conn.commit()
     
@@ -71,8 +75,12 @@ class CLFiltrationDB:
             clf_filtration.ladder_length = row[1]
             clf_filtration.upper = clf_filtration.incremental_filtration_creation(eval(row[2]))
             clf_filtration.lower = clf_filtration.incremental_filtration_creation(eval(row[3]))
-            clf_filtration.horizontal_parameters = eval(row[4])
-            clf_filtration.info = json.loads(row[5])
+            print(type(row[4]))
+            try:
+                clf_filtration.horizontal_parameters = loads(literal_eval(row[4]))
+            except Exception as e:
+                print(e)
+            clf_filtration.info = loads(literal_eval(row[5]))
             return clf_filtration
         else:
             return None

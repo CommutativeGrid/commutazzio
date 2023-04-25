@@ -11,6 +11,7 @@ import subprocess, os, json, sys
 #import gc garbage collection
 import configparser
 from warnings import warn
+from icecream import ic
 
 #---------Get the path to the binary file of FZZ----------------
 # Get the path to the parent directory of this module
@@ -35,15 +36,17 @@ if FZZ_BINARY_PATH == '':
 #     return list(map(int, st.split(',')))
 
 class ConnectedPersistenceDiagram():
-    def __init__(self, filtration_filepath,ladder_length,dim,radii,**kwargs ):
-        self.txf = filtration_filepath # filtration file
+    def __init__(self, filtration_filepath,ladder_length,homological_dim,radii,clean_up=True,**kwargs ):
+        self.txf = os.path.abspath(filtration_filepath) # filtration file
         self.m = ladder_length # default length is 10
         self.ladder_length = self.m
+        self.clean_up = clean_up # clean up the temporary files
         self.n = 2 # two layers by default
-        self.dim = dim
+        self.dim = homological_dim # homological dimension
         self.radii=np.asarray(radii)
         self.intv = self.interval_generator()
         self.variables={'cov':{},'c_ss':{}}
+        # c_ss stands for compression source-sink 
         self.cover_generator()
         self.delt_ss = self.deco()
         self.compute_dec_obj()
@@ -77,16 +80,16 @@ class ConnectedPersistenceDiagram():
          '1,5,10,-1': 1}
         self.dec = ttt
 
-    @staticmethod
-    def radii_compute(**kwargs):
-        radii = kwargs.get("radii")
-        if radii is not None:
-            return np.array(radii)
-        start = kwargs.get("start")
-        end = kwargs.get("end")
-        ladder_length = kwargs.get("ladder_length")
-        radii = radii_generator(start,end,ladder_length)
-        return radii
+    # @staticmethod
+    # def radii_compute(**kwargs):
+    #     radii = kwargs.get("radii")
+    #     if radii is not None:
+    #         return np.array(radii)
+    #     start = kwargs.get("start")
+    #     end = kwargs.get("end")
+    #     ladder_length = kwargs.get("ladder_length")
+    #     radii = radii_generator(start,end,ladder_length)
+    #     return radii
 
 
     def interval_generator(self):
@@ -173,8 +176,13 @@ class ConnectedPersistenceDiagram():
 
     def complexes_generator(self):
         """compute complexes"""
-        # C[j][i], j in range(m), i in range(n)
+        # C[i][j], i in range(m), j in range(n)
+        # i: time index
+        # j: layer index
         C = [[set() for j in range(self.n)] for i in range(self.m)]
+        # C is a list of lists of sets, 
+        # each set contains strings of vertices, 
+        # each string represents a simplex
         with open(self.txf, 'r') as f:
             filt = [line.rstrip() for line in f]
             # line is in form of
@@ -185,18 +193,28 @@ class ConnectedPersistenceDiagram():
         for i in range(len(filt)):
             # data=filt[i].rstrip().split()
             data = filt[i].split()
-            if data[0] == '#': continue
-            if self.dim < 1 and data[0] == '2': continue
-            if self.dim < 2 and data[0] == '3': continue
+            if data[0] == '#': continue # skip comments
+            if self.dim + 1 < int(data[0]): continue # skip higher dimensions
+            # if self.dim < 1 and data[0] == '2': continue 
+            # if self.dim < 2 and data[0] == '3': continue
+            # data[3]: horizontal index
+            # data[2]: vertical index
             C[int(data[3])][int(data[2])].add(' '.join(sorted(data[4:])))
-        for i in range(1, self.m):
-            C[i][0] = C[i][0] | C[i-1][0]
-        for j in range(1, self.n):
+            # TODO: check if sorted here is sufficient, or if it is necessary to sort
+        # up to now, C contains each simplices newly added at each step.
+        for i in range(1, self.m): # Reconstruct the lower layer
+            C[i][0] = C[i][0] | C[i-1][0] # union
+        for j in range(1, self.n): # reconstruct the leftest column
+            # for self.n=2, we only need to reconstruct the first column
             C[0][j] = C[0][j] | C[0][j-1]
+        # Reconstruction of the upper layer staring from the second column
         for i in range(1, self.m):
             for j in range(1, self.n):
                 C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
         self.complexes = C
+        # from itertools import product
+        # for i,j in product(range(self.m),range(self.n)):
+        #     ic(i,j,(C[i][j]))
         # return C
 
     
@@ -276,24 +294,24 @@ class ConnectedPersistenceDiagram():
         # return PathToStr
 
     
-    def _fzz_executor(self, input_file_name, delete_input_file=True):
+    def _fzz_executor(self, input_file_name):
         """https://github.com/taohou01/fzz/"""
         original_dir = os.getcwd()
-        input_dir = os.path.dirname(input_file_name)
+        # get the absolute path of the directory of the input file
+        input_dir = os.path.abspath(os.path.dirname(input_file_name))
         os.chdir(input_dir)
         subprocess.run([FZZ_BINARY_PATH,input_file_name])
-        if delete_input_file:
+        if self.clean_up:
             delete_file(input_file_name)
         os.chdir(original_dir)
         return f"{input_file_name[:-4]}_pers"
-
+    
     def fzz_generator_1(self):
-        
         m=self.m
         n=self.n
         fzz_input_file_name = f"{self.txf[:-4]}_FZZ.txt"
         self.variables['d_ss'] = {}
-        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 1)][1]]
+        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 1)][1]] # (0,1), notice the difference
         for i in range(m-1): 
             self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 1, i+1, 1)][1])
         self.variables['S'].append(self.variables['S'][-1]+1)
@@ -309,6 +327,13 @@ class ConnectedPersistenceDiagram():
         m=self.m
         n=self.n
         fzz_input_file_name = f"{self.txf[:-4]}_FZZ.txt"
+        self.variables['d_ss']={}
+        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 0)][1]] # (0,0), notice the difference
+        for i in range(m-1): 
+            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 0, i+1, 0)][1])
+        self.variables['S'].append(self.variables['S'][-1]+1)
+        for i in range(m):
+            for j in range(i, m): self.variables['d_ss'][(i, j)]=0
         with open(fzz_input_file_name, 'w') as f:
             f.write(self.variables['NodeToStr'][(0, 0)][0])
             f.write(self.variables['PathToStr'][(0, 0, m-1, 0)][0])
@@ -348,21 +373,30 @@ class ConnectedPersistenceDiagram():
         print("全ての道の差分リストを構築")
         # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
         # self.write_node_to_str(self.variables['PathToStr'], "PathToStr.txt")
-        fzz_output_1=self.fzz_generator_1()
-        with open(fzz_output_1, 'r') as f:
+
+        fzz_output_1=self.fzz_generator_1() #initialized with the function
+        # notice that S is initialized with S=[0, NodeToStr[(0, 1)][1]] when using this function 
+        with open(fzz_output_1, 'r') as f: # opening the output file of fzz
             filt = [line.rstrip() for line in f]
-        
+        # Each line denotes an interval in the barcode, 
+        # with the first number being the dimension and 
+        # the rest being birth and death. 
+        # Note that the birth and death are start and end of the closed integral interval, 
+        # i.e., a line d p q indicates a persistence interval [p,q] in dimensional d 
+        # starting with the complex K_p and ending with the complex K_q.
         for i in range(len(filt)):
             data=filt[i].rstrip().split()
             if int(data[0])!=dim: 
                 continue
             p=int(data[1])
             q=int(data[2])
+            # ic(m)
+            # ic(len(self.variables['S'])) length is m+2
             for j in range(m): 
                 if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
                     b=j; 
                     break
-            for j in range(m): 
+            for j in range(m): #starting from -1?
                 if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
                     d=j; 
                     break
@@ -377,15 +411,6 @@ class ConnectedPersistenceDiagram():
             for b in range(m-l):
                 d=b+l
                 self.variables['c_ss'][(e, (b, d))]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][(e, (b-1, d))]+self.variables['c_ss'][(e, (b, d+1))]-self.variables['c_ss'][(e, (b-1, d+1))]
-
-        self.variables['d_ss']={}
-        self.variables['S']=[0, self.variables['NodeToStr'][(0, 0)][1]]
-        for i in range(m-1): 
-            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 0, i+1, 0)][1])
-        self.variables['S'].append(self.variables['S'][-1]+1)
-        for i in range(m):
-            for j in range(i, m): self.variables['d_ss'][(i, j)]=0
-
 
         fzz_output_2=self.fzz_generator_2()
         with open(fzz_output_2, 'r') as f:

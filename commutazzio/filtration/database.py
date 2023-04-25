@@ -85,7 +85,7 @@ class CLFiltrationDB:
         else:
             return None
         
-    def read_all(self):
+    def get_all(self):
         # Retrieve all rows from the table
         cursor = self.conn.cursor()
         cursor.execute('''SELECT * FROM clf_filtration''')

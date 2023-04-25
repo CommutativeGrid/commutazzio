@@ -36,7 +36,7 @@ class CLInvariants:
         (Can choose other finite field if we use dionysus2)
         """
         if self.filtration_file_ready == False:
-            self.filtration_filepath=self.clf.random_cech_format_output_file(new_file=True,dirname='./filtration',suffix='fltr')
+            self.filtration_filepath=self.clf.random_cech_format_output_file(new_file=True,dirname='./filtration',extension='fltr')
             self.filtration_file_ready = True
         new_diagram=cPD(self.filtration_filepath,\
                         ladder_length=self.clf.ladder_length,\

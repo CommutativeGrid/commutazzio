@@ -167,6 +167,7 @@ class CLFiltration():
         if a simplex is seen in the lower row first,
         do not need to add it from the upper row
         """
+        #TODO: add all intermediate simplices
         # create a dict from .get_filtration()
         # key: filtration value
         # value: list of simplices
@@ -192,15 +193,15 @@ class CLFiltration():
         output = ["# dim birth n m v_0 .. v_dim (CECH_RANDOM)"]
         warn("Functionality under construction")
         for i in range(1,self.ladder_length+1):
-            # seen = set()
+            seen = set()
             if i in lower_dict.keys():
                 for s in sorted(lower_dict[i],key=lambda x: len(x)):
                     output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 0 {i-1} {" ".join(map(str,s))}')
-                    # seen.add(s)
+                    seen.add(s)
             if i in upper_dict.keys():
                 for s in sorted(upper_dict[i],key=lambda x: len(x)):
-                    # if s not in seen:
-                    output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 1 {i-1} {" ".join(map(str,s))}')
+                    if s not in seen:
+                        output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 1 {i-1} {" ".join(map(str,s))}')
         return output
     
     def random_cech_format_output_file(self,new_file=True,**kwargs):

@@ -167,40 +167,34 @@ class CLFiltration():
         if a simplex is seen in the lower row first,
         do not need to add it from the upper row
         """
-        #TODO: add all intermediate simplices
         # create a dict from .get_filtration()
         # key: filtration value
         # value: list of simplices
         upper = [(tuple(s), round(fv)) for s,fv in self.upper.get_filtration()]
         lower = [(tuple(s), round(fv)) for s,fv in self.lower.get_filtration()]
-        # from icecream import ic
-        # ic(upper)
-        # ic(lower)
+        # modify upper and lower such that all faces are included
         upper_dict = defaultdict(list)
         lower_dict = defaultdict(list)
         for s,fv in upper:
             upper_dict[fv].append(s)
-            # if fv not in upper_dict:
-            #     upper_dict[fv] = [s]
-            # else:
-            #     upper_dict[fv].append(s)
         for s,fv in lower:
             lower_dict[fv].append(s)
-            # if fv not in lower_dict:
-            #     lower_dict[fv] = [s]
-            # else:
-            #     lower_dict[fv].append(s)
-        output = ["# dim birth n m v_0 .. v_dim (CECH_RANDOM)"]
-        warn("Functionality under construction")
+        # sort the simplices in each list, first by length, then by lexicographic order
         for i in range(1,self.ladder_length+1):
-            seen = set()
+            if i in upper_dict.keys():
+                upper_dict[i] = self._sort(upper_dict[i])
+            if i in lower_dict.keys():
+                lower_dict[i] = self._sort(lower_dict[i])
+        output = ["# dim birth n m v_0 .. v_dim (CECH_RANDOM)"]
+        for i in range(1,self.ladder_length+1):
+            col_seen = set() # do not add simplex added in the lower layer to the upper layer again
             if i in lower_dict.keys():
                 for s in sorted(lower_dict[i],key=lambda x: len(x)):
                     output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 0 {i-1} {" ".join(map(str,s))}')
-                    seen.add(s)
+                    col_seen.add(s)
             if i in upper_dict.keys():
                 for s in sorted(upper_dict[i],key=lambda x: len(x)):
-                    if s not in seen:
+                    if s not in col_seen:
                         output.append(f'{len(s)-1} {self.horizontal_parameters[i-1]} 1 {i-1} {" ".join(map(str,s))}')
         return output
     

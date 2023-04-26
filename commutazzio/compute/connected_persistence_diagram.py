@@ -13,6 +13,7 @@ import subprocess, os, json, sys
 import configparser
 from warnings import warn
 from icecream import ic
+from ..utils import filepath_generator
 
 #---------Get the path to the binary file of FZZ----------------
 # Get the path to the parent directory of this module
@@ -39,6 +40,8 @@ if FZZ_BINARY_PATH == '':
 class ConnectedPersistenceDiagram():
     def __init__(self, filtration_filepath,ladder_length,homological_dim,filtration_values,clean_up=True,**kwargs ):
         self.txf = os.path.abspath(filtration_filepath) # filtration file
+        self.txf_dir = os.path.dirname(self.txf)
+        self.txf_basename_wo_ext = os.path.splitext(os.path.basename(self.txf))[0]
         self.m = ladder_length # default length is 10
         self.ladder_length = self.m
         self.clean_up = clean_up # clean up the temporary files
@@ -54,6 +57,9 @@ class ConnectedPersistenceDiagram():
         self.compute_connecting_lines()
         self.compute_dotdec()
         self.compute_plot_dots()
+
+    #TODO: validate the txf file
+    #TODO: check if all faces are contained, etc.
 
     def preprocess_filtration_values(self,filtration_values):
         """Preprocess the filtration values"""
@@ -197,6 +203,10 @@ class ConnectedPersistenceDiagram():
             y_index = int(data[2])
             # x_index should be determined by cur_time and self.times
             x_index = bisect_left(self.times, cur_time)
+            if x_index == len(self.times): #skip if cur_time is larger than the largest time in the filtration
+                break
+            # data[3]: horizontal index
+            # data[2]: vertical index
             C[x_index][y_index].add(' '.join(sorted(data[4:])))
             # TODO: check if sorted here is sufficient, or if it is necessary to sort
         # up to now, C contains each simplices newly added at each step.
@@ -209,48 +219,52 @@ class ConnectedPersistenceDiagram():
         for i in range(1, self.m):
             for j in range(1, self.n):
                 C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
+                
+        # for i in range(self.m):
+        #     for j in range(self.n):
+        #         ic(i, j, C[i][j])
         self.complexes = C
 
-    def complexes_generator_legacy(self):
-        """compute complexes"""
-        # C[i][j], i in range(m), j in range(n)
-        # i: time index
-        # j: layer index
-        C = [[set() for j in range(self.n)] for i in range(self.m)]
-        # C is a list of lists of sets, 
-        # each set contains strings of vertices, 
-        # each string represents a simplex
-        with open(self.txf, 'r') as f:
-            filt = [line.rstrip() for line in f]
-            # line is in form of
-            # dim birth n m v_0...v_dim
-            # filt=f.read().rstrip().split('\n') #filtration
-        if filt[0] == '':
-            return
-        for i in range(len(filt)):
-            # data=filt[i].rstrip().split()
-            data = filt[i].split()
-            if data[0] == '#': continue # skip comments
-            if self.dim + 1 < int(data[0]): continue # skip higher dimensions
-            # if self.dim < 1 and data[0] == '2': continue 
-            # if self.dim < 2 and data[0] == '3': continue
-            # data[3]: horizontal index
-            # data[2]: vertical index
-            C[int(data[3])][int(data[2])].add(' '.join(sorted(data[4:])))
-            # TODO: notice that this is not affected by self.m and self.n. 
-            # TODO: maybe we should set the ladder length automatically from the filtration file
-            # TODO: check if sorted here is sufficient, or if it is necessary to sort
-        # up to now, C contains each simplices newly added at each step.
-        for i in range(1, self.m): # Reconstruct the lower layer
-            C[i][0] = C[i][0] | C[i-1][0] # union
-        for j in range(1, self.n): # reconstruct the leftest column
-            # for self.n=2, we only need to reconstruct the first column
-            C[0][j] = C[0][j] | C[0][j-1]
-        # Reconstruction of the upper layer staring from the second column
-        for i in range(1, self.m):
-            for j in range(1, self.n):
-                C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
-        self.complexes = C
+    # def complexes_generator_legacy(self):
+    #     """compute complexes"""
+    #     # C[i][j], i in range(m), j in range(n)
+    #     # i: time index
+    #     # j: layer index
+    #     C = [[set() for j in range(self.n)] for i in range(self.m)]
+    #     # C is a list of lists of sets, 
+    #     # each set contains strings of vertices, 
+    #     # each string represents a simplex
+    #     with open(self.txf, 'r') as f:
+    #         filt = [line.rstrip() for line in f]
+    #         # line is in form of
+    #         # dim birth n m v_0...v_dim
+    #         # filt=f.read().rstrip().split('\n') #filtration
+    #     if filt[0] == '':
+    #         return
+    #     for i in range(len(filt)):
+    #         # data=filt[i].rstrip().split()
+    #         data = filt[i].split()
+    #         if data[0] == '#': continue # skip comments
+    #         if self.dim + 1 < int(data[0]): continue # skip higher dimensions
+    #         # if self.dim < 1 and data[0] == '2': continue 
+    #         # if self.dim < 2 and data[0] == '3': continue
+    #         # data[3]: horizontal index
+    #         # data[2]: vertical index
+    #         C[int(data[3])][int(data[2])].add(' '.join(sorted(data[4:])))
+    #         # TODO: notice that this is not affected by self.m and self.n. 
+    #         # TODO: maybe we should set the ladder length automatically from the filtration file
+    #         # TODO: check if sorted here is sufficient, or if it is necessary to sort
+    #     # up to now, C contains each simplices newly added at each step.
+    #     for i in range(1, self.m): # Reconstruct the lower layer
+    #         C[i][0] = C[i][0] | C[i-1][0] # union
+    #     for j in range(1, self.n): # reconstruct the leftest column
+    #         # for self.n=2, we only need to reconstruct the first column
+    #         C[0][j] = C[0][j] | C[0][j-1]
+    #     # Reconstruction of the upper layer staring from the second column
+    #     for i in range(1, self.m):
+    #         for j in range(1, self.n):
+    #             C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
+    #     self.complexes = C
 
     
 
@@ -272,7 +286,13 @@ class ConnectedPersistenceDiagram():
         for a in range(m):
             for b in range(n):
                 L=list(C[a][b])
-                L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  #Q: does the order of same length objects matter?
+                if len(L)==0: #TODO: check correctness
+                    NodeToStr[(a, b)]=('', 0)
+                    continue
+                L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
+                #Q: does the order of same length objects matter?
+                # ic(C[a][b])
+                # ic(a,b,L)
                 s='\ni '.join(L) 
                 NodeToStr[(a, b)]=('i '+s+'\n', len(L))
         self.variables['NodeToStr']=NodeToStr
@@ -329,39 +349,48 @@ class ConnectedPersistenceDiagram():
         # return PathToStr
 
     
-    def _fzz_executor(self, input_file_name):
+    def _fzz_executor(self, input_file_path):
         """https://github.com/taohou01/fzz/"""
         original_dir = os.getcwd()
         # get the absolute path of the directory of the input file
-        input_dir = os.path.abspath(os.path.dirname(input_file_name))
+        input_dir = os.path.abspath(os.path.dirname(input_file_path))
         os.chdir(input_dir)
-        subprocess.run([FZZ_BINARY_PATH,input_file_name])
+        subprocess.run([FZZ_BINARY_PATH,input_file_path])
         if self.clean_up:
-            delete_file(input_file_name)
+            delete_file(input_file_path)
         os.chdir(original_dir)
-        return f"{input_file_name[:-4]}_pers"
+        return f"{input_file_path[:-4]}_pers" # do not change this line as the file name is controled by fzz. if you would like to change it, change the filename of the output first
     
-    def fzz_generator_1(self):
+    def fzz_generator_upper(self):
+        # upper layer
         m=self.m
-        n=self.n
-        fzz_input_file_name = f"{self.txf[:-4]}_FZZ.txt"
+        # n=self.n
+        # remove the extension of self.txf and add _FZZ to the filename, use .txt as the extension
+        # do not use [:-4], as the length of extension may change
+        fzz_input_file_name = filepath_generator(dirname=self.txf_dir,filename=self.txf_basename_wo_ext + '_FZZ_upper',extension='txt')
         self.variables['d_ss'] = {}
         self.variables['S'] = [0, self.variables['NodeToStr'][(0, 1)][1]] # (0,1), notice the difference
+        # ic(self.variables['S'])
         for i in range(m-1): 
             self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 1, i+1, 1)][1])
+            # ic(i,self.variables['S'])
         self.variables['S'].append(self.variables['S'][-1]+1)
+        # ic(self.variables['S'])
         for i in range(m):
             for j in range(i, m): 
                 self.variables['d_ss'][(i, j)]=0
         with open(fzz_input_file_name, 'w') as f:
-            f.write(self.variables['NodeToStr'][(0, 1)][0])
+            # add the simplices at (0,1) line by line
+            f.write(self.variables['NodeToStr'][(0, 1)][0]) 
+             # add all simplices from (0,1) to (m-1,1) line by line and by insertion order
             f.write(self.variables['PathToStr'][(0, 1, m-1, 1)][0])
         return self._fzz_executor(fzz_input_file_name)
     
-    def fzz_generator_2(self):
+    def fzz_generator_lower(self):
+        # lower layer
         m=self.m
-        n=self.n
-        fzz_input_file_name = f"{self.txf[:-4]}_FZZ.txt"
+        # n=self.n
+        fzz_input_file_name = filepath_generator(dirname=self.txf_dir,filename=self.txf_basename_wo_ext + '_FZZ_lower',extension='txt')
         self.variables['d_ss']={}
         self.variables['S'] = [0, self.variables['NodeToStr'][(0, 0)][1]] # (0,0), notice the difference
         for i in range(m-1): 
@@ -398,10 +427,6 @@ class ConnectedPersistenceDiagram():
         m = self.m
         dim = self.dim
         self.complexes_generator()
-        # C=self.complexes
-        # breakpoint()
-        # self.write_list_of_lists_of_sets_to_file("complexes.txt", C)
-        # print(C)
         self.node2str_generator()
         # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
         self.path2str_generator()
@@ -409,10 +434,12 @@ class ConnectedPersistenceDiagram():
         # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
         # self.write_node_to_str(self.variables['PathToStr'], "PathToStr.txt")
 
-        fzz_output_1=self.fzz_generator_1() #initialized with the function
+        fzz_output_upper=self.fzz_generator_upper() #initialized with the function
         # notice that S is initialized with S=[0, NodeToStr[(0, 1)][1]] when using this function 
-        with open(fzz_output_1, 'r') as f: # opening the output file of fzz
+        with open(fzz_output_upper, 'r') as f: # opening the output file of fzz
             barcode = [line.rstrip() for line in f]
+        if self.clean_up:
+            delete_file(fzz_output_upper)
         # Each line denotes an interval in the barcode, 
         # d p q: dimension, birth, death
         # Note that the birth and death are start and end of the closed integral interval, 
@@ -427,10 +454,14 @@ class ConnectedPersistenceDiagram():
                 if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
                     b=j; 
                     break
-            for j in range(m): # here we shift the death time earlier by one unit
+            for j in range(-1,m): # here we shift the death time earlier by one unit
+                # set d to be 
                 if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
                     d=j; 
                     break
+
+                # if self.variables['S'][d1+1]<p or q<self.variables['S'][d1+2]: 
+                #     continue
             if b<=d:
                 self.variables['d_ss'][(b, d)]+=1
         e=(m, -1)
@@ -443,9 +474,11 @@ class ConnectedPersistenceDiagram():
                 d=b+l
                 self.variables['c_ss'][(e, (b, d))]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][(e, (b-1, d))]+self.variables['c_ss'][(e, (b, d+1))]-self.variables['c_ss'][(e, (b-1, d+1))]
 
-        fzz_output_2=self.fzz_generator_2()
-        with open(fzz_output_2, 'r') as f:
+        fzz_output_lower=self.fzz_generator_lower()
+        with open(fzz_output_lower, 'r') as f:
             barcode = [line.rstrip() for line in f]
+        if self.clean_up:
+            delete_file(fzz_output_lower)
         for interval in barcode:
             current_dim, p, q = map(int, interval.rstrip().split())
             if current_dim != dim:
@@ -460,7 +493,7 @@ class ConnectedPersistenceDiagram():
                 if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
                     b=j; 
                     break
-            for j in range(m): 
+            for j in range(-1,m): 
                 if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
                     d=j; 
                     break
@@ -493,8 +526,7 @@ class ConnectedPersistenceDiagram():
                 for b1 in range(b0+1):
                     for d0 in range(d1, m): 
                         self.variables['d_ss'][((b0, d0), (b1, d1))]=0
-    
-                fzz_input_file_name = f"{self.txf[:-4]}_FZZ.txt"
+                fzz_input_file_name = filepath_generator(dirname=self.txf_dir,filename=self.txf_basename_wo_ext + f'_FZZ_{b0}_{d1}',extension='txt')
                 with open(fzz_input_file_name, 'w') as f:
                     f.write(self.variables['NodeToStr'][(0, 1)][0])
                     if 0<d1:
@@ -502,15 +534,15 @@ class ConnectedPersistenceDiagram():
                     f.write(self.variables['PathToStr'][(d1, 1, b0, 0)][0])
                     if b0<m-1:
                         f.write(self.variables['PathToStr'][(b0, 0, m-1, 0)][0])
-                fzz_output_3=self._fzz_executor(fzz_input_file_name)
-                with open(fzz_output_3, 'r') as f:
-                    filt = [line.rstrip() for line in f]
-                for i in range(len(filt)):
-                    data=filt[i].rstrip().split()
-                    if int(data[0])!=dim: 
+                fzz_output_loop=self._fzz_executor(fzz_input_file_name)
+                with open(fzz_output_loop, 'r') as f:
+                    barcode = [line.rstrip() for line in f]
+                if self.clean_up:
+                    delete_file(fzz_output_loop)
+                for interval in barcode:
+                    current_dim, p, q = map(int, interval.rstrip().split())
+                    if current_dim != dim:
                         continue
-                    p=int(data[1])
-                    q=int(data[2])
                     if self.variables['S'][d1+1]<p or q<self.variables['S'][d1+2]: 
                         continue
                     for j in range(d1+1): 

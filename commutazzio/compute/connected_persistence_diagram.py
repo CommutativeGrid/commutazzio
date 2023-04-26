@@ -5,8 +5,9 @@ Created on Sun Jan  2 17:29:27 2022
 @author: kasumi
 """
 import pandas as pd
-from ..utils import radii_generator,delete_file
+from ..utils import delete_file
 import numpy as np
+from bisect import bisect_left
 import subprocess, os, json, sys
 #import gc garbage collection
 import configparser
@@ -36,14 +37,14 @@ if FZZ_BINARY_PATH == '':
 #     return list(map(int, st.split(',')))
 
 class ConnectedPersistenceDiagram():
-    def __init__(self, filtration_filepath,ladder_length,homological_dim,radii,clean_up=True,**kwargs ):
+    def __init__(self, filtration_filepath,ladder_length,homological_dim,filtration_values,clean_up=True,**kwargs ):
         self.txf = os.path.abspath(filtration_filepath) # filtration file
         self.m = ladder_length # default length is 10
         self.ladder_length = self.m
         self.clean_up = clean_up # clean up the temporary files
         self.n = 2 # two layers by default
         self.dim = homological_dim # homological dimension
-        self.radii=np.asarray(radii)
+        self.times = self.preprocess_filtration_values(filtration_values)
         self.intv = self.interval_generator()
         self.variables={'cov':{},'c_ss':{}}
         # c_ss stands for compression source-sink 
@@ -54,12 +55,21 @@ class ConnectedPersistenceDiagram():
         self.compute_dotdec()
         self.compute_plot_dots()
 
+    def preprocess_filtration_values(self,filtration_values):
+        """Preprocess the filtration values"""
+        if len(filtration_values) != self.m:
+            raise ValueError("The length of the filtration value list is not equal to the ladder length.")
+        # raise error if not sorted strictly increasing
+        if not all(filtration_values[i] < filtration_values[i+1] for i in range(len(filtration_values)-1)):
+            raise ValueError("The filtration values provided are not strictly increasing.")
+        return np.asarray(filtration_values)
+
     @property
     def plot_data(self):
         plot_data_dict = {}
         plot_data_dict.update({'ladder_length': self.ladder_length})
         plot_data_dict.update({'dim': self.dim})
-        plot_data_dict.update({'radii': self.radii})
+        plot_data_dict.update({'radii': self.times})
         plot_data_dict.update({'dots': self.dots})
         plot_data_dict.update({'lines': self.lines})
         return plot_data_dict
@@ -79,18 +89,6 @@ class ConnectedPersistenceDiagram():
          '4,7,10,-1': 1,
          '1,5,10,-1': 1}
         self.dec = ttt
-
-    # @staticmethod
-    # def radii_compute(**kwargs):
-    #     radii = kwargs.get("radii")
-    #     if radii is not None:
-    #         return np.array(radii)
-    #     start = kwargs.get("start")
-    #     end = kwargs.get("end")
-    #     ladder_length = kwargs.get("ladder_length")
-    #     radii = radii_generator(start,end,ladder_length)
-    #     return radii
-
 
     def interval_generator(self):
         """Generate intervals"""
@@ -173,8 +171,47 @@ class ConnectedPersistenceDiagram():
         if s < t and Z[s][1] < Z[s+1][1]: Z[s] = (Z[s][0], Z[s][1]+1)
         if s < t and Z[t][0] > Z[t-1][0]: Z[t] = (Z[t][0]-1, Z[t][1])
         return tuple(Z)
-
+    
     def complexes_generator(self):
+        """compute complexes based on the time parameter in the filtration file"""
+        # C[i][j], i in range(m), j in range(n)
+        # i: time index
+        # j: layer index
+        C = [[set() for j in range(self.n)] for i in range(self.m)]
+        # C is a list of lists of sets, 
+        # each set contains strings of vertices, 
+        # each string represents a simplex
+        with open(self.txf, 'r') as f:
+            filt = [line.rstrip() for line in f]
+            # line is in form of
+            # dim birth n m v_0...v_dim
+            # filt=f.read().rstrip().split('\n') #filtration
+        if filt[0] == '':
+            return
+        for i in range(len(filt)):
+            data=filt[i].rstrip().split()
+            # data = filt[i].split()
+            if data[0] == '#': continue # skip comments
+            if self.dim + 1 < int(data[0]): continue # skip higher dimensions
+            cur_time = float(data[1])
+            y_index = int(data[2])
+            # x_index should be determined by cur_time and self.times
+            x_index = bisect_left(self.times, cur_time)
+            C[x_index][y_index].add(' '.join(sorted(data[4:])))
+            # TODO: check if sorted here is sufficient, or if it is necessary to sort
+        # up to now, C contains each simplices newly added at each step.
+        for i in range(1, self.m): # Reconstruct the lower layer
+            C[i][0] = C[i][0] | C[i-1][0] # union
+        for j in range(1, self.n): # reconstruct the leftest column
+            # for self.n=2, we only need to reconstruct the first column
+            C[0][j] = C[0][j] | C[0][j-1]
+        # Reconstruction of the upper layer staring from the second column
+        for i in range(1, self.m):
+            for j in range(1, self.n):
+                C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
+        self.complexes = C
+
+    def complexes_generator_legacy(self):
         """compute complexes"""
         # C[i][j], i in range(m), j in range(n)
         # i: time index
@@ -200,6 +237,8 @@ class ConnectedPersistenceDiagram():
             # data[3]: horizontal index
             # data[2]: vertical index
             C[int(data[3])][int(data[2])].add(' '.join(sorted(data[4:])))
+            # TODO: notice that this is not affected by self.m and self.n. 
+            # TODO: maybe we should set the ladder length automatically from the filtration file
             # TODO: check if sorted here is sufficient, or if it is necessary to sort
         # up to now, C contains each simplices newly added at each step.
         for i in range(1, self.m): # Reconstruct the lower layer
@@ -212,10 +251,6 @@ class ConnectedPersistenceDiagram():
             for j in range(1, self.n):
                 C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
         self.complexes = C
-        # from itertools import product
-        # for i,j in product(range(self.m),range(self.n)):
-        #     ic(i,j,(C[i][j]))
-        # return C
 
     
 
@@ -377,26 +412,22 @@ class ConnectedPersistenceDiagram():
         fzz_output_1=self.fzz_generator_1() #initialized with the function
         # notice that S is initialized with S=[0, NodeToStr[(0, 1)][1]] when using this function 
         with open(fzz_output_1, 'r') as f: # opening the output file of fzz
-            filt = [line.rstrip() for line in f]
+            barcode = [line.rstrip() for line in f]
         # Each line denotes an interval in the barcode, 
-        # with the first number being the dimension and 
-        # the rest being birth and death. 
+        # d p q: dimension, birth, death
         # Note that the birth and death are start and end of the closed integral interval, 
         # i.e., a line d p q indicates a persistence interval [p,q] in dimensional d 
         # starting with the complex K_p and ending with the complex K_q.
-        for i in range(len(filt)):
-            data=filt[i].rstrip().split()
-            if int(data[0])!=dim: 
+        # for i in range(len(barcode)):
+        for interval in barcode:
+            current_dim, p, q = map(int, interval.rstrip().split())
+            if current_dim != dim:
                 continue
-            p=int(data[1])
-            q=int(data[2])
-            # ic(m)
-            # ic(len(self.variables['S'])) length is m+2
             for j in range(m): 
                 if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
                     b=j; 
                     break
-            for j in range(m): #starting from -1?
+            for j in range(m): # here we shift the death time earlier by one unit
                 if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
                     d=j; 
                     break
@@ -414,13 +445,17 @@ class ConnectedPersistenceDiagram():
 
         fzz_output_2=self.fzz_generator_2()
         with open(fzz_output_2, 'r') as f:
-            filt = [line.rstrip() for line in f]
-        for i in range(len(filt)):
-            data=filt[i].rstrip().split()
-            if int(data[0])!=dim: 
+            barcode = [line.rstrip() for line in f]
+        for interval in barcode:
+            current_dim, p, q = map(int, interval.rstrip().split())
+            if current_dim != dim:
                 continue
-            p=int(data[1])
-            q=int(data[2])
+        # for i in range(len(barcode)):
+        #     data=barcode[i].rstrip().split()
+        #     if int(data[0])!=dim: 
+        #         continue
+        #     p=int(data[1])
+        #     q=int(data[2])
             for j in range(m): 
                 if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
                     b=j; 

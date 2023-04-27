@@ -201,23 +201,23 @@ class ComplementaryTrianglesPlot():
         create_directory(dir_name)
         overwrite = kwargs.pop('overwrite', False)
         if export_mode == 'full_html':
-            if 'file' in kwargs:
-                file = kwargs.pop('file')
-                file = filepath_generator(dir_name, file, overwrite=overwrite)
+            if 'filename' in kwargs:
+                filename = kwargs.pop('filename')
+                filepath = filepath_generator(dir_name, filename, extension='html', overwrite=overwrite)
             else:
-                file = filepath_generator(
+                filepath = filepath_generator(
                     dir_name, 'test', 'html', overwrite=overwrite)
-            fig.write_html(file=file, include_plotlyjs='cdn')
+            fig.write_html(file=filepath, include_plotlyjs='cdn')
             #print("Saved to", file)
         elif export_mode == 'div':
-            if 'file' in kwargs:
-                file = kwargs.pop('file')
-                file = filepath_generator(dir_name, file, overwrite=overwrite)
+            if 'filename' in kwargs:
+                filename = kwargs.pop('filename')
+                filepath = filepath_generator(dir_name, filename, extension='html', overwrite=overwrite)
             else:
-                file = filepath_generator(
+                filepath = filepath_generator(
                     dir_name, 'div', 'html', overwrite=overwrite)
             # TODO decorate the write_html function in an inherited class
-            fig.write_html(file=file, full_html=False,
+            fig.write_html(file=filepath, full_html=False,
                            include_plotlyjs=False, **kwargs)
             #print("Saved to", file)
         else:
@@ -321,8 +321,8 @@ class ComplementaryTrianglesPlot():
             showlegend=False,
             name="",
             hovertemplate="multiplicity: %{customdata[0]}<br>"
-            +"birth: %{customdata[1]:.d},%{customdata[3]:.2f}<br>"
-            +"death: %{customdata[2]:.d},%{customdata[4]:.2f}",
+            +"birth: %{customdata[1]:.d},%{customdata[3]:.3f}<br>"
+            +"death: %{customdata[2]:.d},%{customdata[4]:.3f}",
         )
         )
         # although plotly express is easier, graph object provides more customizability

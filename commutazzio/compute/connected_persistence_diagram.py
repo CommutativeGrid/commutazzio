@@ -207,8 +207,11 @@ class ConnectedPersistenceDiagram():
                 break
             # data[3]: horizontal index
             # data[2]: vertical index
-            C[x_index][y_index].add(' '.join(sorted(data[4:])))
-            # TODO: check if sorted here is sufficient, or if it is necessary to sort
+            # C[x_index][y_index].add(' '.join(sorted(data[4:])))
+            # check if sorted here is sufficient, or if it is necessary to sort
+            # I believe that it works well as long as it is sorted, no matter the order'
+            # maybe better to change it to the one below
+            C[x_index][y_index].add(' '.join(sorted(data[4:], key=lambda x: (len(x), x))))
         # up to now, C contains each simplices newly added at each step.
         for i in range(1, self.m): # Reconstruct the lower layer
             C[i][0] = C[i][0] | C[i-1][0] # union
@@ -290,9 +293,6 @@ class ConnectedPersistenceDiagram():
                     NodeToStr[(a, b)]=('', 0)
                     continue
                 L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
-                #Q: does the order of same length objects matter?
-                # ic(C[a][b])
-                # ic(a,b,L)
                 s='\ni '.join(L) 
                 NodeToStr[(a, b)]=('i '+s+'\n', len(L))
         self.variables['NodeToStr']=NodeToStr
@@ -369,6 +369,9 @@ class ConnectedPersistenceDiagram():
         # do not use [:-4], as the length of extension may change
         fzz_input_file_name = filepath_generator(dirname=self.txf_dir,filename=self.txf_basename_wo_ext + '_FZZ_upper',extension='txt')
         self.variables['d_ss'] = {}
+        # self.variables['S'] is used to align the index in the commutative ladder
+        # with the index when all simplicial complex get expanded and inserted one by one
+        # and then computed using fzz
         self.variables['S'] = [0, self.variables['NodeToStr'][(0, 1)][1]] # (0,1), notice the difference
         # ic(self.variables['S'])
         for i in range(m-1): 

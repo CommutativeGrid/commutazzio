@@ -6,9 +6,10 @@ for storing and retrieving instances of CLFiltration.
 """
 from orjson import loads
 from ast import literal_eval
+import os
 
 class CLFiltrationDB:
-    def __init__(self, filename='clf_database.db'):
+    def __init__(self, filename='clf_database.db', create_new=False):
         """
         initializes the database by connecting to the database file, 
         and calls create_table() method which creates a table 
@@ -18,9 +19,20 @@ class CLFiltrationDB:
         if '.db' not in filename:
             filename = filename + '.db'
         self.filename = filename
-        self.conn = sqlite3.connect(self.filename)
-        print(f"Connected to {self.filename} database.")
-        self.create_table()
+        #check whether self.filename exists
+        if create_new:
+            if os.path.exists(self.filename):
+                raise Exception(f"{self.filename} already exists.")
+            else:
+                print(f"Creating {self.filename} database.")
+                self.conn = sqlite3.connect(self.filename)
+                self.create_table()
+        else:
+            if os.path.exists(self.filename):
+                self.conn = sqlite3.connect(self.filename)
+                print(f"Connected to {self.filename} database.")
+            else:
+                raise Exception(f"{self.filename} does not exist.")
 
     def create_table(self):
         """

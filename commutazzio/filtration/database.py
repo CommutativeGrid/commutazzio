@@ -15,6 +15,11 @@ class CLFiltrationDB:
         and calls create_table() method which creates a table 
         if it doesn't exist in the database.
         """
+        if filename == ':memory:':
+            self.conn = sqlite3.connect(':memory:')
+            print('Connected to in-memory database.')
+            self.create_table()
+            return
         # add .db if no .db in filename
         if '.db' not in filename:
             filename = filename + '.db'

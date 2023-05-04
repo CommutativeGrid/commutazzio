@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from io import StringIO
 
 from ..utils import create_directory, filepath_generator
 from .colors_helper import get_color
@@ -31,8 +32,8 @@ class ComplementaryTrianglesPlot():
     def __init__(self, title=None, **kwargs):
         """acquire data
         """
-        self.dots = kwargs.get("dots", None)
-        self.lines = kwargs.get("lines", None)
+        self.dots = pd.read_csv(StringIO(kwargs.get("dots")),index_col=0)
+        self.lines = pd.read_csv(StringIO(kwargs.get("lines")),index_col=0)
         self.radii = kwargs.get("radii")
         self.ladder_length = kwargs.get("ladder_length", None)
         self.title = title

@@ -39,11 +39,15 @@ def filepath_generator(dirname='./',filename=None,extension=None,overwrite=False
         raise FileNotFoundError(f"{dirname} does not exist.")
     if filename is None:
         filename=f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{uuid.uuid4().hex[-5:]}'
-    if '.' in filename and extension is None:
-        extension=filename.split('.')[-1]
+    if '.' in filename:
+        extension_from_fn=filename.split('.')[-1]
+        if extension is None:
+            extension=extension_from_fn
+        elif extension!=extension_from_fn:
+            raise ValueError(f"Extension {extension} is not consistent with the extension from filename {filename}.")
         filename='.'.join(filename.split('.')[:-1])
-    if 'extension' not in locals():
-        raise ValueError("extension of the file not defined.")
+    if extension is None:
+        raise ValueError("Extension is not provided.")
     file_path=os.path.join(dirname,f"{filename}.{extension}")
     original_file_path=file_path
     count=1

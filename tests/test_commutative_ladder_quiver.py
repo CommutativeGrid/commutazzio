@@ -13,7 +13,7 @@ radii=[0.17399216,0.35642443,0.38279749,0.38289977]
 # define test function for pointCloud2Filtration
 def test_point_cloud_filtration():
     # create a filtration object from point cloud and radii
-    cl4f=pointCloud2Filtration(pts=pts,vertical_removal=[3],radii=radii,max_simplex_dim=2)
+    cl4f=pointCloud2Filtration(pts=pts,vertical_removal_input=[3],radii=radii,max_simplex_dim=2)
     # assert that the number of simplices in the upper and lower filtration
     # is as expected
     assert len(cl4f.upper.maximum_simplices) == 22

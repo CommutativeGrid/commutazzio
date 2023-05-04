@@ -56,7 +56,7 @@ def clf_db():
 # create a test that checks that the filtrations have been added correctly
 def test_read_filtration(clf_db):
     # read all the filtrations from the database
-    filtrations = clf_db.read_all()
+    filtrations = clf_db.get_all()
     # ~check that there are two filtrations~
     f0= next(filtrations)
     f1= next(filtrations)

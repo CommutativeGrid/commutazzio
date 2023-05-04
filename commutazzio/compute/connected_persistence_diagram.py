@@ -76,8 +76,8 @@ class ConnectedPersistenceDiagram():
         plot_data_dict.update({'ladder_length': self.ladder_length})
         plot_data_dict.update({'dim': self.dim})
         plot_data_dict.update({'radii': self.times})
-        plot_data_dict.update({'dots': self.dots})
-        plot_data_dict.update({'lines': self.lines})
+        plot_data_dict.update({'dots': self.dots.to_csv(index=True)})
+        plot_data_dict.update({'lines': self.lines.to_csv(index=True)})
         return plot_data_dict
 
     def temp(self):

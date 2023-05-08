@@ -92,7 +92,6 @@ class CLFiltrationDB:
             clf_filtration.ladder_length = row[1]
             clf_filtration.upper = clf_filtration.incremental_filtration_creation(eval(row[2]))
             clf_filtration.lower = clf_filtration.incremental_filtration_creation(eval(row[3]))
-            print(type(row[4]))
             try:
                 clf_filtration.horizontal_parameters = loads(literal_eval(row[4]))
             except Exception as e:

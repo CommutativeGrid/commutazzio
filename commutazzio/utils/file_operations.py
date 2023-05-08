@@ -53,7 +53,7 @@ def filepath_generator(dirname='./',filename=None,extension=None,overwrite=False
     count=1
     while os.path.isfile(file_path):
         if overwrite is True:
-            print(f"Overwrite mode is on. Rewriting to {file_path} .")
+            print(f"Overwrite mode is on. Redirecting to {file_path} .")
             return file_path
         #file_path=os.path.join(dirname,f"{name}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')}.{extension}")
         file_path=os.path.join(dirname,f"{filename}_{str(count).zfill(6)}.{extension}")

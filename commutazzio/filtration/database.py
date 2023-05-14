@@ -7,6 +7,7 @@ for storing and retrieving instances of CLFiltration.
 from orjson import loads
 from ast import literal_eval
 import os
+from functools import cache
 
 class CLFiltrationDB:
     def __init__(self, filename='clf_database.db', create_new=False):
@@ -100,6 +101,12 @@ class CLFiltrationDB:
             return clf_filtration
         else:
             return None
+    
+    @cache
+    def __len__(self):
+        cursor = self.conn.cursor()
+        cursor.execute('''SELECT count(*) FROM clf_filtration''')
+        return cursor.fetchone()[0]
         
     def get_all(self):
         # Retrieve all rows from the table

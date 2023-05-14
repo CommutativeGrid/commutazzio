@@ -29,6 +29,13 @@ INSTALL_REQUIRES = [
       'fire',
       'gudhi',
       'giotto-tda',
+      'pytest',
+      'networkx',
+      'icecream',
+      'orjson',
+      'pathos'
+
+
 ]
 
 DEPENDENCY_LINKS = [

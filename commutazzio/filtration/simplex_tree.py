@@ -6,7 +6,7 @@ from gtda.externals import CechComplex
 from gudhi import RipsComplex, AlphaComplex
 
 class SimplexTree(gudhi_SimplexTree):
-    Epsilon = 1e-6 # for numerical comparison
+    Epsilon = 1e-10 # for numerical comparison
 
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)

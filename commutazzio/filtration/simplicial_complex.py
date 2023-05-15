@@ -154,7 +154,7 @@ class SimplicialComplex(gudhi_SimplexTree):
         
     def dimension(self):
         """Return the dimension of the simplicial complex"""
-        return max([len(s) for s in self.sc])
+        return max([len(s) for s in self.simplices])
         
         
     

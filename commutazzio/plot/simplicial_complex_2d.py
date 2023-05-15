@@ -12,7 +12,7 @@ class SC2DViz():
     """
     Plot the simplicial complex of a 2D point cloud.
     """
-    EPSILON=1e-6
+    EPSILON=1e-10
     NUM_COLS=3
     #POINT_COLOR="darkcyan"
     POINT_COLOR="rgba(0,174,239,1)"

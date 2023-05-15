@@ -18,25 +18,42 @@ from .simplicial_complex import SimplicialComplex
 from .simplex_tree import SimplexTree
 import matplotlib.pyplot as plt
 from os.path import abspath
+import numpy as np
+from bisect import bisect_left
 
 class CLFiltration():
-    Epsilon = 1e-6 # for numerical comparison
+    Epsilon = 1e-10 # for numerical comparison
 
     def __init__(self,upper=SimplexTree(),lower=SimplexTree(),length=4,h_params=None,info={}):
-        self.upper = upper # a SimplexTree, filtration values are 1,2,3,...,length
-        self.lower = lower # a SimplexTree, filtration values are 1,2,3,...,length
         self.ladder_length=length
         if h_params is None: 
             # horizontal parameters, a list of length ladder_length, maps an index to a parameter
             self.horizontal_parameters = list(range(1,length+1))
         else:
             self.horizontal_parameters = h_params
+            #has to be sorted
+            if not all(h_params[i] <= h_params[i+1] for i in range(len(h_params) - 1)):
+                raise ValueError('horizontal parameters must be sorted')
+            self.upper = self.regularize_filtration(upper) # a SimplexTree, filtration values are 1,2,3,...,length
+            self.lower = self.regularize_filtration(lower) # a SimplexTree, filtration values are 1,2,3,...,length
         # for example, it can be a list of radii 
         self.info = dict(**info)
 
     @property
     def h_params(self):
         return self.horizontal_parameters
+    
+    def regularize_filtration(self,filtration:SimplexTree):
+        new_filt = SimplexTree()
+        for simplex, original_fv in filtration.get_filtration():
+            # new fv should be the smallest index of the number in self.horizontal_parameters that is equal or larger than original_fv
+            # use bisect, notice that self.horizontal_parameters is sorted
+            new_fv = bisect_left(self.horizontal_parameters,original_fv)+1
+            new_filt.insert(simplex,new_fv)
+        return new_filt
+
+
+
     
     def set_info(self,info:dict):
         # make sure that the stored format is json-serializable
@@ -126,6 +143,7 @@ class CLFiltration():
     def get_simplicial_complex(self,x:int,y:int):
         """
         return the simplicial complex of the given coordinate (x,y)
+        x: an ordinal number, 1,2,...,ladder_length
         """
         if y == 2:
             filtration = self.upper.get_filtration()
@@ -133,9 +151,8 @@ class CLFiltration():
             filtration = self.lower.get_filtration()
         else:
             raise ValueError('The y-coordinate must be either 1 or 2')
-        if x>self.ladder_length and x!=float('inf'): #if x is larger than the ladder length, raise a warning
-            warn('The x-coordinate is larger than the ladder length')
-
+        if x > self.ladder_length and x!=float('inf'): #if x is larger than the ladder length, raise a warning
+            warn('The x-coordinate is larger than the largest filtration value')
         # return all simplicies in filtration up to (inclusive) x
         sc=SimplicialComplex()
         sc.from_simplices([tuple(s) for s,fv in filtration if fv <= x+CLFiltration.Epsilon])

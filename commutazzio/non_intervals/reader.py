@@ -6,7 +6,6 @@ from operator import itemgetter
 from ..utils import filepath_generator,create_directory
 from ..plot import SC2DViz
 from plotly.subplots import make_subplots
-from .. import Pipeline
 from cachetools import cached
 import plotly.graph_objects as go
 
@@ -73,20 +72,20 @@ class NonIntervalCL4():
         print(f"File saved @ {filepath} in homcloud format.")
         return filepath
 
-    @cached(cache={})
-    def cPD(self):
-        title = ",".join([f"{k}={v}" for k,v in self.total_decomp.items()])
-        ladder_length = 4
-        radii = 1.000001*self.radii
-        # ladder_length = 20
-        # radii = np.linspace(self.radii[0],1.1*self.radii[-1],num=ladder_length),
-        ppl=Pipeline(layered_point_cloud_fpath=self.write2file(),
-                 radii=radii,
-                 ladder_length=ladder_length,
-                 dim=1,
-                 executor="../random-cech/cech_filtration")
-        ppl.plot(title=title,export_mode='full_html',file=f'{title}.html',overwrite=False)
-        return ppl
+    # @cached(cache={})
+    # def cPD(self):
+    #     title = ",".join([f"{k}={v}" for k,v in self.total_decomp.items()])
+    #     ladder_length = 4
+    #     radii = 1.000001*self.radii
+    #     # ladder_length = 20
+    #     # radii = np.linspace(self.radii[0],1.1*self.radii[-1],num=ladder_length),
+    #     ppl=Pipeline(layered_point_cloud_fpath=self.write2file(),
+    #              radii=radii,
+    #              ladder_length=ladder_length,
+    #              dim=1,
+    #              executor="../random-cech/cech_filtration")
+    #     ppl.plot(title=title,export_mode='full_html',file=f'{title}.html',overwrite=False)
+    #     return ppl
 
     def visualization(self,sub_width,sub_height):
         assert self.dim==2

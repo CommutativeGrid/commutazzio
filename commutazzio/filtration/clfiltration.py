@@ -43,16 +43,17 @@ class CLFiltration():
     def h_params(self):
         return self.horizontal_parameters
     
-                break
-        for simplex, original_fv in filtration.get_filtration():
-            new_filt.insert(simplex,new_fv)
     def regularize_filtration(self,filtration:SimplexTree):
         new_filt = SimplexTree()
+        for simplex, original_fv in filtration.get_filtration():
             # new fv should be the smallest index of the number in self.horizontal_parameters that is equal or larger than original_fv
             # use bisect, notice that self.horizontal_parameters is sorted
-            if new_fv > self.ladder_length:
-        return new_filt
             new_fv = bisect_left(self.horizontal_parameters,original_fv)+1
+            if new_fv > self.ladder_length:
+                break
+            new_filt.insert(simplex,new_fv)
+        return new_filt
+    
     def set_info(self,info:dict):
         # make sure that the stored format is json-serializable
         self.info = info

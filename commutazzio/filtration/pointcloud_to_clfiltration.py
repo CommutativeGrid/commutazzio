@@ -3,6 +3,8 @@ import numpy as np
 from .clfiltration import CLFiltration
 from random import randint #inclusive of the upper bound
 
+EPSILON = 1e-10 # for numerical comparison
+
 def random_vertical_removal_points_only(num_pts,ladder_length,max_removal_per_time=None):
     # generate a list of length ladder_length
     # each item is a list of tuples representing points to be removed, indices of points is in range(0,num_pts)
@@ -49,18 +51,22 @@ def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,ma
     # add simplices in sc.delete(vertical_removal[i]) to lower row, at the designated radius
     # return necessary infos
     if isinstance(vertical_removal_input[0],(int, np.int64)): #[2,3,4,5,6,7]
+        # constant removal
         vertical_removal=[[(vertex,) for vertex in vertical_removal_input]]*len(radii)
         # print(vertical_removal)
     else:
-        #example: [[(2,),(3,)],[(2,),(3,),(4,)],[(2,),(3,),(4,),(5,)]
+        # vertical_removal_input is a list of list of simplices
+        # should be decreasing
+        assert all(set(vertical_removal_input[i]).issuperset(vertical_removal_input[i+1]) for i in range(len(vertical_removal_input)-1))
+        #example: [[(2,),(3,),(4,),(5,)],[(2,),(3,),(4,)],[(2,),(3,)]]
         # canonically, vertical_removal is a list of list of simplices
         # each entry of vertical_removal is a list of simplices to be removed, for example [(1,),(2,3)]
         assert len(vertical_removal_input)==len(radii)
-        vertical_removal = [*vertical_removal_input]
+        vertical_removal = [*vertical_removal_input] # just a change of name
     #check that radii is sorted
     assert all(radii[i]<=radii[i+1] for i in range(len(radii)-1))
     parentalST=SimplexTree()
-    parentalST.from_point_cloud(pts)
+    parentalST.from_point_cloud(pts,method='cech',sc_dim_ceil=max_simplex_dim,radius_max=max(radii)+EPSILON)
     upper=SimplexTree()
     lower=SimplexTree()
     for i,radius in enumerate(radii):
@@ -68,16 +74,17 @@ def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,ma
         sc=parentalST.truncation(radius)
         # pdb.set_trace()
         for simplex in sc.simplices:
-            if len(simplex)<=max_simplex_dim+1:
-                upper.insert(simplex,x_coord) 
+            # if len(simplex)<=max_simplex_dim+1:
+            upper.insert(simplex,x_coord) 
                 # this function will not make existing filtration value higher
                 # This function inserts the given N-simplex 
                 # and its subfaces with the given filtration value (default value is ‘0.0’). 
                 # If some of those simplices are already present with a higher filtration value, 
                 # their filtration value is lowered.
         for simplex in sc.delete_simplices(vertical_removal[i]).simplices:
-            if len(simplex)<=max_simplex_dim+1:
-                lower.insert(simplex,x_coord)
+            # if len(simplex)<=max_simplex_dim+1:
+            lower.insert(simplex,x_coord)
+        print(f"Progress: {100*(i+1)/len(radii):.2f}%", flush=True)
     # from icecream import ic
     # ic(parentalST.maximum_simplices)
     # ic(upper.maximum_simplices)

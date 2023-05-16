@@ -41,6 +41,7 @@ class SimplexTree(gudhi_SimplexTree):
         Create a simplex tree from a point cloud.
         """
         num_pts,space_dim = pt_cloud.shape # number of points and dimension of the space.
+        # print('num_pts',num_pts,'space_dim',space_dim)
         if sc_dim_ceil == 'auto':
             sc_dim_ceil = space_dim  # maximum dimension of the simplicial complex.
         if method == 'rips':
@@ -52,7 +53,7 @@ class SimplexTree(gudhi_SimplexTree):
             simplex_tree = alpha_complex.create_simplex_tree()
             simplex_tree.make_filtration_non_decreasing()
         elif method == 'cech':
-            cech_complex = CechComplex(points=pt_cloud,max_radius=np.inf)
+            cech_complex = CechComplex(points=pt_cloud,max_radius=radius_max)
             simplex_tree = cech_complex.create_simplex_tree(max_dimension=sc_dim_ceil)
             simplex_tree.make_filtration_non_decreasing()
         # elif method == 'weak-witness':
@@ -77,6 +78,7 @@ class SimplexTree(gudhi_SimplexTree):
         #     simplex_tree.make_filtration_non_decreasing()
         else:
             raise NotImplementedError('Method not supported.')
+        # reconstruct the simplex tree from the gudhi simplex tree.
         for simplex,value in simplex_tree.get_filtration():
             self.insert(simplex,value)
 

@@ -19,40 +19,53 @@ from .simplex_tree import SimplexTree
 import matplotlib.pyplot as plt
 from os.path import abspath
 import numpy as np
-from bisect import bisect_left
+from functools import cache
 
 class CLFiltration():
     Epsilon = 1e-10 # for numerical comparison
 
-    def __init__(self,upper=SimplexTree(),lower=SimplexTree(),length=4,h_params=None,info={}):
-        self.ladder_length=length
+    def __init__(self,upper=SimplexTree(),lower=SimplexTree(),ladder_length=4,h_params=None,info={}):
+        self.ladder_length=ladder_length
         if h_params is None: 
+            # print('assuming ordinal number filtration values')
+            # if not all(int(x) == i for i, x in enumerate(upper.filtration_values, start=1)) or not all(int(x) == i for i, x in enumerate(lower.filtration_values, start=1)):
+            #     raise ValueError('Filtration values of the input not matching the ordinal number filtration values')
+            if ladder_length < len(upper.filtration_values) or ladder_length < len(lower.filtration_values):
+                raise ValueError('The ladder length is shorter than the number of filtration values in the input')
             # horizontal parameters, a list of length ladder_length, maps an index to a parameter
-            self.horizontal_parameters = list(range(1,length+1))
+            self.horizontal_parameters = list(range(1,ladder_length+1))
+            self.upper = upper # a SimplexTree, filtration values are 1,2,3,...,length
+            self.lower = lower # a SimplexTree, filtration values are 1,2,3,...,length
         else:
             self.horizontal_parameters = h_params
             #has to be sorted
             if not all(h_params[i] <= h_params[i+1] for i in range(len(h_params) - 1)):
                 raise ValueError('horizontal parameters must be sorted')
-            self.upper = self.regularize_filtration(upper) # a SimplexTree, filtration values are 1,2,3,...,length
-            self.lower = self.regularize_filtration(lower) # a SimplexTree, filtration values are 1,2,3,...,length
+            if not len(h_params) == ladder_length:
+                raise ValueError('The length of the horizontal parameters does not match the ladder length')
+            self.upper = upper.to_ordinal_number_indexing(h_params) # a SimplexTree, filtration values are 1,2,3,...,length
+            self.lower = lower.to_ordinal_number_indexing(h_params) # a SimplexTree, filtration values are 1,2,3,...,length
         # for example, it can be a list of radii 
         self.info = dict(**info)
+
+    @cache
+    def get_filtration_by_layer(self,layer:str):
+        """
+        return the filtration with original filtration values by layer
+        """
+        if layer in ['u','upper']:
+            filtration = self.upper.to_custom_filtration_values(self.horizontal_parameters)
+        elif layer in ['l','lower']:
+            filtration =  self.lower.to_custom_filtration_values(self.horizontal_parameters)
+        else:
+            raise ValueError('layer must be either upper or lower')
+        return filtration
+
+
 
     @property
     def h_params(self):
         return self.horizontal_parameters
-    
-    def regularize_filtration(self,filtration:SimplexTree):
-        new_filt = SimplexTree()
-        for simplex, original_fv in filtration.get_filtration():
-            # new fv should be the smallest index of the number in self.horizontal_parameters that is equal or larger than original_fv
-            # use bisect, notice that self.horizontal_parameters is sorted
-            new_fv = bisect_left(self.horizontal_parameters,original_fv)+1
-            if new_fv > self.ladder_length:
-                break
-            new_filt.insert(simplex,new_fv)
-        return new_filt
     
     def set_info(self,info:dict):
         # make sure that the stored format is json-serializable
@@ -66,30 +79,35 @@ class CLFiltration():
             self.info[key] = []
         self.info[key].append(value)
 
-    def set_new_length(self,new_length,indices=None):
+    def set_new_length(self,new_length,new_h_params=None):
         """
         This method allows the user to refactor the length of the ladder.
         new_length shall be strictly shorter than the current length.
-        indices will be randomized to be a list of length new_length
-        if not given.
+        new_h_params: a list of length new_length consisting of integers between 1 and the current ladder length.
+        new_h_params will be set to [1,2,3,...,new_length] if not given.
         """
         if new_length >= self.ladder_length:
             raise ValueError("new_length must be strictly shorter than the current length")
-        if indices is None: 
+        if new_h_params is None: 
             # will be a strictly increasing list of length new_length, picking values from 1,...,self.ladder_length
             indices = sorted(sample(range(1,self.ladder_length+1),new_length))
+        else:
+            for i in new_h_params:
+                # i has to be an integer, or 1.0
+                if not i.is_integer():
+                    raise ValueError("Each element in new_h_params must be an integer")
+                if not 1 <= i <= self.ladder_length:
+                    raise ValueError("Each element in new_h_params must be between 1 and the current ladder length")
     
         if len(indices) != new_length:
-            raise ValueError("indices must be a list of length new_length")
+            raise ValueError(f"indices must be a list of length {new_length}")
         if len(set(indices)) != new_length:
             raise ValueError("indices must be a list of distinct integers")
-        if max(indices) > self.ladder_length:
-            raise ValueError("indices must be a list of integers between 1 and the current ladder length")
 
         new_upper = SimplexTree(self.upper)
         new_lower = SimplexTree(self.lower)
         # Reassign filtration values
-        for simplex, original_fv in self.upper.get_simplices():
+        for simplex, original_fv in self.upper.get_filtration():
             # new filtration value is determined by its relative position in indices
             # for example, if indices = [2,4,6], then the filtration value of a simplex with original filtration value 4 is 2
             # and the new filtration value of a simplex with original filtration value 3 is also 2,
@@ -100,7 +118,7 @@ class CLFiltration():
                     new_fv = i+1
                     break
             new_upper.assign_filtration(simplex,new_fv)
-        for simplex, original_fv in self.lower.get_simplices():
+        for simplex, original_fv in self.lower.get_filtration():
             new_fv = len(indices)
             for i in range(len(indices)):
                 if original_fv <= indices[i]:

@@ -4,12 +4,66 @@ import numpy as np
 from scipy.spatial import distance
 from gtda.externals import CechComplex
 from gudhi import RipsComplex, AlphaComplex
+from bisect import bisect_left
 
 class SimplexTree(gudhi_SimplexTree):
     Epsilon = 1e-10 # for numerical comparison
 
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
+
+    def __str__(self):
+        return str(list(self.get_filtration()))
+        # can use ast.literal_eval to convert it back to a list of tuples
+
+    def to_ordinal_number_indexing(self,fvs:list):
+        """
+        Rescale the filtration values to ordinal numbers, starting from 1.
+        Based on the input fv=[t_1,t_2,...,t_n]
+        """
+        new_filt_ordinal = self.__class__()
+        for simplex, original_fv in self.get_filtration():
+            # new fv should be the smallest index of the number in fvs that is equal or larger than original_fv
+            # use bisect, notice that self.horizontal_parameters is sorted
+            new_fv = bisect_left(fvs,original_fv)+1
+            new_filt_ordinal.insert(simplex,new_fv) 
+            # insert the simplex with the new filtration value, notice that it will keep the lowest value
+        return new_filt_ordinal
+    
+    def to_custom_filtration_values(self,fvs:list):
+        """
+        Rescale a simplex tree with ordinal number filtration values [1,2,...,n]
+        to user input filtration values.
+        """
+        new_filt_custom = self.__class__()
+        original_fv = self.filtration_values #can be [1,3,7,...]
+        original_fv_len = len(original_fv)
+        
+        # assert that the original filtration values are 1,2,...,
+        for i in original_fv:
+            if not i.is_integer() or i<1:
+                raise ValueError(f'Found non-integeer or non-positive filtration value {i} in the original filtration values.')
+        if len(fvs) > original_fv_len:
+            #just print the message below and let the user know what is giving the warning
+            pass
+            # print(f"{self.__class__.__name__}{hex(id(self))}: {len(fvs)} filtration values given, while the original A_n quiver length is {original_fv_len}.")
+            #warn('The number of new filtration values is greater than the count of original filtration values in the simplex tree.')
+        elif len(fvs) < original_fv_len:
+            print(f"{self.__class__.__name__}{hex(id(self))}: {len(fvs)} filtration values given, smaller than the original A_n quiver length {original_fv_len}.")
+            # warn('The number of filtration values is smaller \
+            #      than the count of original filtration values in the simplex tree.\n\
+            #      simplices after the last filtration value will be ignored.')
+        for simplex, original_fv in self.get_filtration():
+            # new fv should be the smallest index of the number in fvs that is equal or larger than original_fv
+            # use bisect, notice that self.horizontal_parameters is sorted
+            original_fv_int=int(original_fv)
+            if original_fv_int > len(fvs):
+                break
+            new_fv = fvs[original_fv_int-1]
+            new_filt_custom.insert(simplex,new_fv) 
+            # insert the simplex with the new filtration value, notice that it will keep the lowest value
+        return new_filt_custom
+
 
     @property
     def maximum_simplices(self):
@@ -33,7 +87,7 @@ class SimplexTree(gudhi_SimplexTree):
     def critical_radii(self,dimension):
         self.compute_persistence()
         bdpairs=self.persistence_intervals_in_dimension(dimension)
-        return sorted((1+SimplexTree.Epsilon)*bdpairs.flatten())
+        return sorted(np.unique((1+SimplexTree.Epsilon)*bdpairs.flatten()))
         
 
     def from_point_cloud(self,pt_cloud,method='cech',sc_dim_ceil='auto',radius_max=np.inf):

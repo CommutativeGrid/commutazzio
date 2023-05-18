@@ -25,7 +25,8 @@ class SimplexTree(gudhi_SimplexTree):
         for simplex, original_fv in self.get_filtration():
             # new fv should be the smallest index of the number in fvs that is equal or larger than original_fv
             # use bisect, notice that self.horizontal_parameters is sorted
-            new_fv = bisect_left(fvs,original_fv)+1
+            new_fv = bisect_left(fvs,original_fv)+1 
+            # if original_fv is larger than the largest value in fvs, then it will be len(fvs)+1
             new_filt_ordinal.insert(simplex,new_fv) 
             # insert the simplex with the new filtration value, notice that it will keep the lowest value
         return new_filt_ordinal

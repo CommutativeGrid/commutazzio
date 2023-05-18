@@ -1,5 +1,5 @@
 import dionysus as d
-import pytest
+# import pytest
 from commutazzio.filtration import SimplicialComplex, ZigzagFiltration
 
 

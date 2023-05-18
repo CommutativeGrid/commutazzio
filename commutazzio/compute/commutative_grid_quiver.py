@@ -79,9 +79,10 @@ class CommutativeGridQuiver:
             #warn("The specified dimension is larger than the dimension of the simplicial complex.")
             count=0
         else:
-            for p in dgms[dim]:
-                if self.longest_matching(p):
-                    count+=1
+            count = sum(1 for p in dgms[dim] if self.longest_matching(p))
+            # for p in dgms[dim]:
+            #     if self.longest_matching(p):
+            #         count+=1
         return count
 
 class CommutativeGrid2DQuiver(CommutativeGridQuiver):

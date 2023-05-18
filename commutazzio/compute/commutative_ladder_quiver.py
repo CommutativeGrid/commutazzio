@@ -13,7 +13,7 @@ from .commutative_grid_quiver import CommutativeGrid2DQuiver
 from .tours import tours_cl3,tours_cl4,coeff_mat
 from .decomposition_container import DecompositionCollection
 from ..utils import timeit
-from pathos.multiprocessing import ProcessingPool as Pool
+# from pathos.multiprocessing import ProcessingPool as Pool
 from collections import OrderedDict
 from cpes import *
 # import gudhi as gd
@@ -55,15 +55,14 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
         # self.plot() 
         print("Filtration updated.")
 
-
-    def multiplicity_zigzag_pool(self,args):
-        """
-        Compute the multiplicity of a zigzag tour
-        """
-        return self.multiplicity_zigzag(*args)
+    # def multiplicity_zigzag_pool(self,args):
+    #     """
+    #     Compute the multiplicity of a zigzag tour
+    #     """
+    #     return self.multiplicity_zigzag(*args)
     
     #@timeit
-    def tours_vector(self,dim=1,prime=2,mp_method=0):
+    def tours_vector(self,dim=1,prime=2,mp_method=1):
         """
         Returns the vector of all the tours over the simplicial complex.
         mp_method: multiprocessing method, 0 for none, 1 for pool
@@ -73,13 +72,21 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
             raise NotImplementedError("Incompatible orientation.")
         # parallel computing here
         if mp_method == 0:
-            vector_list=[[self.multiplicity_zigzag(tour,dim,prime)] for tour in self.tours.values()]
+            total_tours=len(self.tours)
+            vector_list = []
+            for i, tour in enumerate(self.tours.values()):
+                progress = f"Progress: {i+1} / {total_tours}"
+                vector = self.multiplicity_zigzag(tour, dim, prime)
+                vector_list.append([vector])
+                print(f"{progress} - tours processed.",flush=True)
+            # vector_list=[[self.multiplicity_zigzag(tour,dim,prime)] for tour in self.tours.values()]
         elif mp_method == 1:
-            params=[(tour,dim,prime) for tour in self.tours.values()]
-            with Pool() as pool: # the same as Pool(os.cpu_count())
-                results=pool.map(self.multiplicity_zigzag_pool,params)
-                vector_list = [[result] for result in results]
-            #breakpoint()
+            #not pickable due to cython objects
+            raise NotImplementedError("Multiprocessing computation not implemented yet.")
+            # params=[(tour,dim,prime) for tour in self.tours.values()]
+            # with Pool() as pool: # the same as Pool(os.cpu_count())
+            #     results=pool.map(self.multiplicity_zigzag_pool,params)
+            #     vector_list = [[result] for result in results]
         else:
             raise NotImplementedError("Incompatible mp_method.")
         vector=np.array(vector_list)
@@ -149,7 +156,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
     
 
     
-if __name__ == '__main__':
-    size=4
-    fcc_d1_alpha=thinning_pipeline('fcc',parameter_array=[1.334,1.501,2.01,2.1],parameter_type='squared',deletion_rate=0.05,dimension=1,num=size,method='alpha')
-    hcp_d1_alpha=thinning_pipeline('hcp',parameter_array=[1.334,1.501,2.01,2.1],parameter_type='squared',deletion_rate=0.6,dimension=1,num=size,method='alpha')
+# if __name__ == '__main__':
+#     size=4
+#     fcc_d1_alpha=thinning_pipeline('fcc',parameter_array=[1.334,1.501,2.01,2.1],parameter_type='squared',deletion_rate=0.05,dimension=1,num=size,method='alpha')
+#     hcp_d1_alpha=thinning_pipeline('hcp',parameter_array=[1.334,1.501,2.01,2.1],parameter_type='squared',deletion_rate=0.6,dimension=1,num=size,method='alpha')

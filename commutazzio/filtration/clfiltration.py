@@ -27,9 +27,9 @@ class CLFiltration():
     def __init__(self,upper=SimplexTree(),lower=SimplexTree(),ladder_length=4,h_params=None,info={}):
         self.ladder_length=ladder_length
         if h_params is None: 
-            # print('assuming ordinal number filtration values')
-            # if not all(int(x) == i for i, x in enumerate(upper.filtration_values, start=1)) or not all(int(x) == i for i, x in enumerate(lower.filtration_values, start=1)):
-            #     raise ValueError('Filtration values of the input not matching the ordinal number filtration values')
+            print(f'{self.__class__.__name__}:assuming ordinal number filtration values.')
+            if not set([int(_) for _ in upper.filtration_values]).issubset(set(range(1,ladder_length+1))) or not set([int(_) for _ in lower.filtration_values]).issubset(set(range(1,ladder_length+1))):
+                raise ValueError('Filtration values of the input not matching the ordinal number filtration values')
             if ladder_length < len(upper.filtration_values) or ladder_length < len(lower.filtration_values):
                 raise ValueError('The ladder length is shorter than the number of filtration values in the input')
             # horizontal parameters, a list of length ladder_length, maps an index to a parameter
@@ -40,16 +40,26 @@ class CLFiltration():
             self.horizontal_parameters = h_params
             #has to be sorted
             if not all(h_params[i] <= h_params[i+1] for i in range(len(h_params) - 1)):
-                raise ValueError('horizontal parameters must be sorted')
+                raise ValueError('horizontal parameters must be sorted.')
             if not len(h_params) == ladder_length:
-                raise ValueError('The length of the horizontal parameters does not match the ladder length')
-            self.upper = upper.to_ordinal_number_indexing(h_params) # a SimplexTree, filtration values are 1,2,3,...,length
-            self.lower = lower.to_ordinal_number_indexing(h_params) # a SimplexTree, filtration values are 1,2,3,...,length
+                raise ValueError('The length of the horizontal parameters does not match the ladder length.')
+            # will not rescale again if the filtration values are already ordinal numbers
+            if not set([int(_) for _ in upper.filtration_values]).issubset(set(range(1,ladder_length+1))) or not set([int(_) for _ in lower.filtration_values]).issubset(set(range(1,ladder_length+1))):
+                print(f'{self.__class__.__name__}:rescaling filtration values to ordinal numbers.')
+                self.upper = upper.to_ordinal_number_indexing(h_params) # a SimplexTree, filtration values are 1,2,3,...,length
+                self.lower = lower.to_ordinal_number_indexing(h_params) # a SimplexTree, filtration values are 1,2,3,...,length
+            else:
+                print(f'{self.__class__.__name__}:ordinal number filtration values detected, will not rescale.')
+                self.upper = upper
+                self.lower = lower
         # for example, it can be a list of radii 
         self.info = dict(**info)
 
+    def get_filtration_fv(self,layer:str):
+        return self.get_filtration_with_custom_filtration_values(layer)
+    
     @cache
-    def get_filtration_by_layer(self,layer:str):
+    def get_filtration_with_custom_filtration_values(self,layer:str):
         """
         return the filtration with original filtration values by layer
         """
@@ -357,16 +367,25 @@ class ZigzagFiltration:
     def __init__(self,*args):
         """Input: each variable is a simplicial complex.
         """
-        self.ensemble=[]
+        # if type(args[0]).__name__ != 'SimplicialComplex':
+        #     raise NotImplementedError('Each variable must be a simplicial complex object')
+        # self.ensemble=[]
+        # #if type(args[0][0][0]) is list and len(args)==1:
+        # #    args=tuple(args[0]) # dealing with the case when the input is not spread
+        # self.sequence=[simplicial_complex_object.simplices for simplicial_complex_object in args]
+        # for simplicial_complex_list in self.sequence:
+        #     for simplex in simplicial_complex_list:
+        #         if simplex not in self.ensemble:
+        #             self.ensemble.append(simplex)
+        # self.ensemble.sort()
+
         if type(args[0]).__name__ != 'SimplicialComplex':
             raise NotImplementedError('Each variable must be a simplicial complex object')
-        #if type(args[0][0][0]) is list and len(args)==1:
-        #    args=tuple(args[0]) # dealing with the case when the input is not spread
-        self.sequence=[simplicial_complex_object.simplices for simplicial_complex_object in args]
+        self.sequence = [_.simplices for _ in args]
+        self.ensemble = set()
         for simplicial_complex_list in self.sequence:
-            for simplex in simplicial_complex_list:
-                if simplex not in self.ensemble:
-                    self.ensemble.append(simplex)
+            self.ensemble |= set(simplicial_complex_list)
+        self.ensemble = list(self.ensemble)
         self.ensemble.sort()
     
     def time_sequence(self,simplex):
@@ -391,13 +410,18 @@ class ZigzagFiltration:
             breakpoint()
             return self.times
         else:        
-            self.times=[]
-            for simplex in self.ensemble:
-                self.times.append(self.time_sequence(simplex))
+            self.times = [self.time_sequence(simplex) for simplex in self.ensemble]
             return self.times
+            # self.times=[]
+            # for simplex in self.ensemble:
+            #     self.times.append(self.time_sequence(simplex))
+            # return self.times
         
-        
+            
 
+        
+        
+# already in the unit test
 # if __name__ == '__main__':
 #     example=([[1]],# the first sc
 #                        [[0],[1]], # the second sc

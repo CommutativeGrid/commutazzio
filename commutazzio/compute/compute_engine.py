@@ -65,7 +65,7 @@ class CLInvariants:
             raise ValueError("Total decomposition is only available for finite-type commutative ladders.")
         if not self.repr_filled:
             self.repr_generation()
-        self.quiver.multiplicity_computation(dim=dim,prime=prime,recalculate=recalculate,output_message=output_message)
+        self.quiver.multiplicity_computation(dim=dim,prime=prime,recalculate=recalculate,mp_method=0,output_message=output_message)
         print(f"Total decomposition of the homology module at dimension {dim} and finite field F{prime} is computed.")
         
     @property

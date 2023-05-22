@@ -33,9 +33,7 @@ INSTALL_REQUIRES = [
       'networkx',
       'icecream',
       'orjson',
-      'pathos'
-
-
+      'joblib'
 ]
 
 DEPENDENCY_LINKS = [

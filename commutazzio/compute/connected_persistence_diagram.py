@@ -8,7 +8,7 @@ import pandas as pd
 from ..utils import delete_file
 import numpy as np
 from bisect import bisect_left
-import subprocess, os, json, sys
+import subprocess, os, sys
 #import gc garbage collection
 import configparser
 from warnings import warn
@@ -348,15 +348,15 @@ class ConnectedPersistenceDiagram():
         self.variables['PathToStr']=PathToStr
         # return PathToStr
 
-    
-    def _fzz_executor(self, input_file_path):
+    @staticmethod
+    def _fzz_executor(input_file_path, clean_up=True):
         """https://github.com/taohou01/fzz/"""
         original_dir = os.getcwd()
         # get the absolute path of the directory of the input file
         input_dir = os.path.abspath(os.path.dirname(input_file_path))
         os.chdir(input_dir)
         subprocess.run([FZZ_BINARY_PATH,input_file_path])
-        if self.clean_up:
+        if clean_up:
             delete_file(input_file_path)
         os.chdir(original_dir)
         return f"{input_file_path[:-4]}_pers" # do not change this line as the file name is controled by fzz. if you would like to change it, change the filename of the output first
@@ -387,7 +387,7 @@ class ConnectedPersistenceDiagram():
             f.write(self.variables['NodeToStr'][(0, 1)][0]) 
              # add all simplices from (0,1) to (m-1,1) line by line and by insertion order
             f.write(self.variables['PathToStr'][(0, 1, m-1, 1)][0])
-        return self._fzz_executor(fzz_input_file_name)
+        return self._fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
     
     def fzz_generator_lower(self):
         # lower layer
@@ -404,7 +404,7 @@ class ConnectedPersistenceDiagram():
         with open(fzz_input_file_name, 'w') as f:
             f.write(self.variables['NodeToStr'][(0, 0)][0])
             f.write(self.variables['PathToStr'][(0, 0, m-1, 0)][0])
-        return self._fzz_executor(fzz_input_file_name)
+        return self._fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
 
     @staticmethod
     def write_list_of_lists_of_sets_to_file(file_path, list_of_lists_of_sets):
@@ -512,6 +512,7 @@ class ConnectedPersistenceDiagram():
                 self.variables['c_ss'][((b, d), e)]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][((b-1, d), e)]+self.variables['c_ss'][((b, d+1), e)]-self.variables['c_ss'][((b-1, d+1), e)]
 
         c=0
+        # parallelize this part
         for b0 in range(m):
             for d1 in range(b0, m):
                 print('\r進捗率: {0:.2f}％ '.format(100*c/((m+1)*m/2)), end='')
@@ -537,7 +538,7 @@ class ConnectedPersistenceDiagram():
                     f.write(self.variables['PathToStr'][(d1, 1, b0, 0)][0])
                     if b0<m-1:
                         f.write(self.variables['PathToStr'][(b0, 0, m-1, 0)][0])
-                fzz_output_loop=self._fzz_executor(fzz_input_file_name)
+                fzz_output_loop=self._fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
                 with open(fzz_output_loop, 'r') as f:
                     barcode = [line.rstrip() for line in f]
                 if self.clean_up:

@@ -13,7 +13,6 @@ from .commutative_grid_quiver import CommutativeGrid2DQuiver
 from .courses import courses_cl3, courses_cl4,coeff_mat
 from .decomposition_container import DecompositionCollection
 from ..utils import timeit
-# from pathos.multiprocessing import ProcessingPool as Pool
 from os import cpu_count
 from joblib import delayed, Parallel
 from collections import OrderedDict
@@ -93,7 +92,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
             from ..utils import tqdm_joblib
             from tqdm import tqdm
             # add prompt telling that the progress bar is for xxxx
-            print(f"Computing multiplicity vector @ dim={dim} with prime={prime} ...")
+            print(f"Computing multiplicity vector @ dim={dim} with prime={prime}...")
             with tqdm_joblib(tqdm(desc="Progress",total=total_courses)) as progress_bar:
                 results = Parallel(n_jobs=num_cores)(delayed(self.multiplicity_zigzag)(*param) for param in params)
             # results = Parallel(n_jobs=8)(delayed(self.multiplicity_zigzag)(*param) for param in params)

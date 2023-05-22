@@ -10,10 +10,12 @@ import networkx as nx
 import numpy as np
 from .commutative_grid_quiver import CommutativeGrid2DQuiver
 # from ..filtration import SimplicialComplex
-from .tours import tours_cl3,tours_cl4,coeff_mat
+from .courses import courses_cl3, courses_cl4,coeff_mat
 from .decomposition_container import DecompositionCollection
 from ..utils import timeit
 # from pathos.multiprocessing import ProcessingPool as Pool
+from os import cpu_count
+from joblib import delayed, Parallel
 from collections import OrderedDict
 from cpes import *
 # import gudhi as gd
@@ -30,13 +32,13 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
         super().__init__(m,2,orientation=orientation,one_based=one_based)
         if orientation in ['equi','ff','fff']: # Specify the tours for the two cases below
             if m==3:
-                self.tours_list=tours_cl3(one_based=one_based)
+                self.courses_list=courses_cl3(one_based=one_based)
             elif m==4:
-                self.tours_list=tours_cl4(one_based=one_based)
+                self.courses_list=courses_cl4(one_based=one_based)
                 self.coeff_mat=coeff_mat
         self.decomp_collection=DecompositionCollection()
-        self.tours=OrderedDict((f"t_{i+1}",tour) for (i,tour) in enumerate(self.tours_list))
-        del(self.tours_list)
+        self.courses=OrderedDict((f"t_{i+1}",course) for (i,course) in enumerate(self.courses_list))
+        del(self.courses_list)
 
 
 
@@ -54,39 +56,51 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
             nx.set_node_attributes(self.G, values=values)
         # self.plot() 
         print("Filtration updated.")
-
-    # def multiplicity_zigzag_pool(self,args):
-    #     """
-    #     Compute the multiplicity of a zigzag tour
-    #     """
-    #     return self.multiplicity_zigzag(*args)
     
     #@timeit
-    def tours_vector(self,dim=1,prime=2,mp_method=1):
+    def tours_vector(self,dim,prime,multi_process_mode,num_cores):
         """
         Returns the vector of all the tours over the simplicial complex.
         mp_method: multiprocessing method, 0 for none, 1 for pool
+        num_cores: int or 'auto'
         """
         m=self.shape[0]
         if set(self.orientation)!={'f'} or (m!=3 and m!=4):
             raise NotImplementedError("Incompatible orientation.")
-        # parallel computing here
-        if mp_method == 0:
-            total_tours=len(self.tours)
+        total_courses=len(self.courses)
+        if multi_process_mode == False:
             vector_list = []
-            for i, tour in enumerate(self.tours.values()):
-                progress = f"Progress: {i+1} / {total_tours}"
-                vector = self.multiplicity_zigzag(tour, dim, prime)
+            for i, course in enumerate(self.courses.values()):
+                progress = f"Progress: {i+1} / {total_courses}"
+                # a course is a sequence of nodes
+                sc_zigzag_list=self.attribute_sequence(course,"simplicial_complex")
+                # obtain the corresponding nodes from course to make
+                # self.multiplicity_zigzag a static method, for easier parallelization implementation
+                vector = self.multiplicity_zigzag(sc_zigzag_list, dim, prime)
                 vector_list.append([vector])
                 print(f"{progress} - tours processed.",flush=True)
             # vector_list=[[self.multiplicity_zigzag(tour,dim,prime)] for tour in self.tours.values()]
-        elif mp_method == 1:
-            #not pickable due to cython objects
-            raise NotImplementedError("Multiprocessing computation not implemented yet.")
-            # params=[(tour,dim,prime) for tour in self.tours.values()]
+        elif multi_process_mode == True:
+            max_cores=cpu_count()
+            if num_cores == 'auto':
+                num_cores=int(0.5*max_cores) # use half number of total cores
+            elif num_cores > max_cores:
+                print(f"Number of cores specified ({num_cores}) is larger than the maximum number of cores ({max_cores}).")
+                print(f"Resetting number of cores to {max_cores}.")
+                num_cores=max_cores
+            print('Number of cores being used:',num_cores)
+            params = [(self.attribute_sequence(course,"simplicial_complex"),dim,prime) for course in self.courses.values()]
+            from ..utils import tqdm_joblib
+            from tqdm import tqdm
+            # add prompt telling that the progress bar is for xxxx
+            print(f"Computing multiplicity vector @ dim={dim} with prime={prime} ...")
+            with tqdm_joblib(tqdm(desc="Progress",total=total_courses)) as progress_bar:
+                results = Parallel(n_jobs=num_cores)(delayed(self.multiplicity_zigzag)(*param) for param in params)
+            # results = Parallel(n_jobs=8)(delayed(self.multiplicity_zigzag)(*param) for param in params)
+            # results= Parallel(n_jobs=2)(delayed(self.computePD)(param) for param in params)
             # with Pool() as pool: # the same as Pool(os.cpu_count())
-            #     results=pool.map(self.multiplicity_zigzag_pool,params)
-            #     vector_list = [[result] for result in results]
+            #     results=pool.map(self.multiplicity_zigzag,params)
+            vector_list = [[result] for result in results]
         else:
             raise NotImplementedError("Incompatible mp_method.")
         vector=np.array(vector_list)
@@ -94,15 +108,13 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
 
         
 
-    def multiplicity_computation(self,dim=1,prime=2,recalculate=False,mp_method=0,output_message=True):
+    def multiplicity_computation(self,dim=1,prime=2,recalculate=False,output_message=True,multi_process_mode=False,num_cores=1):
         """Return the vector of multiplicities"""
-        if mp_method == 1:
-            raise NotImplementedError("Multiprocessing computation not implemented yet.")
         
         if len(self.decomp_collection.dim(dim).prime(prime).collection)!=0 and not recalculate:
             print("Already existed. Pass parameter recalculate=True to recalculate.")
         else:
-            b=self.tours_vector(dim=dim,prime=prime,mp_method=mp_method)
+            b=self.tours_vector(dim=dim,prime=prime,multi_process_mode=multi_process_mode,num_cores=num_cores)
             result=np.linalg.solve(self.coeff_mat,b)
             rounded=result.round().astype(int)
             error=np.linalg.norm(np.matmul(self.coeff_mat,rounded)-b)

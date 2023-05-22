@@ -12,7 +12,7 @@ from icecream import ic
 
 
 class CLInvariants:
-    def __init__(self, clf: CLFiltration):
+    def __init__(self, clf: CLFiltration,multi_process_mode=False,num_cores="auto"):
         self.clf = clf
         if len(clf) in [3,4]:
             self.quiver = CLQ(len(clf))
@@ -23,6 +23,8 @@ class CLInvariants:
         self.connected_persistence_diagrams = []
         create_directory('./filtration')
         self.filtration_file_ready = False
+        self.multi_process_mode = multi_process_mode
+        self.num_cores = num_cores
 
 
 
@@ -65,7 +67,7 @@ class CLInvariants:
             raise ValueError("Total decomposition is only available for finite-type commutative ladders.")
         if not self.repr_filled:
             self.repr_generation()
-        self.quiver.multiplicity_computation(dim=dim,prime=prime,recalculate=recalculate,mp_method=0,output_message=output_message)
+        self.quiver.multiplicity_computation(dim=dim,prime=prime,recalculate=recalculate,output_message=output_message,multi_process_mode=self.multi_process_mode,num_cores=self.num_cores)
         print(f"Total decomposition of the homology module at dimension {dim} and finite field F{prime} is computed.")
         
     @property

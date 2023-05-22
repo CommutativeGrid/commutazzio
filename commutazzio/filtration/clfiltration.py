@@ -363,9 +363,13 @@ class CLFiltration():
 class ZigzagFiltration:
     def __init__(self, *args):
         # Check if the input arguments are SimplicialComplex objects
-        if type(args[0]).__name__ != 'SimplicialComplex':
-            raise NotImplementedError('Each variable must be a simplicial complex object')
-
+        if isinstance(args[0],SimplicialComplex):
+            pass
+        elif isinstance(args[0],list):
+            pass
+        else: 
+            raise NotImplementedError('Each variable must be a simplicial complex object or a list')
+        
         # Initialize the ensemble as an empty set and times as an empty dictionary
         self.ensemble = set()
         self.times = {}
@@ -376,9 +380,10 @@ class ZigzagFiltration:
         for i, simplicial_complex in enumerate(args):
             # Initialize a dictionary to keep track of the current presence status of each simplex
             current_presence = {simplex: False for simplex in self.ensemble}
-
+            if isinstance(simplicial_complex,SimplicialComplex):
+                simplicial_complex = simplicial_complex.simplices
             # Iterate over the simplices in the current SimplicialComplex object
-            for simplex in simplicial_complex.simplices:
+            for simplex in simplicial_complex:
                 # If the simplex is not in the ensemble, add it and initialize its times and last presence status
                 if simplex not in self.ensemble:
                     self.ensemble.add(simplex)

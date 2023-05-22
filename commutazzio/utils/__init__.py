@@ -3,3 +3,4 @@ from .file_operations import * # create_directory, filepath_generator, pickle_sa
 from .labelled_point_cloud import attach_level
 from .radii_generator import radii_generator
 from .watch import timeit
+from .joblib_progress import tqdm_joblib

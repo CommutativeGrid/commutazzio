@@ -7,9 +7,9 @@ Created on Fri Oct 29 16:15:49 2021
 """
 import numpy as np
 
-def tours_cl4(one_based=True):    
+def courses_cl4(one_based=True):    
     offset=1
-    tours_cl4=(
+    courses_cl4_array=(
         #A1
         [(1,1)], #[N["1,1"],]
         [(2,1)], #[N["2,2"],]
@@ -94,18 +94,19 @@ def tours_cl4(one_based=True):
         [(1,1),(3,2),(1,2),(2,2),(2,1),(4,1)], #[M["1,3"],L["1,3"],L["1,2"],M["2,2"],N["2,4"],]
         )
     if one_based is False:
-        tours_cl4=[[tuple(np.array(node)-offset) for node in tour] for tour in tours_cl4]
+        courses_cl4_array=[[tuple(np.array(node)-offset) for node in tour] for tour in tours_cl4]
     
-    return tours_cl4
+    return courses_cl4_array
 
-def tours_cl3(one_based=True):
+def courses_cl3(one_based=True):
+    raise NotImplementedError("Courses for CL(3) Not implemented yet.")
     offset=1
-    tours_cl3=(
+    courses_cl3_array=(
         )
     if one_based is False:
-        tours_cl3=[[tuple(np.array(node)-offset) for node in tour] for tour in tours_cl3]
+        courses_cl3=[[tuple(np.array(node)-offset) for node in tour] for tour in tours_cl3]
     
-    return tours_cl3
+    return courses_cl3
 
 
 def read_numpy_array(filename):

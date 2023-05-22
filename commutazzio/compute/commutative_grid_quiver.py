@@ -7,9 +7,8 @@ Created on Mon Oct 25 18:03:10 2021
 """
 import networkx as nx
 import numpy as np
-from ..filtration import ZigzagFiltration
-import dionysus as d
 from itertools import product
+from ..filtration import ZigzagFiltration
 
 def one_based_numbering(dim_vector):
     """
@@ -25,6 +24,18 @@ def one_based_numbering(dim_vector):
     
     return mapping
 
+def longest_matching(diagram_point):
+    """Test if the given diagram point is of form (0,inf)"""
+    # Remark: notice that the diagram in dionysus2 is in the form (birth,death)
+    # where birth means the time when the corresponding homology class is born
+    # and death means the time when the corresponding homology class dies
+    # NOTICE that the homology generator DOES NOT EXIST at the time of death
+    # so for any other usage other than this one, index changing is necessary
+    import numpy as np
+    if diagram_point.birth==0 and diagram_point.death==np.inf:
+        return True
+    else:
+        return False
 
 class CommutativeGridQuiver:
     def __init__(self,dim_vector,one_based=True):
@@ -51,30 +62,41 @@ class CommutativeGridQuiver:
         """
         output=[]
         for node in nodes:
-            output.append(self.G.nodes[node][attribute])
+            # output.append(self.G.nodes[node][attribute])
+            output.append(self.G.nodes[node][attribute].simplices)
         return output
-    
-    @staticmethod
-    def longest_matching(diagram_point):
-        """Test if the given diagram point is of form (0,inf)"""
-        # Remark: notice that the diagram in dionysus2 is in the form (birth,death)
-        # where birth means the time when the corresponding homology class is born
-        # and death means the time when the corresponding homology class dies
-        # NOTICE that the homology generator DOES NOT EXIST at the time of death
-        # so for any other usage other than this one, index changing is necessary
-        if diagram_point.birth==0 and diagram_point.death==np.inf:
-            return True
-        else:
-            return False
 
-    def multiplicity_zigzag(self,zigzag_filtration_nodes,dim=1,prime=2):
-        # TODO: make it a static method, for faster computation when using mp
+    @staticmethod    
+    def computePD(i):
+        import dionysus as d
+        import numpy as np
+        np.random.seed(42)
+        f = d.Filtration([[0], [1], [0,1], [2], [0,2], [1,2]])
+        times = [[.4, .6, .7], [.1], [.9], [.9], [.9], [.9]]
+        zz, dgms, cells = d.zigzag_homology_persistence(f, times)
+        return np.random.randint(1,20)
+
+    # def multiplicity_zigzag_pool(self,args):
+    #     """
+    #     Compute the multiplicity of a zigzag tour
+    #     """
+    #     return self.multiplicity_zigzag(*args)
+
+    @staticmethod
+    def multiplicity_zigzag(sc_zigzag_list,dim=1,prime=2):
         """
         Compute the multiplicity of the longest interval in the given
         zigzag filtration of simplicial complexes
         """
-        sc_filtration=self.attribute_sequence(zigzag_filtration_nodes,"simplicial_complex")
-        tour=ZigzagFiltration(*sc_filtration)
+        import dionysus as d
+        # f = d.Filtration([[0], [1], [0,1], [2], [0,2], [1,2]])
+        # times = [[.4, .6, .7], [.1], [.9], [.9], [.9], [.9]]
+        # zz, dgms, cells = d.zigzag_homology_persistence(f, times)
+        # return dgms[1]
+        # return 1
+        # zzf=self.attribute_sequence(course,"simplicial_complex")
+        # return 1
+        tour=ZigzagFiltration(*sc_zigzag_list)
         filtration_dionysus=d.Filtration(tour.ensemble)
         times=tour.all_time_sequences()
         zz, dgms, cells = d.zigzag_homology_persistence(filtration_dionysus, times, prime=prime) # dgms in all dimensions, starting from zero
@@ -84,11 +106,10 @@ class CommutativeGridQuiver:
             #warn("The specified dimension is larger than the dimension of the simplicial complex.")
             count=0
         else:
-            count = sum(1 for p in dgms[dim] if self.longest_matching(p))
-            # for p in dgms[dim]:
-            #     if self.longest_matching(p):
-            #         count+=1
+            count = sum(1 for p in dgms[dim] if longest_matching(p))
         return count
+
+
 
 class CommutativeGrid2DQuiver(CommutativeGridQuiver):
 

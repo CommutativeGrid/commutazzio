@@ -57,6 +57,11 @@ class CommutativeGridQuiver:
     @staticmethod
     def longest_matching(diagram_point):
         """Test if the given diagram point is of form (0,inf)"""
+        # Remark: notice that the diagram in dionysus2 is in the form (birth,death)
+        # where birth means the time when the corresponding homology class is born
+        # and death means the time when the corresponding homology class dies
+        # NOTICE that the homology generator DOES NOT EXIST at the time of death
+        # so for any other usage other than this one, index changing is necessary
         if diagram_point.birth==0 and diagram_point.death==np.inf:
             return True
         else:

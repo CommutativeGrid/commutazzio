@@ -360,86 +360,108 @@ class CLFiltration():
 
 
     
-
-
-
 class ZigzagFiltration:
-    def __init__(self,*args):
-        """Input: each variable is a simplicial complex.
-        """
-        # if type(args[0]).__name__ != 'SimplicialComplex':
-        #     raise NotImplementedError('Each variable must be a simplicial complex object')
-        # self.ensemble=[]
-        # #if type(args[0][0][0]) is list and len(args)==1:
-        # #    args=tuple(args[0]) # dealing with the case when the input is not spread
-        # self.sequence=[simplicial_complex_object.simplices for simplicial_complex_object in args]
-        # for simplicial_complex_list in self.sequence:
-        #     for simplex in simplicial_complex_list:
-        #         if simplex not in self.ensemble:
-        #             self.ensemble.append(simplex)
-        # self.ensemble.sort()
-
+    def __init__(self, *args):
+        # Check if the input arguments are SimplicialComplex objects
         if type(args[0]).__name__ != 'SimplicialComplex':
             raise NotImplementedError('Each variable must be a simplicial complex object')
-        self.sequence = [_.simplices for _ in args]
+
+        # Initialize the ensemble as an empty set and times as an empty dictionary
         self.ensemble = set()
-        for simplicial_complex_list in self.sequence:
-            self.ensemble |= set(simplicial_complex_list)
-        self.ensemble = list(self.ensemble)
-        self.ensemble.sort()
-    
-    def time_sequence(self,simplex):
-        """Register the attendence-absence vector of a simplex"""
-        state = 0
-        seq=[]
-        for i,item in enumerate(self.sequence):
-            if simplex in item:
-                new_state = 1
-            else:
-                new_state = 0
-            if new_state != state:
-                seq.append(i)
-            else:
-                pass
-            state=new_state
-        return seq
-            
+        self.times = {}
+        # Initialize a dictionary to keep track of the last known presence status of each simplex
+        last_presence = {}
+
+        # Iterate over the SimplicialComplex objects in args
+        for i, simplicial_complex in enumerate(args):
+            # Initialize a dictionary to keep track of the current presence status of each simplex
+            current_presence = {simplex: False for simplex in self.ensemble}
+
+            # Iterate over the simplices in the current SimplicialComplex object
+            for simplex in simplicial_complex.simplices:
+                # If the simplex is not in the ensemble, add it and initialize its times and last presence status
+                if simplex not in self.ensemble:
+                    self.ensemble.add(simplex)
+                    self.times[simplex] = []
+                    last_presence[simplex] = False
+                # Set the current presence status of the simplex to True
+                current_presence[simplex] = True
+
+            # Check for simplices in the ensemble whose presence status has changed
+            # If a simplex's presence status has changed, append the current time to its times
+            # and update its last presence status
+            for simplex in self.ensemble:
+                if last_presence[simplex] != current_presence[simplex]:
+                    self.times[simplex].append(i)
+                    last_presence[simplex] = current_presence[simplex]
+
+        # Convert the ensemble to a sorted list and times to a list of lists
+        self.ensemble = sorted(list(self.ensemble))
+        self.times = [self.times[simplex] for simplex in self.ensemble]
+
+    # Method to return the times
     def all_time_sequences(self):
-        """Find the time vectors for all simplices"""
-        if hasattr(self, 'times'):
-            breakpoint()
-            return self.times
-        else:        
-            self.times = [self.time_sequence(simplex) for simplex in self.ensemble]
-            return self.times
+        return self.times
+
+
+
+
+
+# class ZigzagFiltration:
+#     def __init__(self,*args):
+#         """Input: each variable is a simplicial complex.
+#         """
+#         # if type(args[0]).__name__ != 'SimplicialComplex':
+#         #     raise NotImplementedError('Each variable must be a simplicial complex object')
+#         # self.ensemble=[]
+#         # #if type(args[0][0][0]) is list and len(args)==1:
+#         # #    args=tuple(args[0]) # dealing with the case when the input is not spread
+#         # self.sequence=[simplicial_complex_object.simplices for simplicial_complex_object in args]
+#         # for simplicial_complex_list in self.sequence:
+#         #     for simplex in simplicial_complex_list:
+#         #         if simplex not in self.ensemble:
+#         #             self.ensemble.append(simplex)
+#         # self.ensemble.sort()
+
+#         if type(args[0]).__name__ != 'SimplicialComplex':
+#             raise NotImplementedError('Each variable must be a simplicial complex object')
+#         #args: simplicial complexes in order, in an alternating orientation
+#         self.sequence = [_.simplices for _ in args] 
+#         self.ensemble = set() # the set of all simplices
+#         for simplicial_complex_list in self.sequence:
+#             self.ensemble |= set(simplicial_complex_list)
+#         self.ensemble = list(self.ensemble)
+#         self.ensemble.sort()
+    
+#     def time_sequence(self,simplex):
+#         """Register the attendence-absence vector of a simplex"""
+#         state = 0
+#         seq=[]
+#         for i,item in enumerate(self.sequence):
+#             if simplex in item:
+#                 new_state = 1
+#             else:
+#                 new_state = 0
+#             if new_state != state:
+#                 seq.append(i)
+#             else:
+#                 pass
+#             state=new_state
+#         return seq
+            
+#     def all_time_sequences(self):
+#         """Find the time vectors for all simplices"""
+#         if hasattr(self, 'times'):
+#             return self.times
+#         else:
+#             self.times = [self.time_sequence(simplex) for simplex in self.ensemble]
+#             return self.times
             # self.times=[]
             # for simplex in self.ensemble:
             #     self.times.append(self.time_sequence(simplex))
             # return self.times
-        
-            
 
         
-        
-# already in the unit test
-# if __name__ == '__main__':
-#     example=([[1]],# the first sc
-#                        [[0],[1]], # the second sc
-#                        [[1]],
-#                        [[0],[1]],
-#                        [[0],[1],[2],[0,1],[0,2],[1,2]])
-                       
-#     a=ZigzagFiltration(*example)
-    
-#     f=d.Filtration(a.ensemble)
-#     times=a.all_time_sequences()
-    
-#     zz, dgms, cells = d.zigzag_homology_persistence(f, times)
-#     print(zz)
-#     for i,dgm in enumerate(dgms):
-#         print("Dimension:", i)
-#         for p in dgm:
-#             print(p)
     
     
     

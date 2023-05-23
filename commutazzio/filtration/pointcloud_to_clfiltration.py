@@ -85,8 +85,8 @@ def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,ma
             # if len(simplex)<=max_simplex_dim+1:
             lower.insert(simplex,x_coord)
         print(f"Progress: {100*(i+1)/len(radii):.2f}%", flush=True)
-    print(list(upper.get_filtration()))
-    print(list(lower.get_filtration()))
+    # print(list(upper.get_filtration()))
+    # print(list(lower.get_filtration()))
     # from icecream import ic
     # ic(parentalST.maximum_simplices)
     # ic(upper.maximum_simplices)

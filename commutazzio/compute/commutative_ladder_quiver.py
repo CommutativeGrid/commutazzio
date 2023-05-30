@@ -57,7 +57,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
         print("Filtration updated.")
     
     #@timeit
-    def tours_vector(self,dim,prime,multi_process_mode,num_cores):
+    def tours_vector(self,dim,prime,enable_multi_processing,num_cores):
         """
         Returns the vector of all the tours over the simplicial complex.
         mp_method: multiprocessing method, 0 for none, 1 for pool
@@ -67,7 +67,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
         if set(self.orientation)!={'f'} or (m!=3 and m!=4):
             raise NotImplementedError("Incompatible orientation.")
         total_courses=len(self.courses)
-        if multi_process_mode == False:
+        if enable_multi_processing == False:
             vector_list = []
             for i, course in enumerate(self.courses.values()):
                 progress = f"Progress: {i+1} / {total_courses}"
@@ -79,7 +79,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
                 vector_list.append([vector])
                 print(f"{progress} - tours processed.",flush=True)
             # vector_list=[[self.multiplicity_zigzag(tour,dim,prime)] for tour in self.tours.values()]
-        elif multi_process_mode == True:
+        elif enable_multi_processing == True:
             max_cores=cpu_count()
             if num_cores == 'auto':
                 num_cores=int(0.5*max_cores) # use half number of total cores
@@ -107,13 +107,13 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
 
         
 
-    def multiplicity_computation(self,dim=1,prime=2,recalculate=False,output_message=True,multi_process_mode=False,num_cores=1):
+    def multiplicity_computation(self,dim=1,prime=2,recalculate=False,output_message=True,enable_multi_processing=False,num_cores=1):
         """Return the vector of multiplicities"""
         
         if len(self.decomp_collection.dim(dim).prime(prime).collection)!=0 and not recalculate:
             print("Already existed. Pass parameter recalculate=True to recalculate.")
         else:
-            b=self.tours_vector(dim=dim,prime=prime,multi_process_mode=multi_process_mode,num_cores=num_cores)
+            b=self.tours_vector(dim=dim,prime=prime,enable_multi_processing=enable_multi_processing,num_cores=num_cores)
             result=np.linalg.solve(self.coeff_mat,b)
             rounded=result.round().astype(int)
             error=np.linalg.norm(np.matmul(self.coeff_mat,rounded)-b)

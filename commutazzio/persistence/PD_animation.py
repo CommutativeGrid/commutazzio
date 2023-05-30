@@ -7,7 +7,7 @@ Created on Wed Jan 19 11:51:00 2022
 """
 import numpy as np
 import pandas as pd
-from PD_close_packings import PD_packings
+from pd_points3d import PD_Points3D
 from cpes import FaceCenteredCubic as FCC
 from cpes import HexagonalClosePacking as HCP
 import plotly.express as px
@@ -56,22 +56,21 @@ def PD_animation(df):
 
 
 if __name__ == '__main__':
-    size = 5
-    removal = 5
+    size = 10
+    removal = 15
     fcc = FCC(size)
     df = pd.DataFrame()
     for step in range(0, 30):
-        pdiagram = PD_packings(fcc.data,method="homcloud")
-        fcc.thinning(number_removal=removal, inplace=True)
+        pdiagram = PD_Points3D(fcc,method="alpha")
         new_data = pd.DataFrame(pdiagram.diagram_1_r)
         new_data['atoms'] = size**3-step*removal
         df = df.append(new_data, ignore_index=True)
         if new_data.loc[new_data[0]-0.001>new_data[1]].empty is False:
             breakpoint()
-        print(1+1)
+        fcc.thinning(number_removal=removal, mode="singlet", inplace=True)
         # track generators, animation_group
     df.rename(columns={0: 'birth', 1: 'death', 2: 'multiplicity'},inplace=True)
 
     fig = PD_animation(df)
 
-    #fig.write_html('PD_animation.html')
+    fig.write_html('PD_animation.html')

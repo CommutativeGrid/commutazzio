@@ -8,8 +8,7 @@ Created on Wed Dec  1 14:46:51 2021
 import dionysus as d
 import numpy as np
 import gudhi as gd
-# import dionysus as d
-import homcloud.interface as hc
+# import homcloud.interface as hc
 
 from scipy.spatial.distance import cdist
 from gudhi.wasserstein import wasserstein_distance as wasserstein_distance_gudhi
@@ -18,7 +17,7 @@ from gtda.externals import CechComplex
 from dataclasses import dataclass
 from math import sqrt
 
-from .format_conversion import *
+from format_conversion import *
 
 
 def wasserstein_distance(pd1,pd2,dim,order=1.,internal_p=2.):
@@ -55,7 +54,7 @@ class PD_Points3D:
             self._diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
             self.simplex_tree=simplex_tree
         elif method == "cech":
-            max_radius = np.inf
+            max_radius = 4
             s_complex = CechComplex(points=self.points3d.xyz,max_radius=max_radius)
             simplex_tree = s_complex.create_simplex_tree(max_dimension=3)
             simplex_tree.make_filtration_non_decreasing() # make sure that the generate filtration is valid
@@ -76,7 +75,7 @@ class PD_Points3D:
         #     #self.simplex_tree=simplex_tree
         elif method == "rips":
             # radius here is 2 times the radius used to construct the sphere
-            max_edge_length=np.inf
+            max_edge_length=4
             s_complex = gd.RipsComplex(points=self.points3d.xyz, max_edge_length=max_edge_length)
             simplex_tree = s_complex.create_simplex_tree(max_dimension=3)
             if simplex_tree.make_filtration_non_decreasing():
@@ -85,19 +84,19 @@ class PD_Points3D:
             print(result_str)
             self._diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
             self.simplex_tree=simplex_tree
-        elif method == "homcloud":
-            #using alpha complex
-            pdlist=hc.PDList.from_alpha_filtration(self.points3d.xyz,no_squared=not is_squared)
-            if is_squared:
-                print("Radius is squared.")
-            else:
-                print("Radius is not squared.")
-            print("Computation of pdlist finished.")
-            self._diagrams=[]
-            for i in range(3):
-                pd = pdlist.dth_diagram(i)
-                for birth,death in zip(pd.births,pd.deaths):
-                    self._diagrams.append((i,(birth,death)))
+        # elif method == "homcloud":
+        #     #using alpha complex
+        #     pdlist=hc.PDList.from_alpha_filtration(self.points3d.xyz,no_squared=not is_squared)
+        #     if is_squared:
+        #         print("Radius is squared.")
+        #     else:
+        #         print("Radius is not squared.")
+        #     print("Computation of pdlist finished.")
+        #     self._diagrams=[]
+        #     for i in range(3):
+        #         pd = pdlist.dth_diagram(i)
+        #         for birth,death in zip(pd.births,pd.deaths):
+        #             self._diagrams.append((i,(birth,death)))
         if is_squared is False and method in ["alpha","cech","rips"]:
             print("Radius is not squared.")
             self._diagrams=[(dim,(sqrt(birth),sqrt(death))) for (dim,(birth,death)) in self._diagrams]

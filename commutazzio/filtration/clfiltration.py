@@ -54,6 +54,8 @@ class CLFiltration():
                 self.lower = lower
         # for example, it can be a list of radii 
         self.info = dict(**info)
+        # automatic validation
+        self.validation()
 
     def get_filtration_fv(self,layer:str):
         return self.get_filtration_with_custom_filtration_values(layer)
@@ -166,7 +168,7 @@ class CLFiltration():
         lower = [(tuple(s), int(fv)) for s,fv in lower]
         return f'Upper row:\n{str(upper)},\nLower row:\n{str(lower)}'
     
-    @cache
+    # @cache
     def get_simplicial_complex(self,x:int,y:int):
         """
         return the simplicial complex of the given coordinate (x,y)

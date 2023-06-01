@@ -465,17 +465,3 @@ class ComplementaryTrianglesPlot():
         y_coords = [y_a, y_b, y_c, y_d, y_a]
         return x_coords, y_coords
 
-
-# if __name__ == "__main__":
-#     dots = pd.read_pickle("./sample/dots.pkl")
-#     dots = dots.astype({
-#         'x': 'int',
-#         'y': 'int',
-#         'multiplicity': 'int',
-#         'area': 'str'
-#     })
-#     lines = pd.read_pickle("./sample/lines.pkl")
-#     lines = lines.astype('int', copy=False)
-#     aaa = CommutativeLadderPdSS(
-#         dots, lines, title='CL(50)のss方式による区間近似(hcp)')
-#     aaa.render(export_mode='full_html')

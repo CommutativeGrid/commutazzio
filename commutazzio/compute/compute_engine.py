@@ -32,12 +32,13 @@ class CLInvariants:
     def cPDs(self):
         return self.connected_persistence_diagrams
     
-    def cPD_computation(self,dim=1):
+    def cPD_computation(self,homology_dim=1):
         """
         Compute the connected persistence diagram of the filtration at dimension dim.
         The coefficient field is GF(2). (using FZZ)
         (Can choose other finite field if we use dionysus2)
         """
+        print(f"Computing connected persistence diagram at dimension {homology_dim}")
         if self.filtration_file_ready == False:
             self.filtration_filepath=self.clf.random_cech_format_output_file(new_file=True,dirname='./filtration',extension='fltr')
             self.filtration_file_ready = True
@@ -45,7 +46,7 @@ class CLInvariants:
         # ic(self.clf.horizontal_parameters)
         new_diagram=cPD(self.filtration_filepath,\
                         ladder_length=self.clf.ladder_length,\
-                        homological_dim=dim,\
+                        homology_dim=homology_dim,\
                         filtration_values=self.clf.horizontal_parameters)
         self.connected_persistence_diagrams.append(new_diagram)
 

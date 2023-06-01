@@ -9,8 +9,8 @@ def test_commutative_property_of_cPD():
     radii = [1.5, 1.731, 1.733, 1.999, 2.001]
     test_dir = os.path.dirname(os.path.abspath(__file__))
     # Load filtration data
-    Da = cPD(os.path.join(test_dir, "test_fixtures/X_a.fltr"), ladder_length=l, homological_dim=1, filtration_values=radii, clean_up=True)
-    Db = cPD(os.path.join(test_dir, "test_fixtures/X_b.fltr"), ladder_length=l, homological_dim=1, filtration_values=radii, clean_up=True)
+    Da = cPD(os.path.join(test_dir, "test_fixtures/X_a.fltr"), ladder_length=l, homology_dim=1, filtration_values=radii, clean_up=True)
+    Db = cPD(os.path.join(test_dir, "test_fixtures/X_b.fltr"), ladder_length=l, homology_dim=1, filtration_values=radii, clean_up=True)
     # Check that computations are correct
     assert Da.lines.multiplicity.values[0] == 1
     assert Db.lines.empty

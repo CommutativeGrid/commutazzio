@@ -38,7 +38,7 @@ if FZZ_BINARY_PATH == '':
 #     return list(map(int, st.split(',')))
 
 class ConnectedPersistenceDiagram():
-    def __init__(self, filtration_filepath,ladder_length,homological_dim,filtration_values,clean_up=True,**kwargs ):
+    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,clean_up=True,**kwargs ):
         self.txf = os.path.abspath(filtration_filepath) # filtration file
         self.txf_dir = os.path.dirname(self.txf)
         self.txf_basename_wo_ext = os.path.splitext(os.path.basename(self.txf))[0]
@@ -46,7 +46,7 @@ class ConnectedPersistenceDiagram():
         self.ladder_length = self.m
         self.clean_up = clean_up # clean up the temporary files
         self.n = 2 # two layers by default
-        self.dim = homological_dim # homological dimension
+        self.dim = homology_dim # homology dimension
         self.times = self.preprocess_filtration_values(filtration_values)
         self.intv = self.interval_generator()
         self.variables={'cov':{},'c_ss':{}}

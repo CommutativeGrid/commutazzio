@@ -5,7 +5,7 @@ Created on Wed Dec  8 12:31:20 2021
 
 @author: kasumi
 """
-import dionysus as dio
+import dionysus as d
 import gudhi as gd
 import numpy as np
 
@@ -39,7 +39,7 @@ if __name__ == '__main__' and __package__ is None:
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
     points = np.random.random([100,3])
-    filtration = dio.fill_rips(points, 2, 4)
+    filtration = d.fill_rips(points, 2, 4)
     s_complex = gd.AlphaComplex(points=points)
     simplex_tree = s_complex.create_simplex_tree()
     test=filtration_g2d(simplex_tree)

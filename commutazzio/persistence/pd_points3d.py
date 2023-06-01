@@ -14,10 +14,11 @@ from scipy.spatial.distance import cdist
 from gudhi.wasserstein import wasserstein_distance as wasserstein_distance_gudhi
 #from cpes import Points3D
 from gtda.externals import CechComplex
+from gtda.plotting import plot_diagram as plot_diagram_gtda
 from dataclasses import dataclass
 from math import sqrt
 
-from format_conversion import *
+from .format_conversion import *
 
 
 def wasserstein_distance(pd1,pd2,dim,order=1.,internal_p=2.):
@@ -54,13 +55,15 @@ class PD_Points3D:
             self._diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
             self.simplex_tree=simplex_tree
         elif method == "cech":
-            max_radius = 4
+            max_radius = 3
             s_complex = CechComplex(points=self.points3d.xyz,max_radius=max_radius)
             simplex_tree = s_complex.create_simplex_tree(max_dimension=3)
             simplex_tree.make_filtration_non_decreasing() # make sure that the generate filtration is valid
             result_str = 'Cech complex is of dimension ' + repr(simplex_tree.dimension())
             print(result_str)
             self._diagrams = simplex_tree.persistence(homology_coeff_field=self.characteristic)
+            # report the radius after a square
+            self._diagrams=[(dim,(birth**2,death**2)) for (dim,(birth,death)) in self._diagrams]
             self.simplex_tree=simplex_tree
         # elif method == 'cech_dionysus':
         #     max_radius = 10
@@ -98,10 +101,10 @@ class PD_Points3D:
         #         for birth,death in zip(pd.births,pd.deaths):
         #             self._diagrams.append((i,(birth,death)))
         if is_squared is False and method in ["alpha","cech","rips"]:
-            print("Radius is not squared.")
+            print("The radius is not squared.")
             self._diagrams=[(dim,(sqrt(birth),sqrt(death))) for (dim,(birth,death)) in self._diagrams]
         else:
-            print("Radius is squared.")
+            print("The radius is squared.")
         self.reduced_diagram = self.diagram_multiplicity_count(self._diagrams,data_type="gudhi")
         self.diagram_0_r = [(birth,death,count) for (dim,(birth,death),count) in self.reduced_diagram if dim==0]
         self.diagram_1_r = [(birth,death,count) for (dim,(birth,death),count) in self.reduced_diagram if dim==1]
@@ -156,23 +159,28 @@ class PD_Points3D:
             return np.array([[b,d] for (i,(b,d)) in self._diagrams if i==dim])
         else:
             raise NotImplementedError
+        
+    def plot_all(self):
+        """Plot the persistence diagram using giotto-tda"""
+        return plot_diagram_gtda(np.array([(b,d,dim) for (dim,(b,d)) in self._diagrams]))
+        
 
     #TODO use heat plot
-    def plot_0D(self,reduced=True,plotrange=(0,3)):
+    def plot_0D(self,reduced=False,plotrange=(0,3)):
         if reduced:
             diagram=self.diagram_0_r
         else:
             diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==0]
         self._plot_diagram(diagram,plotrange)
 
-    def plot_1D(self,reduced=True,plotrange=(0,3)):
+    def plot_1D(self,reduced=False,plotrange=(0,3)):
         if reduced:
             diagram=self.diagram_1_r
         else:
             diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==1]
         self._plot_diagram(diagram,plotrange)
 
-    def plot_2D(self,reduced=True,plotrange=(0,3)):
+    def plot_2D(self,reduced=False,plotrange=(0,3)):
         if reduced:
             diagram=self.diagram_2_r
         else:

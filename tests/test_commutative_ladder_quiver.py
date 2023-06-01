@@ -48,5 +48,5 @@ def test_commutative_ladder():
     assert cl_engine.decomp_collection[0].nonzero_components == {'N1': 1}
 
     #multiprocessing test
-    cl_engine.multiplicity_computation(dim=1,prime=3,multi_process_mode=True,num_cores=2)
+    cl_engine.multiplicity_computation(dim=1,prime=3,enable_multi_processing=True,num_cores=2)
     assert cl_engine.decomp_collection[1].nonzero_components == {'N1': 1}

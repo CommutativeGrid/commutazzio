@@ -74,7 +74,7 @@ class SimplexTree(gudhi_SimplexTree):
     
     def truncation(self,ceiling):
         temp = SimplicialComplex()
-        temp.from_simplices([tuple(s[0]) for s in self.get_filtration() if s[1]<=ceiling])
+        temp.from_simplices([tuple(s[0]) for s in self.get_filtration() if s[1]<=ceiling+SimplexTree.Epsilon])
         return temp
     
     def insert(self,simplex,filtration_value):
@@ -90,7 +90,6 @@ class SimplexTree(gudhi_SimplexTree):
         bdpairs=self.persistence_intervals_in_dimension(dimension)
         return sorted(np.unique((1+SimplexTree.Epsilon)*bdpairs.flatten()))
         
-
     def from_point_cloud(self,pt_cloud,method='cech',sc_dim_ceil='auto',radius_max=np.inf):
         """
         Create a simplex tree from a point cloud.

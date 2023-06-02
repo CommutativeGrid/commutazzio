@@ -35,6 +35,7 @@ class ComplementaryTrianglesPlot():
         self.dots = pd.read_csv(StringIO(kwargs.get("dots")),index_col=0)
         self.lines = pd.read_csv(StringIO(kwargs.get("lines")),index_col=0)
         self.radii = kwargs.get("radii")
+        self.radii = np.array(self.radii)
         self.ladder_length = kwargs.get("ladder_length", None)
         self.title = title
         self.legend = True

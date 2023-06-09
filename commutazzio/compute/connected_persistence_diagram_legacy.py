@@ -33,6 +33,11 @@ if FZZ_BINARY_PATH == '':
     warn("The path to the binary file of FZZ is not set. Connected persistence diagram is not available.")
 
 
+#-----------------End of getting the path----------------------
+
+# def toList(st):
+#     return list(map(int, st.split(',')))
+
 class ConnectedPersistenceDiagram():
     def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,clean_up=True,**kwargs ):
         self.txf = os.path.abspath(filtration_filepath) # filtration file
@@ -98,7 +103,6 @@ class ConnectedPersistenceDiagram():
         n = self.n  # vertical height, use !n in debug mode
         m = self.m  # horizontal length, 2 by default
         intv = []
-        # will be a list of tuples.
         for k in range(n):
             for birth in range(m):
                 for death in range(birth, m):
@@ -123,7 +127,7 @@ class ConnectedPersistenceDiagram():
 
     def cover_generator(self):
         """generate interval covers"""
-        cov = {} # will be a dict
+        cov = {}
         n = self.n
         m = self.m
         for I in self.intv:
@@ -226,9 +230,60 @@ class ConnectedPersistenceDiagram():
         for i in range(1, self.m):
             for j in range(1, self.n):
                 C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
-
+                
+        # for i in range(self.m):
+        #     for j in range(self.n):
+        #         ic(i, j, C[i][j])
         self.complexes = C
 
+    # def complexes_generator_legacy(self):
+    #     """compute complexes"""
+    #     # C[i][j], i in range(m), j in range(n)
+    #     # i: time index
+    #     # j: layer index
+    #     C = [[set() for j in range(self.n)] for i in range(self.m)]
+    #     # C is a list of lists of sets, 
+    #     # each set contains strings of vertices, 
+    #     # each string represents a simplex
+    #     with open(self.txf, 'r') as f:
+    #         filt = [line.rstrip() for line in f]
+    #         # line is in form of
+    #         # dim birth n m v_0...v_dim
+    #         # filt=f.read().rstrip().split('\n') #filtration
+    #     if filt[0] == '':
+    #         return
+    #     for i in range(len(filt)):
+    #         # data=filt[i].rstrip().split()
+    #         data = filt[i].split()
+    #         if data[0] == '#': continue # skip comments
+    #         if self.dim + 1 < int(data[0]): continue # skip higher dimensions
+    #         # if self.dim < 1 and data[0] == '2': continue 
+    #         # if self.dim < 2 and data[0] == '3': continue
+    #         # data[3]: horizontal index
+    #         # data[2]: vertical index
+    #         C[int(data[3])][int(data[2])].add(' '.join(sorted(data[4:])))
+    #         # TODO: notice that this is not affected by self.m and self.n. 
+    #         # TODO: maybe we should set the ladder length automatically from the filtration file
+    #         # TODO: check if sorted here is sufficient, or if it is necessary to sort
+    #     # up to now, C contains each simplices newly added at each step.
+    #     for i in range(1, self.m): # Reconstruct the lower layer
+    #         C[i][0] = C[i][0] | C[i-1][0] # union
+    #     for j in range(1, self.n): # reconstruct the leftest column
+    #         # for self.n=2, we only need to reconstruct the first column
+    #         C[0][j] = C[0][j] | C[0][j-1]
+    #     # Reconstruction of the upper layer staring from the second column
+    #     for i in range(1, self.m):
+    #         for j in range(1, self.n):
+    #             C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
+    #     self.complexes = C
+
+    
+
+    @staticmethod
+    def intv_support_num(I):
+        b0, d0 = I[0]
+        b1, d1 = I[1]
+        return max(d1-b1+1,0)+max(d0-b0+1,0)
 
     def node2str_generator(self):
         NodeToStr={} #Dictionary to store string representations of nodes
@@ -541,12 +596,7 @@ class ConnectedPersistenceDiagram():
                     if (1 << j) & s:
                         sl += 1
                         js = self.join_intv(js, self.variables['cov'][I][j])
-                # remove the usage of (-1)^sl
-                # ans_ss += ((-1)**sl)*self.variables['c_ss'][js]
-                if sl%2==0:
-                    ans_ss += self.variables['c_ss'][js]
-                else:
-                    ans_ss -= self.variables['c_ss'][js]
+                ans_ss += ((-1)**sl)*self.variables['c_ss'][js]
             delt_ss[I] = ans_ss
         return delt_ss
 

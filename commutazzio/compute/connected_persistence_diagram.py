@@ -11,6 +11,7 @@ from bisect import bisect_left
 import subprocess, os, sys
 #import gc garbage collection
 import configparser
+import pickle
 from warnings import warn
 from icecream import ic
 from ..utils import filepath_generator
@@ -25,74 +26,54 @@ config.read(os.path.join(parent_dir, 'config.ini'))
 
 if sys.platform == 'darwin':
     FZZ_BINARY_PATH=config.get('FZZ','binary_path_darwin')
+    # try to find the path [PRECOMPUTED] precomputed_intv_directory_darwin
+    try:
+        PRECOMPUTED_INTV_DIR=config.get('PRECOMPUTED','precomputed_intv_directory_darwin')
+    except configparser.NoOptionError:
+        PRECOMPUTED_INTV_DIR=''
 elif sys.platform == 'linux':
     FZZ_BINARY_PATH=config.get('FZZ','binary_path_linux')
+    # try to find the path [PRECOMPUTED] precomputed_intv_directory_linux
+    try:
+        PRECOMPUTED_INTV_DIR=config.get('PRECOMPUTED','precomputed_intv_directory_linux')
+    except configparser.NoOptionError:
+        PRECOMPUTED_INTV_DIR=''
 
 #raise warning if the path is not set, say that connected persistence diagram is not available
 if FZZ_BINARY_PATH == '':
     warn("The path to the binary file of FZZ is not set. Connected persistence diagram is not available.")
 
 
-class ConnectedPersistenceDiagram():
-    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,clean_up=True,**kwargs ):
-        self.txf = os.path.abspath(filtration_filepath) # filtration file
-        self.txf_dir = os.path.dirname(self.txf)
-        self.txf_basename_wo_ext = os.path.splitext(os.path.basename(self.txf))[0]
-        self.m = ladder_length # default length is 10
-        self.ladder_length = self.m
-        self.clean_up = clean_up # clean up the temporary files
-        self.n = 2 # two layers by default
-        self.dim = homology_dim # homology dimension
-        self.times = self.preprocess_filtration_values(filtration_values)
+class CommutativeGridPreCompute():
+    # G_{m,n}
+    def __init__(self,m:int,n:int=2):
+        # m: horizontal length
+        # n: height
+        # n=2 for commutative ladder 
+        self.m=m
+        self.n=n
         self.intv = self.interval_generator()
         self.variables={'cov':{},'c_ss':{}}
-        # c_ss stands for compression source-sink 
         self.cover_generator()
-        self.delt_ss = self.deco()
-        self.compute_dec_obj()
-        self.compute_connecting_lines()
-        self.compute_dotdec()
-        self.compute_plot_dots()
 
-    #TODO: validate the txf file
-    #TODO: check if all faces are contained, etc.
-    #TODO: validation costs time. do we really need to do that?
+    def get_intervals(self):
+        return self.intv
 
-    def preprocess_filtration_values(self,filtration_values):
-        """Preprocess the filtration values"""
-        if len(filtration_values) != self.m:
-            raise ValueError("The length of the filtration value list is not equal to the ladder length.")
-        # raise error if not sorted strictly increasing
-        if not all(filtration_values[i] < filtration_values[i+1] for i in range(len(filtration_values)-1)):
-            raise ValueError("The filtration values provided are not strictly increasing.")
-        return np.asarray(filtration_values)
+    def get_variables(self):
+        return self.variables
 
-    @property
-    def plot_data(self):
-        plot_data_dict = {}
-        plot_data_dict.update({'ladder_length': self.ladder_length})
-        plot_data_dict.update({'dim': self.dim})
-        plot_data_dict.update({'radii': self.times})
-        plot_data_dict.update({'dots': self.dots.to_csv(index=True)})
-        plot_data_dict.update({'lines': self.lines.to_csv(index=True)})
-        return plot_data_dict
-
-    def temp(self):
-        ttt = {'1,1,10,-1': 5,
-         '4,4,10,-1': 52,
-         '10,-1,0,0': 410,
-         '2,3,10,-1': 9,
-         '4,5,10,-1': 1,
-         '0,0,0,0': 46,
-         '1,3,10,-1': 2,
-         '2,4,10,-1': 9,
-         '4,6,10,-1': 1,
-         '0,1,0,0': 1,
-         '1,4,10,-1': 11,
-         '4,7,10,-1': 1,
-         '1,5,10,-1': 1}
-        self.dec = ttt
-
+    def save_intv_to_file(self,dirpath):
+        """save intv to file"""
+        import pickle
+        with open(f"{dirpath}/intv_{self.m}_{self.n}.pkl","wb") as f:
+            pickle.dump(self.intv,f)
+    
+    def save_variables_to_file(self,dirpath):
+        """save variables to file"""
+        import pickle
+        with open(f"{dirpath}/variables_{self.m}_{self.n}.pkl","wb") as f:
+            pickle.dump(self.variables,f)
+    
     def interval_generator(self):
         """Generate intervals"""
         n = self.n  # vertical height, use !n in debug mode
@@ -120,7 +101,7 @@ class ConnectedPersistenceDiagram():
         print(f"全{str(len(intv))}個の区間表現を構築")
         # self.intv=intv
         return intv
-
+    
     def cover_generator(self):
         """generate interval covers"""
         cov = {} # will be a dict
@@ -158,7 +139,78 @@ class ConnectedPersistenceDiagram():
                     L = list(I); L[j] = (I[j][0], I[j][1]+1)
                     cov[I].append(tuple(L))
         self.variables['cov']=cov
-        # return cov
+
+class ConnectedPersistenceDiagram():
+    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,clean_up=True,**kwargs ):
+        self.txf = os.path.abspath(filtration_filepath) # filtration file
+        #TODO: validate the txf file, check if all faces are contained, etc. But validation costs time. do we really need to do that?
+        self.txf_dir = os.path.dirname(self.txf)
+        self.txf_basename_wo_ext = os.path.splitext(os.path.basename(self.txf))[0]
+        self.m = ladder_length # default length is 10
+        self.ladder_length = self.m
+        self.clean_up = clean_up # clean up the temporary files
+        self.n = 2 # two layers by default
+        self.dim = homology_dim # homology dimension
+        self.times = self.preprocess_filtration_values(filtration_values)
+
+        is_intv_loaded = False
+        if PRECOMPUTED_INTV_DIR:
+            intv_fn=f"{PRECOMPUTED_INTV_DIR}/intv_{self.m}_{self.n}.pkl"
+            variables_fn=f"{PRECOMPUTED_INTV_DIR}/variables_{self.m}_{self.n}.pkl"
+            if os.path.exists(intv_fn) and os.path.exists(variables_fn):
+                print("Loading precomputed intervals and variables...")
+                with open(intv_fn,"rb") as f:
+                    self.intv = pickle.load(f)
+                with open(variables_fn,"rb") as f:
+                    self.variables = pickle.load(f)
+                is_intv_loaded = True
+        if not is_intv_loaded:
+            temp = CommutativeGridPreCompute(self.m,self.n)
+            self.intv = temp.get_intervals()
+            self.variables = temp.get_variables()
+            del temp
+        self.delt_ss = self.deco()
+        self.compute_dec_obj()
+        self.compute_connecting_lines()
+        self.compute_dotdec()
+        self.compute_plot_dots()
+
+    
+
+    def preprocess_filtration_values(self,filtration_values):
+        """Preprocess the filtration values"""
+        if len(filtration_values) != self.m:
+            raise ValueError("The length of the filtration value list is not equal to the ladder length.")
+        # raise error if not sorted strictly increasing
+        if not all(filtration_values[i] < filtration_values[i+1] for i in range(len(filtration_values)-1)):
+            raise ValueError("The filtration values provided are not strictly increasing.")
+        return np.asarray(filtration_values)
+
+    @property
+    def plot_data(self):
+        plot_data_dict = {}
+        plot_data_dict.update({'ladder_length': self.ladder_length})
+        plot_data_dict.update({'dim': self.dim})
+        plot_data_dict.update({'radii': self.times})
+        plot_data_dict.update({'dots': self.dots.to_csv(index=True)})
+        plot_data_dict.update({'lines': self.lines.to_csv(index=True)})
+        return plot_data_dict
+
+    def temp(self):
+        ttt = {'1,1,10,-1': 5,
+         '4,4,10,-1': 52,
+         '10,-1,0,0': 410,
+         '2,3,10,-1': 9,
+         '4,5,10,-1': 1,
+         '0,0,0,0': 46,
+         '1,3,10,-1': 2,
+         '2,4,10,-1': 9,
+         '4,6,10,-1': 1,
+         '0,1,0,0': 1,
+         '1,4,10,-1': 11,
+         '4,7,10,-1': 1,
+         '1,5,10,-1': 1}
+        self.dec = ttt
 
     #@staticmethod
     @lru_cache(maxsize=2048)
@@ -249,8 +301,6 @@ class ConnectedPersistenceDiagram():
                 s='\ni '.join(L) 
                 NodeToStr[(a, b)]=('i '+s+'\n', len(L))
         self.variables['NodeToStr']=NodeToStr
-        # print(self.variables['NodeToStr'])
-        # return NodeToStr
     
     def path2str_generator(self):
         PathToStr={}  #Dictionary to store string representations of paths 
@@ -374,6 +424,8 @@ class ConnectedPersistenceDiagram():
 
     @staticmethod
     def write_node_to_str(NodeToStr, file_path):
+        # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
+        # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
         with open(file_path, 'w') as file:
             for key, value in NodeToStr.items():
                 file.write(f"{key}: {value[0]}")
@@ -383,12 +435,9 @@ class ConnectedPersistenceDiagram():
         m = self.m
         dim = self.dim
         self.complexes_generator()
-        self.node2str_generator()
-        # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
+        self.node2str_generator()        
         self.path2str_generator()
         print("全ての道の差分リストを構築")
-        # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
-        # self.write_node_to_str(self.variables['PathToStr'], "PathToStr.txt")
 
         fzz_output_upper=self.fzz_generator_upper() #initialized with the function
         # notice that S is initialized with S=[0, NodeToStr[(0, 1)][1]] when using this function 
@@ -415,9 +464,6 @@ class ConnectedPersistenceDiagram():
                 if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
                     d=j; 
                     break
-
-                # if self.variables['S'][d1+1]<p or q<self.variables['S'][d1+2]: 
-                #     continue
             if b<=d:
                 self.variables['d_ss'][(b, d)]+=1
         e=(m, -1)
@@ -439,12 +485,6 @@ class ConnectedPersistenceDiagram():
             current_dim, p, q = map(int, interval.rstrip().split())
             if current_dim != dim:
                 continue
-        # for i in range(len(barcode)):
-        #     data=barcode[i].rstrip().split()
-        #     if int(data[0])!=dim: 
-        #         continue
-        #     p=int(data[1])
-        #     q=int(data[2])
             for j in range(m): 
                 if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
                     b=j; 
@@ -464,11 +504,17 @@ class ConnectedPersistenceDiagram():
                 d=b+l
                 self.variables['c_ss'][((b, d), e)]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][((b-1, d), e)]+self.variables['c_ss'][((b, d+1), e)]-self.variables['c_ss'][((b-1, d+1), e)]
 
-        c=0
-        # parallelize this part
+        c=0 # c for compression
+        # parallelize this part by executing the fzz command in parallel
+        # then integrate the results
+        # Shape
+        # [b1,d1]
+        #   [b0,d0]
         for b0 in range(m):
             for d1 in range(b0, m):
+                # Print the progress
                 print('\r進捗率: {0:.2f}％ '.format(100*c/((m+1)*m/2)), end='')
+                # Recall that e=(m, -1)
                 if self.variables['c_ss'][((b0, d1), e)]==0 or self.variables['c_ss'][(e, (b0, d1))]==0: 
                     c+=1
                     continue 

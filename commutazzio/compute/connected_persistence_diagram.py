@@ -487,6 +487,8 @@ class ConnectedPersistenceDiagram():
             print('Number of cores being used:',num_cores)
             print(f"Number of non-vanishing parameters: {len(non_vanishing_parameters)}")
             num_cores=1
+            # https://stackoverflow.com/questions/27569306/populating-matplotlib-subplots-through-a-loop-and-a-function
+            # https://stackoverflow.com/questions/57617496/90-of-the-time-is-spent-on-method-acquire-of-thread-lock-objects
             with tqdm_joblib(tqdm(desc="Progress",total=len(non_vanishing_parameters))) as progress_bar:
                 results = Parallel(n_jobs=num_cores, timeout=60)(
                     # delayed(self.fzz_compute_inside_loop)(b0, d1, m=m, \

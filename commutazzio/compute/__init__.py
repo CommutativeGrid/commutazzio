@@ -2,3 +2,4 @@ from .commutative_ladder_quiver import CommutativeLadderQuiver
 from .compute_engine import CLInvariants
 from .connected_persistence_diagram import ConnectedPersistenceDiagram
 from .decomposition_container import Decomposition
+from .precompute import CommutativeGridPreCompute

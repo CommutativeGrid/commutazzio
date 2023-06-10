@@ -519,13 +519,14 @@ class ConnectedPersistenceDiagram():
                 d=b+l
                 self.variables['c_ss'][((b, d), e)]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][((b-1, d), e)]+self.variables['c_ss'][((b, d+1), e)]-self.variables['c_ss'][((b-1, d+1), e)]
 
-        c=0
+        c=0 # for recording the progress
         # parallelize this part
         for b0 in range(m):
             for d1 in range(b0, m):
                 print('\r進捗率: {0:.2f}％ '.format(100*c/((m+1)*m/2)), end='')
                 if self.variables['c_ss'][((b0, d1), e)]==0 or self.variables['c_ss'][(e, (b0, d1))]==0: 
                     c+=1
+                    print('skipped')
                     continue 
                 self.variables['d_ss']={}
                 self.variables['S']=[0, self.variables['NodeToStr'][(0, 1)][1]]

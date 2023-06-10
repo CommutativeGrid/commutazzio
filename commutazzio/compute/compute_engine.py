@@ -2,7 +2,6 @@ from .commutative_ladder_quiver import CommutativeLadderQuiver as CLQ
 from .connected_persistence_diagram import ConnectedPersistenceDiagram as cPD
 from ..filtration import CLFiltration
 from ..utils import create_directory, delete_file
-import tempfile
 from functools import cache
 from icecream import ic
 
@@ -47,7 +46,9 @@ class CLInvariants:
         new_diagram=cPD(self.filtration_filepath,\
                         ladder_length=self.clf.ladder_length,\
                         homology_dim=homology_dim,\
-                        filtration_values=self.clf.horizontal_parameters)
+                        filtration_values=self.clf.horizontal_parameters,\
+                            enable_multi_processing=self.enable_multi_processing,\
+                                num_cores=self.num_cores)
         self.connected_persistence_diagrams.append(new_diagram)
 
     def delete_filtration_file(self):

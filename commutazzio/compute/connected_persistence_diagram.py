@@ -16,6 +16,7 @@ from warnings import warn
 from icecream import ic
 from ..utils import filepath_generator
 from functools import lru_cache
+from .precompute import CommutativeGridPreCompute
 
 #---------Get the path to the binary file of FZZ----------------
 # Get the path to the parent directory of this module
@@ -44,110 +45,30 @@ if FZZ_BINARY_PATH == '':
     warn("The path to the binary file of FZZ is not set. Connected persistence diagram is not available.")
 
 
-class CommutativeGridPreCompute():
-    # G_{m,n}
-    def __init__(self,m:int,n:int=2):
-        # m: horizontal length
-        # n: height
-        # n=2 for commutative ladder 
-        self.m=m
-        self.n=n
-        self.intv = self.interval_generator()
-        self.variables={'cov':{},'c_ss':{}}
-        self.cover_generator()
+def _fzz_executor(input_file_path, clean_up=True):
+    """https://github.com/taohou01/fzz/"""
+    original_dir = os.getcwd()
+    # get the absolute path of the directory of the input file
+    input_dir = os.path.abspath(os.path.dirname(input_file_path))
+    os.chdir(input_dir)
+    subprocess.run([FZZ_BINARY_PATH,input_file_path])
+    if clean_up:
+        delete_file(input_file_path)
+    os.chdir(original_dir)
+    return f"{input_file_path[:-4]}_pers" # do not change this line as the file name is controled by fzz. if you would like to change it, change the filename of the output first
 
-    def get_intervals(self):
-        return self.intv
-
-    def get_variables(self):
-        return self.variables
-
-    def save_intv_to_file(self,dirpath):
-        """save intv to file"""
-        import pickle
-        with open(f"{dirpath}/intv_{self.m}_{self.n}.pkl","wb") as f:
-            pickle.dump(self.intv,f)
-    
-    def save_variables_to_file(self,dirpath):
-        """save variables to file"""
-        import pickle
-        with open(f"{dirpath}/variables_{self.m}_{self.n}.pkl","wb") as f:
-            pickle.dump(self.variables,f)
-    
-    def interval_generator(self):
-        """Generate intervals"""
-        n = self.n  # vertical height, use !n in debug mode
-        m = self.m  # horizontal length, 2 by default
-        intv = []
-        # will be a list of tuples.
-        for k in range(n):
-            for birth in range(m):
-                for death in range(birth, m):
-                    I = [(m, -1) for _ in range(k)]
-                    I.append((birth, death))
-                    intv.append(I)
-        i = 0
-        while(i < len(intv)):
-            I = intv[i]
-            if len(I) < n:
-                p, q = I[-1]
-                for b in range(p+1):
-                    for d in range(p, q+1):
-                        intv.append(I+[(b, d)])
-            I.extend([(m, -1) for j in range(n-len(I))])
-            intv[i] = tuple(I)
-            i += 1
-        # intv.sort(key=self.sizeSupp)
-        print(f"全{str(len(intv))}個の区間表現を構築")
-        # self.intv=intv
-        return intv
-    
-    def cover_generator(self):
-        """generate interval covers"""
-        cov = {} # will be a dict
-        n = self.n
-        m = self.m
-        for I in self.intv:
-            self.variables['c_ss'][I]=0
-            for s in range(n):
-                if I[s][1] > -1:
-                    break
-            for t in range(n-1, -1, -1):
-                if I[t][1] > -1:
-                    break
-            cov[I] = []  # cover
-            b = I[t][0]  # birth
-            d = I[s][1]  # death
-            if t < n-1:
-                L = list(I); L[t+1] = (b, b)
-                cov[I].append(tuple(L))
-            if s > 0:
-                L = list(I); L[s-1] = (d, d)
-                cov[I].append(tuple(L))
-            if b > 0:
-                L = list(I); L[t] = (b-1, I[t][1])
-                cov[I].append(tuple(L))
-            for j in range(t-1, s-1, -1):
-                if I[j+1][0] < I[j][0]:
-                    L = list(I); L[j] = (I[j][0]-1, I[j][1])
-                    cov[I].append(tuple(L))
-            if d < m-1:
-                L = list(I); L[s] = (I[s][0], d+1)
-                cov[I].append(tuple(L))
-            for j in range(s+1, t+1):
-                if I[j-1][1] > I[j][1]:
-                    L = list(I); L[j] = (I[j][0], I[j][1]+1)
-                    cov[I].append(tuple(L))
-        self.variables['cov']=cov
+        
 
 class ConnectedPersistenceDiagram():
-    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,clean_up=True,**kwargs ):
+    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,enable_multi_processing=False,num_cores="auto",clean_up=True,**kwargs ):
         self.txf = os.path.abspath(filtration_filepath) # filtration file
         #TODO: validate the txf file, check if all faces are contained, etc. But validation costs time. do we really need to do that?
         self.txf_dir = os.path.dirname(self.txf)
         self.txf_basename_wo_ext = os.path.splitext(os.path.basename(self.txf))[0]
         self.m = ladder_length # default length is 10
         self.ladder_length = self.m
+        self.enable_multi_processing = enable_multi_processing
+        self.num_cores = num_cores
         self.clean_up = clean_up # clean up the temporary files
         self.n = 2 # two layers by default
         self.dim = homology_dim # homology dimension
@@ -155,8 +76,8 @@ class ConnectedPersistenceDiagram():
 
         is_intv_loaded = False
         if PRECOMPUTED_INTV_DIR:
-            intv_fn=f"{PRECOMPUTED_INTV_DIR}/intv_{self.m}_{self.n}.pkl"
-            variables_fn=f"{PRECOMPUTED_INTV_DIR}/variables_{self.m}_{self.n}.pkl"
+            intv_fn=f"{PRECOMPUTED_INTV_DIR}/intv_{self.m:03d}_{self.n:03d}.pkl"
+            variables_fn=f"{PRECOMPUTED_INTV_DIR}/variables_{self.m:03d}_{self.n:03d}.pkl"
             if os.path.exists(intv_fn) and os.path.exists(variables_fn):
                 print("Loading precomputed intervals and variables...")
                 with open(intv_fn,"rb") as f:
@@ -169,6 +90,9 @@ class ConnectedPersistenceDiagram():
             self.intv = temp.get_intervals()
             self.variables = temp.get_variables()
             del temp
+        self.complexes_generator()
+        self.node2str_generator()        
+        self.path2str_generator()
         self.delt_ss = self.deco()
         self.compute_dec_obj()
         self.compute_connecting_lines()
@@ -351,19 +275,6 @@ class ConnectedPersistenceDiagram():
         self.variables['PathToStr']=PathToStr
         # return PathToStr
 
-    @staticmethod
-    def _fzz_executor(input_file_path, clean_up=True):
-        """https://github.com/taohou01/fzz/"""
-        original_dir = os.getcwd()
-        # get the absolute path of the directory of the input file
-        input_dir = os.path.abspath(os.path.dirname(input_file_path))
-        os.chdir(input_dir)
-        subprocess.run([FZZ_BINARY_PATH,input_file_path])
-        if clean_up:
-            delete_file(input_file_path)
-        os.chdir(original_dir)
-        return f"{input_file_path[:-4]}_pers" # do not change this line as the file name is controled by fzz. if you would like to change it, change the filename of the output first
-    
     def fzz_generator_upper(self):
         # upper layer
         m=self.m
@@ -371,43 +282,22 @@ class ConnectedPersistenceDiagram():
         # remove the extension of self.txf and add _FZZ to the filename, use .txt as the extension
         # do not use [:-4], as the length of extension may change
         fzz_input_file_name = filepath_generator(dirname=self.txf_dir,filename=self.txf_basename_wo_ext + '_FZZ_upper',extension='txt')
-        self.variables['d_ss'] = {}
-        # self.variables['S'] is used to align the index in the commutative ladder
-        # with the index when all simplicial complex get expanded and inserted one by one
-        # and then computed using fzz
-        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 1)][1]] # (0,1), notice the difference
-        # ic(self.variables['S'])
-        for i in range(m-1): 
-            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 1, i+1, 1)][1])
-            # ic(i,self.variables['S'])
-        self.variables['S'].append(self.variables['S'][-1]+1)
-        # ic(self.variables['S'])
-        for i in range(m):
-            for j in range(i, m): 
-                self.variables['d_ss'][(i, j)]=0
         with open(fzz_input_file_name, 'w') as f:
             # add the simplices at (0,1) line by line
             f.write(self.variables['NodeToStr'][(0, 1)][0]) 
              # add all simplices from (0,1) to (m-1,1) line by line and by insertion order
             f.write(self.variables['PathToStr'][(0, 1, m-1, 1)][0])
-        return self._fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
+        return _fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
     
     def fzz_generator_lower(self):
         # lower layer
         m=self.m
         # n=self.n
         fzz_input_file_name = filepath_generator(dirname=self.txf_dir,filename=self.txf_basename_wo_ext + '_FZZ_lower',extension='txt')
-        self.variables['d_ss']={}
-        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 0)][1]] # (0,0), notice the difference
-        for i in range(m-1): 
-            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 0, i+1, 0)][1])
-        self.variables['S'].append(self.variables['S'][-1]+1)
-        for i in range(m):
-            for j in range(i, m): self.variables['d_ss'][(i, j)]=0
         with open(fzz_input_file_name, 'w') as f:
             f.write(self.variables['NodeToStr'][(0, 0)][0])
             f.write(self.variables['PathToStr'][(0, 0, m-1, 0)][0])
-        return self._fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
+        return _fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
 
     @staticmethod
     def write_list_of_lists_of_sets_to_file(file_path, list_of_lists_of_sets):
@@ -430,57 +320,10 @@ class ConnectedPersistenceDiagram():
             for key, value in NodeToStr.items():
                 file.write(f"{key}: {value[0]}")
 
-    def deco(self):
-        #n = self.n
-        m = self.m
-        dim = self.dim
-        self.complexes_generator()
-        self.node2str_generator()        
-        self.path2str_generator()
-        print("全ての道の差分リストを構築")
-
-        fzz_output_upper=self.fzz_generator_upper() #initialized with the function
-        # notice that S is initialized with S=[0, NodeToStr[(0, 1)][1]] when using this function 
-        with open(fzz_output_upper, 'r') as f: # opening the output file of fzz
-            barcode = [line.rstrip() for line in f]
-        if self.clean_up:
-            delete_file(fzz_output_upper)
-        # Each line denotes an interval in the barcode, 
-        # d p q: dimension, birth, death
-        # Note that the birth and death are start and end of the closed integral interval, 
-        # i.e., a line d p q indicates a persistence interval [p,q] in dimensional d 
-        # starting with the complex K_p and ending with the complex K_q.
-        # for i in range(len(barcode)):
-        for interval in barcode:
-            current_dim, p, q = map(int, interval.rstrip().split())
-            if current_dim != dim:
-                continue
-            for j in range(m): 
-                if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
-                    b=j; 
-                    break
-            for j in range(-1,m): # here we shift the death time earlier by one unit
-                # set d to be 
-                if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
-                    d=j; 
-                    break
-            if b<=d:
-                self.variables['d_ss'][(b, d)]+=1
-        e=(m, -1)
-        self.variables['c_ss'][(e, (-1, m))]=0
-        for i in range(m):
-            self.variables['c_ss'][(e, (i, m))]=0
-            self.variables['c_ss'][(e, (-1, i))]=0
-        for l in range(m-1, -1, -1):
-            for b in range(m-l):
-                d=b+l
-                self.variables['c_ss'][(e, (b, d))]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][(e, (b-1, d))]+self.variables['c_ss'][(e, (b, d+1))]-self.variables['c_ss'][(e, (b-1, d+1))]
-
-        fzz_output_lower=self.fzz_generator_lower()
-        with open(fzz_output_lower, 'r') as f:
-            barcode = [line.rstrip() for line in f]
-        if self.clean_up:
-            delete_file(fzz_output_lower)
+    def _barcode_info_transform_ul(self, barcode):
+        # for the upper and lower layer
+        m=self.m
+        dim=self.dim
         for interval in barcode:
             current_dim, p, q = map(int, interval.rstrip().split())
             if current_dim != dim:
@@ -495,28 +338,180 @@ class ConnectedPersistenceDiagram():
                     break
             if b<=d: 
                 self.variables['d_ss'][(b, d)]+=1
-        self.variables['c_ss'][((-1, m), e)]=0
-        for i in range(m): 
-            self.variables['c_ss'][((i, m), e)]=0
-            self.variables['c_ss'][((-1, i), e)]=0
+
+    # @staticmethod
+    # def fzz_compute_inside_loop(b0,d1,m,NodeToStr,PathToStr,dirname,fn_prefix,clean_up):
+    #     fzz_input_file_name = filepath_generator(dirname=dirname,filename=fn_prefix+f'_FZZ_{b0}_{d1}',extension='txt')
+    #     with open(fzz_input_file_name, 'w') as f:
+    #         f.write(NodeToStr[(0, 1)][0])
+    #         if 0<d1:
+    #             f.write(PathToStr[(0, 1, d1, 1)][0])
+    #         f.write(PathToStr[(d1, 1, b0, 0)][0])
+    #         if b0<m-1:
+    #             f.write(PathToStr[(b0, 0, m-1, 0)][0])
+    #     fzz_output_loop=_fzz_executor(fzz_input_file_name,clean_up=clean_up)
+    #     with open(fzz_output_loop, 'r') as f:
+    #         barcode = [line.rstrip() for line in f]
+    #     if clean_up:
+    #         delete_file(fzz_output_loop)
+    #     return barcode
+
+    def deco(self):
+        #deco for decomposition
+        #n = self.n
+        m = self.m
+        dim = self.dim
+        print("全ての道の差分リストを構築")
+        self.variables['d_ss'] = {}
+        # self.variables['S'] is used to align the index in the commutative ladder
+        # with the index when all simplicial complex get expanded and inserted one by one
+        # and then computed using fzz
+        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 1)][1]] # (0,1), notice the difference
+        for i in range(m-1): 
+            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 1, i+1, 1)][1])
+            # ic(i,self.variables['S'])
+        self.variables['S'].append(self.variables['S'][-1]+1)
+        # ic(self.variables['S'])
+        for i in range(m):
+            for j in range(i, m): 
+                self.variables['d_ss'][(i, j)]=0
+
+        fzz_output_upper=self.fzz_generator_upper() #initialized with the function
+        # notice that S is initialized with S=[0, NodeToStr[(0, 1)][1]] when using this function 
+        with open(fzz_output_upper, 'r') as f: # opening the output file of fzz
+            barcode = [line.rstrip() for line in f]
+        if self.clean_up:
+            delete_file(fzz_output_upper)
+        # Each line denotes an interval in the barcode, 
+        # d p q: dimension, birth, death
+        # Note that the birth and death are start and end of the closed integral interval, 
+        # i.e., a line d p q indicates a persistence interval [p,q] in dimensional d 
+        # starting with the complex K_p and ending with the complex K_q.
+        # for i in range(len(barcode)):
+        self._barcode_info_transform_ul(barcode)
+
+        e=(m, -1)
+        for l in range(m-1, -1, -1):
+            for b in range(m-l):
+                d=b+l
+                self.variables['c_ss'][(e, (b, d))]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][(e, (b-1, d))]+self.variables['c_ss'][(e, (b, d+1))]-self.variables['c_ss'][(e, (b-1, d+1))]
+
+        self.variables['d_ss']={}
+        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 0)][1]] # (0,0), notice the difference
+        for i in range(m-1): 
+            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 0, i+1, 0)][1])
+        self.variables['S'].append(self.variables['S'][-1]+1)
+        for i in range(m):
+            for j in range(i, m): self.variables['d_ss'][(i, j)]=0
+
+        fzz_output_lower=self.fzz_generator_lower()
+
+        with open(fzz_output_lower, 'r') as f:
+            barcode = [line.rstrip() for line in f]
+        if self.clean_up:
+            delete_file(fzz_output_lower)
+        self._barcode_info_transform_ul(barcode)
+
         for l in range(m-1, -1, -1):
             for b in range(m-l):
                 d=b+l
                 self.variables['c_ss'][((b, d), e)]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][((b-1, d), e)]+self.variables['c_ss'][((b, d+1), e)]-self.variables['c_ss'][((b-1, d+1), e)]
 
-        c=0 # c for compression
-        # parallelize this part by executing the fzz command in parallel
-        # then integrate the results
+        
+
+        non_vanishing_parameters = []
+        for b0 in range(m):
+            for d1 in range(b0, m):
+                if self.variables['c_ss'][((b0, d1), e)]==0 or self.variables['c_ss'][(e, (b0, d1))]==0: 
+                    continue
+                else:
+                    non_vanishing_parameters.append((b0,d1))
+        barcodes={}
+
+        NodeToStr=self.variables['NodeToStr']
+        PathToStr=self.variables['PathToStr']
+        dirname=self.txf_dir
+        fn_prefix=self.txf_basename_wo_ext
+        clean_up=self.clean_up
+
+
+        def fzz_compute_inside_loop_local(b0,d1):
+            fzz_input_file_name = filepath_generator(dirname=dirname,filename=fn_prefix+f'_FZZ_{b0}_{d1}',extension='txt')
+            # it costs little time to write the file
+            with open(fzz_input_file_name, 'w') as f:
+                f.write(NodeToStr[(0, 1)][0])
+                if 0<d1:
+                    f.write(PathToStr[(0, 1, d1, 1)][0])
+                f.write(PathToStr[(d1, 1, b0, 0)][0])
+                if b0<m-1:
+                    f.write(PathToStr[(b0, 0, m-1, 0)][0])
+            # time-consuming part of this function (99.9%)
+            # -----------
+            fzz_output_loop=_fzz_executor(fzz_input_file_name,clean_up=clean_up)
+            # -----------
+            # costs little time to read the file
+            with open(fzz_output_loop, 'r') as f:
+                barcode = [line.rstrip() for line in f]
+            if clean_up:
+                delete_file(fzz_output_loop)
+            return barcode
+    
+        if not self.enable_multi_processing:
+            # NodeToStr=self.variables['NodeToStr']
+            # PathToStr=self.variables['PathToStr']
+            # Print the progress
+            progress_count=0
+            for b0,d1 in non_vanishing_parameters:
+                # barcodes[f"{b0}_{d1}"] = self.fzz_compute_inside_loop(b0,d1,m=m,\
+                #                                                           NodeToStr=None,PathToStr=None,\
+                #                                                             dirname=self.txf_dir,\
+                #                                                             fn_prefix=self.txf_basename_wo_ext,\
+                #                                                             clean_up=self.clean_up)
+                barcodes[f"{b0}_{d1}"] = fzz_compute_inside_loop_local(b0,d1)
+                progress_count+=1
+                print('\r進捗率: {0:.2f}％ '.format(100*progress_count/len(non_vanishing_parameters)), end='')
+        else:
+            # Parallelize the loop
+            from os import cpu_count
+            from tqdm import tqdm
+            from ..utils import tqdm_joblib
+            from joblib import delayed, Parallel  
+            max_cores=cpu_count() 
+            num_cores=self.num_cores
+            if num_cores == "auto":       
+                num_cores = min(max_cores,4)
+            elif self.num_cores > max_cores:
+                print(f"Number of cores specified ({num_cores}) is larger than the maximum number of cores ({max_cores}).")
+                print(f"Resetting number of cores to {max_cores}.")
+                num_cores=max_cores
+            print('Number of cores being used:',num_cores)
+            print(f"Number of non-vanishing parameters: {len(non_vanishing_parameters)}")
+            num_cores=1
+            with tqdm_joblib(tqdm(desc="Progress",total=len(non_vanishing_parameters))) as progress_bar:
+                results = Parallel(n_jobs=num_cores, timeout=60)(
+                    # delayed(self.fzz_compute_inside_loop)(b0, d1, m=m, \
+                    #                                     NodeToStr=self.variables['NodeToStr'],\
+                    #                                         PathToStr=self.variables['PathToStr'],\
+                    #                                             dirname=self.txf_dir,\
+                    #                                                 fn_prefix=self.txf_basename_wo_ext,\
+                    #                                                     clean_up=self.clean_up)
+                    delayed(fzz_compute_inside_loop_local)(b0, d1)
+                    for b0, d1 in non_vanishing_parameters
+                )
+            
+            # cost little time
+            for b0, d1 in non_vanishing_parameters:
+                barcodes[f"{b0}_{d1}"] = results.pop(0)
+                # progress_bar.update(1)   
+
         # Shape
         # [b1,d1]
         #   [b0,d0]
+        # the loop below costs very little time
         for b0 in range(m):
             for d1 in range(b0, m):
-                # Print the progress
-                print('\r進捗率: {0:.2f}％ '.format(100*c/((m+1)*m/2)), end='')
                 # Recall that e=(m, -1)
                 if self.variables['c_ss'][((b0, d1), e)]==0 or self.variables['c_ss'][(e, (b0, d1))]==0: 
-                    c+=1
                     continue 
                 self.variables['d_ss']={}
                 self.variables['S']=[0, self.variables['NodeToStr'][(0, 1)][1]]
@@ -529,20 +524,7 @@ class ConnectedPersistenceDiagram():
                 for b1 in range(b0+1):
                     for d0 in range(d1, m): 
                         self.variables['d_ss'][((b0, d0), (b1, d1))]=0
-                fzz_input_file_name = filepath_generator(dirname=self.txf_dir,filename=self.txf_basename_wo_ext + f'_FZZ_{b0}_{d1}',extension='txt')
-                with open(fzz_input_file_name, 'w') as f:
-                    f.write(self.variables['NodeToStr'][(0, 1)][0])
-                    if 0<d1:
-                        f.write(self.variables['PathToStr'][(0, 1, d1, 1)][0])
-                    f.write(self.variables['PathToStr'][(d1, 1, b0, 0)][0])
-                    if b0<m-1:
-                        f.write(self.variables['PathToStr'][(b0, 0, m-1, 0)][0])
-                fzz_output_loop=self._fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
-                with open(fzz_output_loop, 'r') as f:
-                    barcode = [line.rstrip() for line in f]
-                if self.clean_up:
-                    delete_file(fzz_output_loop)
-                for interval in barcode:
+                for interval in barcodes[f"{b0}_{d1}"]:
                     current_dim, p, q = map(int, interval.rstrip().split())
                     if current_dim != dim:
                         continue
@@ -570,12 +552,13 @@ class ConnectedPersistenceDiagram():
                         d0=b1+l
                         if d0<d1 or m-1<d0: 
                             continue
-                        self.variables['c_ss'][((b0, d0), (b1, d1))]=self.variables['d_ss'][((b0, d0), (b1, d1))]+self.variables['c_ss'][((b0, d0), (b1-1, d1))]+self.variables['c_ss'][((b0, d0+1), (b1, d1))]-self.variables['c_ss'][((b0, d0+1), (b1-1, d1))]
-                c+=1
-        print('\r進捗率: {0:.2f}％ '.format(100*c/((m+1)*m/2)))
+                        self.variables['c_ss'][((b0, d0), (b1, d1))]=self.variables['d_ss'][((b0, d0), (b1, d1))]+self.variables['c_ss'][((b0, d0), (b1-1, d1))]+self.variables['c_ss'][((b0, d0+1), (b1, d1))]-self.variables['c_ss'][((b0, d0+1), (b1-1, d1))]      
+        
+
         # last info
         print("仕上がり中..")
         delt_ss={}
+
         for I in self.intv:
             t = len(self.variables['cov'][I]); 
             subs = 1 << t
@@ -607,6 +590,8 @@ class ConnectedPersistenceDiagram():
         self.dec = dec
 
     def wake(self, I):
+        # for 分ける
+        # do not need to use cache as for each I only called once
         m = self.m
         K = I.split(',')
         return [f"{K[0]},{K[1]},{m},-1", f"{m},-1,{K[2]},{K[3]}"]
@@ -670,4 +655,3 @@ class ConnectedPersistenceDiagram():
                 if U != 0:
                     container.loc[len(container)] = [i+1, j+1, U, 'U',]
         self.dots= container
-

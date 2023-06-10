@@ -12,6 +12,9 @@ class SimplexTree(gudhi_SimplexTree):
     def __init__(self,*args,**kwargs):
         super().__init__(*args,**kwargs)
 
+    #TODO: use a classmethod for initialization?
+    # see https://medium.com/techtofreedom/9-python-built-in-decorators-that-optimize-your-code-significantly-bc3f661e9017
+
     def __str__(self):
         return str(list(self.get_filtration()))
         # can use ast.literal_eval to convert it back to a list of tuples

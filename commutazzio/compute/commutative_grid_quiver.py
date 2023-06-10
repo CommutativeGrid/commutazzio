@@ -66,7 +66,7 @@ class CommutativeGridQuiver:
             output.append(self.G.nodes[node][attribute].simplices)
         return output
 
-    @staticmethod    
+    @staticmethod    # used for testing whether dionysus is compatible with multiprocessing
     def computePD(i):
         import dionysus as d
         import numpy as np
@@ -75,12 +75,6 @@ class CommutativeGridQuiver:
         times = [[.4, .6, .7], [.1], [.9], [.9], [.9], [.9]]
         zz, dgms, cells = d.zigzag_homology_persistence(f, times)
         return np.random.randint(1,20)
-
-    # def multiplicity_zigzag_pool(self,args):
-    #     """
-    #     Compute the multiplicity of a zigzag tour
-    #     """
-    #     return self.multiplicity_zigzag(*args)
 
     @staticmethod
     def multiplicity_zigzag(sc_zigzag_list,dim=1,prime=2):

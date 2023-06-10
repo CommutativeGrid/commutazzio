@@ -480,25 +480,25 @@ class ConnectedPersistenceDiagram():
             num_cores=self.num_cores
             if num_cores == "auto":       
                 num_cores = min(max_cores,4)
+                num_cores=1
             elif self.num_cores > max_cores:
                 print(f"Number of cores specified ({num_cores}) is larger than the maximum number of cores ({max_cores}).")
                 print(f"Resetting number of cores to {max_cores}.")
                 num_cores=max_cores
             print('Number of cores being used:',num_cores)
             print(f"Number of non-vanishing parameters: {len(non_vanishing_parameters)}")
-            num_cores=1
             # https://stackoverflow.com/questions/27569306/populating-matplotlib-subplots-through-a-loop-and-a-function
             # https://stackoverflow.com/questions/57617496/90-of-the-time-is-spent-on-method-acquire-of-thread-lock-objects
             with tqdm_joblib(tqdm(desc="Progress",total=len(non_vanishing_parameters))) as progress_bar:
-                results = Parallel(n_jobs=num_cores, timeout=60)(
+                results = Parallel(n_jobs=num_cores, timeout=60, prefer='threads')(
                     # delayed(self.fzz_compute_inside_loop)(b0, d1, m=m, \
                     #                                     NodeToStr=self.variables['NodeToStr'],\
                     #                                         PathToStr=self.variables['PathToStr'],\
                     #                                             dirname=self.txf_dir,\
                     #                                                 fn_prefix=self.txf_basename_wo_ext,\
                     #                                                     clean_up=self.clean_up)
-                    delayed(fzz_compute_inside_loop_local)(b0, d1)
-                    for b0, d1 in non_vanishing_parameters
+                    delayed(fzz_compute_inside_loop_local)(*pair)
+                    for pair in non_vanishing_parameters
                 )
             
             # cost little time

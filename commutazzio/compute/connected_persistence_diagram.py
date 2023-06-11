@@ -480,15 +480,23 @@ class ConnectedPersistenceDiagram():
             num_cores=self.num_cores
             if num_cores == "auto":       
                 num_cores = min(max_cores,4)
-                num_cores=1
             elif self.num_cores > max_cores:
                 print(f"Number of cores specified ({num_cores}) is larger than the maximum number of cores ({max_cores}).")
                 print(f"Resetting number of cores to {max_cores}.")
                 num_cores=max_cores
+            # testing
+            num_cores=2
             print('Number of cores being used:',num_cores)
             print(f"Number of non-vanishing parameters: {len(non_vanishing_parameters)}")
-            # https://stackoverflow.com/questions/27569306/populating-matplotlib-subplots-through-a-loop-and-a-function
-            # https://stackoverflow.com/questions/57617496/90-of-the-time-is-spent-on-method-acquire-of-thread-lock-objects
+            
+            # Notice that the actual computation is done in a shell script,
+            # so for parallelization, we actually need to run multiple shell scripts and let them run in different cores
+            # If we only use the vanilla subprocess.run, I believe that the computation is distributed by the OS
+            # while the multi-threading here is just start the scripts and them waiting for the result
+
+            #TODO: use async? maybe less overhead, but would be better to setup which core to use
+            #TODO: maybe we should set up cpu affinity? or use taskset?
+            # https://stackoverflow.com/questions/14716659/taskset-python
             with tqdm_joblib(tqdm(desc="Progress",total=len(non_vanishing_parameters))) as progress_bar:
                 results = Parallel(n_jobs=num_cores, timeout=60, prefer='threads')(
                     # delayed(self.fzz_compute_inside_loop)(b0, d1, m=m, \
@@ -501,6 +509,7 @@ class ConnectedPersistenceDiagram():
                     for pair in non_vanishing_parameters
                 )
             
+
             # cost little time
             for b0, d1 in non_vanishing_parameters:
                 barcodes[f"{b0}_{d1}"] = results.pop(0)

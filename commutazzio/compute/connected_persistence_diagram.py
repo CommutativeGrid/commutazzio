@@ -47,15 +47,29 @@ if FZZ_BINARY_PATH == '':
 
 def _fzz_executor(input_file_path, clean_up=True):
     """https://github.com/taohou01/fzz/"""
-    original_dir = os.getcwd()
-    # get the absolute path of the directory of the input file
+    # moving files add a little unnecessary overhead
+    # but we would like to keep the files well-organized
+    # this is fashion is compatible with the multiprocessing mode
+    # compared with changing the cwd
+    # might need to modify the fzz program directly to 
+    # allow the user to specify the directory to store the output file
     input_dir = os.path.abspath(os.path.dirname(input_file_path))
-    os.chdir(input_dir)
     subprocess.run([FZZ_BINARY_PATH,input_file_path])
     if clean_up:
         delete_file(input_file_path)
-    os.chdir(original_dir)
-    return f"{input_file_path[:-4]}_pers" # do not change this line as the file name is controled by fzz. if you would like to change it, change the filename of the output first
+    # get the filename of the input file
+    input_file_name = os.path.basename(input_file_path)
+    # file will be generated in cwd, 
+    # with file name being input_file_name removing the extension plus "_pers"
+    # get the current directory
+    current_dir = os.getcwd()
+    fzz_result_fp = os.path.join(current_dir,f"{input_file_name[:-4]}_pers")
+    # do not change the line below as the file name is controled by fzz. 
+    # if you would like to change it, change the filename of the output first
+    target_fp=os.path.join(input_dir,f"{input_file_name[:-4]}_pers")
+    # move the file to the input directory
+    os.rename(fzz_result_fp,target_fp)
+    return target_fp 
 
         
 
@@ -450,8 +464,12 @@ class ConnectedPersistenceDiagram():
             fzz_output_loop=_fzz_executor(fzz_input_file_name,clean_up=clean_up)
             # -----------
             # costs little time to read the file
-            with open(fzz_output_loop, 'r') as f:
-                barcode = [line.rstrip() for line in f]
+            try:
+                with open(fzz_output_loop, 'r') as f:
+                    barcode = [line.rstrip() for line in f]
+            except FileNotFoundError:
+                #TODO: add a computation failed flag?
+                raise FileNotFoundError(f"FileNotFoundError: {fzz_output_loop}")
             if clean_up:
                 delete_file(fzz_output_loop)
             return barcode
@@ -479,13 +497,11 @@ class ConnectedPersistenceDiagram():
             max_cores=cpu_count() 
             num_cores=self.num_cores
             if num_cores == "auto":       
-                num_cores = min(max_cores,4)
+                num_cores = max(1,max_cores-2)
             elif self.num_cores > max_cores:
                 print(f"Number of cores specified ({num_cores}) is larger than the maximum number of cores ({max_cores}).")
                 print(f"Resetting number of cores to {max_cores}.")
                 num_cores=max_cores
-            # testing
-            num_cores=2
             print('Number of cores being used:',num_cores)
             print(f"Number of non-vanishing parameters: {len(non_vanishing_parameters)}")
             
@@ -514,7 +530,10 @@ class ConnectedPersistenceDiagram():
             for b0, d1 in non_vanishing_parameters:
                 barcodes[f"{b0}_{d1}"] = results.pop(0)
                 # progress_bar.update(1)   
-
+        
+        # measure post-processing time
+        from time import time
+        post_processing_start=time()
         # Shape
         # [b1,d1]
         #   [b0,d0]
@@ -588,6 +607,9 @@ class ConnectedPersistenceDiagram():
                 else:
                     ans_ss -= self.variables['c_ss'][js]
             delt_ss[I] = ans_ss
+        post_processing_end=time()
+        # print post-processing time in seconds
+        print(f"post-processing time: {post_processing_end-post_processing_start} seconds")
         return delt_ss
 
     def compute_dec_obj(self):

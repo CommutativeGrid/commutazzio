@@ -29,13 +29,25 @@ class ComplementaryTrianglesPlot():
     via a complementary triangles plot
     """
 
-    def __init__(self, title=None, **kwargs):
+    def __init__(self, title=None, convention="[b,d)",**kwargs):
         """acquire data
         """
         self.dots = pd.read_csv(StringIO(kwargs.get("dots")),index_col=0)
         self.lines = pd.read_csv(StringIO(kwargs.get("lines")),index_col=0)
         self.radii = kwargs.get("radii")
         self.radii = np.array(self.radii)
+        self.convention = convention
+        if convention == "[b,d)":
+            # add an infty to radii
+            self.radii = np.append(self.radii,np.inf)
+            # format: x0 y0 x1 y1: d_lower  b_lower  b_upper  d_upper
+            #increase x0 by one, y1 by one
+            self.lines["x0"] += 1
+            self.lines["y1"] += 1
+            # for all area == D, x plus one
+            # for all area == U, y plus one
+            self.dots.loc[self.dots["area"]=="D","x"] += 1
+            self.dots.loc[self.dots["area"]=="U","y"] += 1
         self.ladder_length = kwargs.get("ladder_length", None)
         self.title = title
         self.legend = True
@@ -64,7 +76,8 @@ class ComplementaryTrianglesPlot():
         offset = 0.5  # offset to beautify the plot
         offset_diag = 0  # offset for the diagonal line
         fig = go.Figure()  # initiate the final figure
-        # add a diagonal line, use add_trace because the layer of add_shape does not work properly
+        # add a diagonal line, 
+        # use add_trace because the layer of add_shape does not work properly
         fig.add_trace(go.Scatter(
             x=[-offset_diag, self.ladder_length+offset_diag],
             y=[-offset_diag, self.ladder_length+offset_diag],
@@ -81,9 +94,9 @@ class ComplementaryTrianglesPlot():
         # the layer of shape does not work properly, see add_shape_to_fig in obsolete.py
         # create scatter chart and line chart for the final figure
         # https://stackoverflow.com/questions/65124833/plotly-how-to-combine-scatter-and-line-plots-using-plotly-express
-        fig1 = self.scatter_chart()
+        fig1 = self.scatter_chart() # intervals on the upper and the lower rows
         if self.lines.empty is not True:
-            fig2 = self.line_chart()
+            fig2 = self.line_chart() # connecting lines
             fig.add_traces(data=[*fig2.data, *fig1.data])
         else:
             fig.add_traces(data=[*fig1.data])
@@ -93,7 +106,11 @@ class ComplementaryTrianglesPlot():
         self.render_ticks(fig)
         if self.legend:
             self.render_legend(fig)
-        self.render_output(fig, export_mode, **kwargs)
+        if export_mode in ['full_html', 'div']:
+            self.render_output(fig, export_mode, **kwargs)
+        elif export_mode == 'object':
+            return fig
+
 
     def render_general_layout(self, fig):
         # https://plotly.com/python/templates/
@@ -196,6 +213,16 @@ class ComplementaryTrianglesPlot():
             legend_title='',
         )
 
+    
+
+
+    @staticmethod
+    def check_cdn_access():
+        import requests
+        url = 'https://cdn.plot.ly/plotly-2.24.1.min.js'
+        response = requests.get(url)
+        return response.status_code == 200
+
     def render_output(self, fig, export_mode, **kwargs):
         # see https://plotly.com/python/interactive-html-export/
         # for parameters
@@ -209,7 +236,10 @@ class ComplementaryTrianglesPlot():
             else:
                 filepath = filepath_generator(
                     dir_name, 'test', 'html', overwrite=overwrite)
-            fig.write_html(file=filepath, include_plotlyjs='cdn')
+            if self.check_cdn_access():
+                fig.write_html(file=filepath, include_plotlyjs='cdn')
+            else:
+                fig.write_html(file=filepath, include_plotlyjs=True)
             #print("Saved to", file)
         elif export_mode == 'div':
             if 'filename' in kwargs:
@@ -228,7 +258,7 @@ class ComplementaryTrianglesPlot():
     def data_preprocessing_dots(self):
         """Add some auxiliary columns to dots
         """
-        df = self.dots
+        df = self.dots # temp df
         # dot_size_min=10 #obsolete
         # dot_size_max=26
         # avoid 0, which will make the dot be of size 0

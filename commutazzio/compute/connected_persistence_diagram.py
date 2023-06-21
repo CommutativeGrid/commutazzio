@@ -514,7 +514,7 @@ class ConnectedPersistenceDiagram():
             #TODO: maybe we should set up cpu affinity? or use taskset?
             # https://stackoverflow.com/questions/14716659/taskset-python
             with tqdm_joblib(tqdm(desc="Progress",total=len(non_vanishing_parameters))) as progress_bar:
-                results = Parallel(n_jobs=num_cores, timeout=60, prefer='threads')(
+                results = Parallel(n_jobs=num_cores, timeout=500, prefer='threads')(
                     # delayed(self.fzz_compute_inside_loop)(b0, d1, m=m, \
                     #                                     NodeToStr=self.variables['NodeToStr'],\
                     #                                         PathToStr=self.variables['PathToStr'],\

@@ -22,6 +22,7 @@ line_opacity=0.4
 #colorscales=px.colors.sequential.Plotly3
 #colorscales=px.colors.sequential.Plasma
 #original_colorscales = 
+#TODO: align to radii function (currently align to the ladder length)
 
 class ComplementaryTrianglesPlot():
     """
@@ -38,8 +39,16 @@ class ComplementaryTrianglesPlot():
         self.radii = np.array(self.radii)
         self.convention = convention
         if convention == "[b,d)":
-            # add an infty to radii
-            self.radii = np.append(self.radii,np.inf)
+            # add a finite number to the last element used to 
+            # represents the infinite radius
+            # use only three digits to avoid numerical error
+            # must be strictly larger than the last element
+            if self.radii[-1]-self.radii[-2] < 0.00001:
+                Warning("The last two radii are too close to each other.")
+                self.inf_replacement = round(self.radii[-1]+0.00001)
+            else:
+                self.inf_replacement = round(self.radii[-1]+self.radii[-1]-self.radii[-2],5)
+            self.radii = np.append(self.radii,self.inf_replacement)
             # format: x0 y0 x1 y1: d_lower  b_lower  b_upper  d_upper
             #increase x0 by one, y1 by one
             self.lines["x0"] += 1
@@ -73,7 +82,7 @@ class ComplementaryTrianglesPlot():
         **kwargs :
             for fig.write_image
         """
-        offset = 0.5  # offset to beautify the plot
+        offset = 1.25  # offset to beautify the plot
         offset_diag = 0  # offset for the diagonal line
         fig = go.Figure()  # initiate the final figure
         # add a diagonal line, 
@@ -108,8 +117,10 @@ class ComplementaryTrianglesPlot():
             self.render_legend(fig)
         if export_mode in ['full_html', 'div']:
             self.render_output(fig, export_mode, **kwargs)
-        elif export_mode == 'object':
+        elif export_mode in ['object','fig']:
             return fig
+        else:
+            raise ValueError('export_mode must be "full_html", "div" or "object"')
 
 
     def render_general_layout(self, fig):
@@ -158,21 +169,30 @@ class ComplementaryTrianglesPlot():
 
     def render_ticks(self, fig):
         # specify ticks
-        tick_coords = np.array(range(1, self.ladder_length+1, 5))
+        # tick_coords = np.array(range(1, self.ladder_length+1, 1))
         # tick_coords = np.concatenate(([1], tick_coords))  # prepend 1
+        tick_coords = np.array(range(1,len(self.radii)+1,1))
         radii_text = [f"{r:.2f}" for r in self.radii[tick_coords-1]]
+        radii_text[-1]='+inf '
+        # show at most 5 ticks
+        if len(tick_coords) > 5:
+            jump = len(tick_coords)//5
+            tick_coords = tick_coords[::jump]
+            radii_text = radii_text[::jump]
+        # import pdb; pdb.set_trace()
+        # print(radii_text)
         fig.update_layout(
             xaxis=dict(
                 tickmode='array',
                 tickvals=tick_coords,
                 ticktext=radii_text,
-                showticklabels=False,
+                showticklabels=True,
             ),
             yaxis=dict(
                 tickmode='array',
                 tickvals=tick_coords,
                 ticktext=radii_text,
-                showticklabels=False,
+                showticklabels=True,
             ),
         )
         # fig.update_layout(
@@ -318,13 +338,25 @@ class ComplementaryTrianglesPlot():
             color_tick_vals = list(range(0, int(np.log10(self.multi_dots_max))+1))
         color_tick_text = [str(10**i) for i in color_tick_vals]
         # ref on custom_data https://stackoverflow.com/questions/67190756/plotly-scatter-customdata-oare-only-nan
-        custom_data = np.stack(
+        pre_custom_data = np.stack(
             (df.multiplicity.to_numpy(),
             df.birth_num.to_numpy(),
             df.death_num.to_numpy(),
             df.birth_radius.to_numpy(),
             df.death_radius.to_numpy()),
             axis=-1)
+        # change to string according to 
+        # {pre_customdata[0]} {pre_customdata[1]:.d} {pre_customdata[3]:.3f} {pre_customdata[2]:.d} {pre_customdata[4]:.3f}
+        # if not np.inf, otherwise '\u221E'
+        custom_data = []
+        for row in pre_custom_data:
+            new_row = []
+            new_row.append(f"{row[0]:.0f}") # multiplicity
+            new_row.append(f"{row[1]:.0f}") # birth_num
+            new_row.append(f"{row[2]:.0f}") # death_num
+            new_row.append(f"{row[3]:.3f}" if row[3] != self.inf_replacement else ' +\u221E') # birth_radius
+            new_row.append(f"{row[4]:.3f}" if row[4] != self.inf_replacement else ' +\u221E') # death_radius
+            custom_data.append(new_row)
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             x=df['x'],
@@ -353,8 +385,11 @@ class ComplementaryTrianglesPlot():
             showlegend=False,
             name="",
             hovertemplate="multiplicity: %{customdata[0]}<br>"
-            +"birth: %{customdata[1]:.d},%{customdata[3]:.3f}<br>"
-            +"death: %{customdata[2]:.d},%{customdata[4]:.3f}",
+            +"birth: %{customdata[1]},%{customdata[3]}<br>"
+            +"death: %{customdata[2]},%{customdata[4]}",
+            # hovertemplate="multiplicity: %{customdata[0]}<br>"
+            # +"birth: %{customdata[1]:.d},%{customdata[3]:.3f}<br>"
+            # +"death: %{customdata[2]:.d},%{customdata[4]:.3f}",
         )
         )
         # although plotly express is easier, graph object provides more customizability

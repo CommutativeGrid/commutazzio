@@ -54,6 +54,3 @@ class CL4_NIScores:
         return numerator / denominator
     
 
-class CLN_NIScores:
-    #write prompts
-    ...

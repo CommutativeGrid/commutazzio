@@ -57,12 +57,12 @@ class CommutativeGridPreCompute():
                 for b in range(p+1):
                     for d in range(p, q+1):
                         intv.append(I+[(b, d)])
-            I.extend([(m, -1) for j in range(n-len(I))])
+            I.extend([(m, -1) for _ in range(n-len(I))])
             intv[i] = tuple(I)
             i += 1
         # intv.sort(key=self.sizeSupp)
-        print(f"全{str(len(intv))}個の区間表現を構築")
-        # self.intv=intv
+        # print(f"全{str(len(intv))}個の区間表現を構築")
+        print(f"Constructed all {str(len(intv))} interval representations")
         return intv
     
     def cover_generator(self):

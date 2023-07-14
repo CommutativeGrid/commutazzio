@@ -38,7 +38,7 @@ def random_vertical_removal_points_only(num_pts,ladder_length,max_removal_per_ti
     
     return result[::-1]
 
-def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,max_simplex_dim:int):
+def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,max_simplex_dim:int,method:str='cech'):
     """
     Convert a point cloud to a commutative ladder filtration.
     pts: a numpy array of shape (n,d), where n is the number of points, d is the dimension of the points
@@ -65,8 +65,9 @@ def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,ma
         vertical_removal = [*vertical_removal_input] # just a change of name
     #check that radii is sorted
     assert all(radii[i]<=radii[i+1] for i in range(len(radii)-1))
+    print("Creating filtration...", flush=True)
     parentalST=SimplexTree()
-    parentalST.from_point_cloud(pts,method='cech',sc_dim_ceil=max_simplex_dim,radius_max=max(radii)+EPSILON)
+    parentalST.from_point_cloud(pts,method=method,sc_dim_ceil=max_simplex_dim,radius_max=max(radii)+EPSILON)
     upper=SimplexTree()
     lower=SimplexTree()
     for i,radius in enumerate(radii):

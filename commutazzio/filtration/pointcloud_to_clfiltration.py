@@ -41,9 +41,12 @@ def random_vertical_removal_points_only(num_pts,ladder_length,max_removal_per_ti
 def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,max_simplex_dim:int,method:str='cech'):
     """
     Convert a point cloud to a commutative ladder filtration.
-    pts: a numpy array of shape (n,d), where n is the number of points, d is the dimension of the points
-    vertical_removal: a list of list of simplices to be removed at each radius, notice that it is the name of the simplices, not the indices of the simplices
-    """
+    pts: a numpy array of shape (num_pts, dim)
+    vertical_removal_input: a list of list of simplices to be removed, notice that it is the name of the simplices, not the indices of the simplices
+    radii: a list of radii
+    max_simplex_dim: the maximum simplex dimension to be considered
+    method: 'cech' or 'rips' or 'alpha'
+    """    
     # create a simplex tree
     # truncation it using radius in radii, get a sc
     # create upper row and lower row

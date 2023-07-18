@@ -1,7 +1,7 @@
 from gudhi import SimplexTree as gudhi_SimplexTree
 from .simplicial_complex import SimplicialComplex
 import numpy as np
-from scipy.spatial import distance
+# from scipy.spatial import distance
 from gtda.externals import CechComplex
 from gudhi import RipsComplex, AlphaComplex
 from bisect import bisect_left
@@ -102,7 +102,7 @@ class SimplexTree(gudhi_SimplexTree):
         if sc_dim_ceil == 'auto':
             sc_dim_ceil = space_dim  # maximum dimension of the simplicial complex.
         if method == 'rips':
-            rips_complex = RipsComplex(pt_cloud,max_edge_length=radius_max)
+            rips_complex = RipsComplex(points=pt_cloud,max_edge_length=radius_max)
             simplex_tree = rips_complex.create_simplex_tree(max_dimension=sc_dim_ceil)
             simplex_tree.make_filtration_non_decreasing()
         elif method == 'alpha':

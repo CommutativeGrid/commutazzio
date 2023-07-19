@@ -533,7 +533,7 @@ class ConnectedPersistenceDiagram():
         
         # measure post-processing time
         from time import time
-        post_processing_start=time()
+        # post_processing_start=time()
         # Shape
         # [b1,d1]
         #   [b0,d0]
@@ -607,9 +607,9 @@ class ConnectedPersistenceDiagram():
                 else:
                     ans_ss -= self.variables['c_ss'][js]
             delt_ss[I] = ans_ss
-        post_processing_end=time()
+        # post_processing_end=time()
         # print post-processing time in seconds
-        print(f"post-processing time: {post_processing_end-post_processing_start} seconds")
+        # print(f"post-processing time: {post_processing_end-post_processing_start} seconds")
         return delt_ss
 
     def compute_dec_obj(self):

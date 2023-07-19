@@ -53,9 +53,10 @@ def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,ma
     # add simplices in sc to upper row, at the designated radius
     # add simplices in sc.delete(vertical_removal[i]) to lower row, at the designated radius
     # return necessary infos
+    len_radii = len(radii)
     if isinstance(vertical_removal_input[0],(int, np.int64)): #[2,3,4,5,6,7]
         # constant removal
-        vertical_removal=[[(vertex,) for vertex in vertical_removal_input]]*len(radii)
+        vertical_removal=[[(vertex,) for vertex in vertical_removal_input]]*len_radii
         # print(vertical_removal)
     else:
         # vertical_removal_input is a list of list of simplices
@@ -64,20 +65,24 @@ def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,ma
         #example: [[(2,),(3,),(4,),(5,)],[(2,),(3,),(4,)],[(2,),(3,)]]
         # canonically, vertical_removal is a list of list of simplices
         # each entry of vertical_removal is a list of simplices to be removed, for example [(1,),(2,3)]
-        assert len(vertical_removal_input)==len(radii)
+        assert len(vertical_removal_input)==len_radii
         vertical_removal = [*vertical_removal_input] # just a change of name
     #check that radii is sorted
-    assert all(radii[i]<=radii[i+1] for i in range(len(radii)-1))
+    assert all(radii[i]<=radii[i+1] for i in range(len_radii-1))
     print("Creating filtration...", flush=True)
     parentalST=SimplexTree()
     parentalST.from_point_cloud(pts,method=method,sc_dim_ceil=max_simplex_dim,radius_max=max(radii)+EPSILON)
+
     upper=SimplexTree()
     lower=SimplexTree()
     for i,radius in enumerate(radii):
         x_coord=i+1
         sc=parentalST.truncation(radius)
+        # breakpoint()
+        # import pdb
         # pdb.set_trace()
-        for simplex in sc.simplices:
+        # for simplex in sc.simplices:
+        for simplex,fv in sc.get_simplices(): # for faster performance
             # if len(simplex)<=max_simplex_dim+1:
             upper.insert(simplex,x_coord) 
                 # this function will not make existing filtration value higher
@@ -85,14 +90,9 @@ def pointCloud2Filtration(pts:np.array,vertical_removal_input:list,radii:list,ma
                 # and its subfaces with the given filtration value (default value is ‘0.0’). 
                 # If some of those simplices are already present with a higher filtration value, 
                 # their filtration value is lowered.
-        for simplex in sc.delete_simplices(vertical_removal[i]).simplices:
+        # for simplex in sc.delete_simplices(vertical_removal[i]).simplices:
+        for simplex,fv in sc.delete_simplices(vertical_removal[i]).get_simplices(): # for faster performance
             # if len(simplex)<=max_simplex_dim+1:
             lower.insert(simplex,x_coord)
         print(f"Progress: {100*(i+1)/len(radii):.2f}%", flush=True)
-    # print(list(upper.get_filtration()))
-    # print(list(lower.get_filtration()))
-    # from icecream import ic
-    # ic(parentalST.maximum_simplices)
-    # ic(upper.maximum_simplices)
-    # ic(lower.maximum_simplices)
-    return CLFiltration(upper=upper,lower=lower,ladder_length=len(radii),h_params=radii,info={'vertical_removal':vertical_removal_input})
+    return CLFiltration(upper=upper,lower=lower,ladder_length=len_radii,h_params=radii,info={'vertical_removal':vertical_removal_input})

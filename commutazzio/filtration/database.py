@@ -90,17 +90,17 @@ class CLFiltrationDB:
         row = cursor.fetchone()
         if row:
             # If a row is found, create a new CLFiltration object and fill it with the data from the row
-            clf_filtration = CLFiltration()
-            clf_filtration = CLFiltration()
-            clf_filtration.ladder_length = row[1]
-            clf_filtration.upper = clf_filtration.incremental_filtration_creation(eval(row[2]))
-            clf_filtration.lower = clf_filtration.incremental_filtration_creation(eval(row[3]))
+            cl_filtration = CLFiltration()
+            cl_filtration = CLFiltration()
+            cl_filtration.ladder_length = row[1]
+            cl_filtration.upper = cl_filtration.incremental_filtration_creation(eval(row[2]))
+            cl_filtration.lower = cl_filtration.incremental_filtration_creation(eval(row[3]))
             try:
-                clf_filtration.horizontal_parameters = loads(literal_eval(row[4]))
+                cl_filtration.horizontal_parameters = loads(literal_eval(row[4]))
             except Exception as e:
                 print(e)
-            clf_filtration.info = loads(literal_eval(row[5]))
-            return clf_filtration
+            cl_filtration.info = loads(literal_eval(row[5]))
+            return cl_filtration
         else:
             return None
     

@@ -37,7 +37,7 @@ class CLInvariants:
         The coefficient field is GF(2). (using FZZ)
         (Can choose other finite field if we use dionysus2)
         """
-        print(f"Computing connected persistence diagram at dimension {homology_dim}")
+        print(f"Computing connected persistence diagram at homology dimension {homology_dim}")
         if self.filtration_file_ready == False:
             self.filtration_filepath=self.clf.random_cech_format_output_file(new_file=True,dirname='./filtration',extension='fltr')
             self.filtration_file_ready = True

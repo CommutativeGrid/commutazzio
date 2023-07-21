@@ -487,7 +487,7 @@ class ConnectedPersistenceDiagram():
                 #                                                             clean_up=self.clean_up)
                 barcodes[f"{b0}_{d1}"] = fzz_compute_inside_loop_local(b0,d1)
                 progress_count+=1
-                print('\r進捗率: {0:.2f}％ '.format(100*progress_count/len(non_vanishing_parameters)), end='')
+                print('\rProgress: {0:.2f}％ '.format(100*progress_count/len(non_vanishing_parameters)), end='')
         else:
             # Parallelize the loop
             from os import cpu_count

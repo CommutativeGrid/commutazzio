@@ -16,8 +16,8 @@ def test_point_cloud_filtration():
     cl4f=pointCloud2Filtration(pts=pts,vertical_removal_input=[3],radii=radii,max_simplex_dim=2)
     # assert that the number of simplices in the upper and lower filtration
     # is as expected
-    assert len(cl4f.upper.maximum_simplices) == 22
-    assert len(cl4f.lower.maximum_simplices) == 16
+    assert len(cl4f.upper.maximum_simplicial_complex) == 22
+    assert len(cl4f.lower.maximum_simplicial_complex) == 16
     
     # assert that the filtration parameters are as expected
     assert cl4f.h_params == [0.17399216, 0.35642443, 0.38279749, 0.38289977]

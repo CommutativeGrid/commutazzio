@@ -24,7 +24,7 @@ from functools import cache
 class CLFiltration():
     Epsilon = 1e-10 # for numerical comparison
 
-    def __init__(self,upper=SimplexTree(),lower=SimplexTree(),ladder_length=4,h_params=None,info={}):
+    def __init__(self,upper=SimplexTree(),lower=SimplexTree(),ladder_length=4,h_params=None,info={},enable_validation=True):
         self.ladder_length=ladder_length
         if h_params is None: 
             print(f'{self.__class__.__name__}:assuming ordinal number filtration values.')
@@ -54,8 +54,11 @@ class CLFiltration():
                 self.lower = lower
         # for example, it can be a list of radii 
         self.info = dict(**info)
-        # automatic validation
-        self.validation()
+        if enable_validation:
+            # automatic validation
+            if not self.validation():
+                raise ValueError('The input is not a valid commutative ladder filtration.')
+
 
     def get_filtration_fv(self,layer:str):
         return self.get_filtration_with_custom_filtration_values(layer)

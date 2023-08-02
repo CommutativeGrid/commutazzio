@@ -18,6 +18,17 @@ class SimplexTree(gudhi_SimplexTree):
     def __str__(self):
         return str(list(self.get_filtration()))
         # can use ast.literal_eval to convert it back to a list of tuples
+    
+    def __repr__(self):
+        description = (
+                f"a simplex tree with {len(list(self.get_simplices()))} simplices "
+                f"and {len(self.filtration_values)} filtration values "
+                f"@ {hex(id(self))}"
+            )
+        return description
+
+    def __len__(self):
+        return len(self.maximum_simplicial_complex)
 
     def to_ordinal_number_indexing(self,fvs:list):
         """
@@ -70,14 +81,39 @@ class SimplexTree(gudhi_SimplexTree):
 
 
     @property
-    def maximum_simplices(self):
+    def maximum_simplicial_complex(self):
         temp = SimplicialComplex()
         temp.from_simplices([tuple(s[0]) for s in self.get_filtration()])
         return temp
     
+    def maximum_simplices(self):
+        return self.maximum_simplicial_complex
+    
+    @property
+    def _fv_to_sc_maps(self):
+        """
+        Return a dict of maps from filtration values to simplicial complexes.
+        """
+        if not hasattr(self,'_fv_to_sc_maps_object'):
+            temp = {}
+            for simplex, fv in self.get_filtration():
+                if fv in temp:
+                    temp[fv].add(frozenset(simplex))
+                else:
+                    temp[fv] = {frozenset(simplex)}
+            self._fv_to_sc_maps_object = temp
+        else:
+            pass
+        return self._fv_to_sc_maps_object
+    
     def truncation(self,ceiling):
         temp = SimplicialComplex()
-        temp.from_simplices([tuple(s[0]) for s in self.get_filtration() if s[1]<=ceiling+SimplexTree.Epsilon])
+        list_simplices = []
+        for k,v in self._fv_to_sc_maps.items():
+            if k <= ceiling+SimplexTree.Epsilon:
+                list_simplices.extend(v)
+        # temp.from_simplices([tuple(s[0]) for s in self.get_filtration() if s[1]<=ceiling+SimplexTree.Epsilon])
+        temp.from_simplices(list_simplices)
         return temp
     
     def insert(self,simplex,filtration_value):
@@ -85,7 +121,11 @@ class SimplexTree(gudhi_SimplexTree):
     
     @property
     def filtration_values(self):
-        return np.sort(list(set([item[1] for item in self.get_filtration()])))
+        if hasattr(self,'filtration_values_list'):
+            pass
+        else:
+            self.filtration_values_list = np.sort(list(set([item[1] for item in self.get_filtration()])))
+        return self.filtration_values_list
     
     
     def critical_radii(self,dimension):

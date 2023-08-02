@@ -21,8 +21,8 @@ class SimplicialComplex(gudhi_SimplexTree):
         if len(simplices) == 0:
             return SimplicialComplex()
         if isinstance(simplices, list) and len(simplices) > 0: # if the input is not empty, verify whether the form complies with the standard
-            if not isinstance(simplices[0], tuple):
-                raise ValueError('Each simplex should be represented by a tuple.')
+            if not isinstance(simplices[0], (tuple, set, frozenset)):
+                raise ValueError('Each simplex should be represented by a tuple, set or frozenset.')
             for simplex in simplices:
                 self.insert(list(simplex))
         else:
@@ -47,7 +47,10 @@ class SimplicialComplex(gudhi_SimplexTree):
         return str(self.simplices)
 
     def __repr__(self):
-        description = f"a simplicial complex with {len(list(self.get_simplices()))} simplices"
+        description = (f"a simplicial complex with "
+                       f"{len(list(self.get_simplices()))} simplices "
+                       f"@ {hex(id(self))}"
+            )
         return description
     
     def __eq__(self, other):
@@ -104,6 +107,7 @@ class SimplicialComplex(gudhi_SimplexTree):
         
     def __delete_from(self,simplex,from_sc):
         """Delete one simplex, together with its superset"""
+        """seems to be very time consuming"""
         simplex=self.simplexify(simplex)    
         new_sc=[s for s in from_sc if not set(simplex).issubset(set(s))]
         return new_sc

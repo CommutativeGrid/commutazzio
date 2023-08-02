@@ -89,24 +89,34 @@ class SimplexTree(gudhi_SimplexTree):
     def maximum_simplices(self):
         return self.maximum_simplicial_complex
     
+    def _attributes_reset(self):
+        if hasattr(self, 'filtration_values_list'):
+            del self.filtration_values_list
+        if hasattr(self, '__fv_to_sc_maps'):
+            del self._fv_to_sc_maps_object
+
+    
     @property
     def _fv_to_sc_maps(self):
         """
         Return a dict of maps from filtration values to simplicial complexes.
         """
-        if not hasattr(self,'_fv_to_sc_maps_object'):
+        if hasattr(self,'__fv_to_sc_maps'):
+            pass
+        else:
             temp = {}
             for simplex, fv in self.get_filtration():
                 if fv in temp:
                     temp[fv].add(frozenset(simplex))
                 else:
                     temp[fv] = {frozenset(simplex)}
-            self._fv_to_sc_maps_object = temp
-        else:
-            pass
-        return self._fv_to_sc_maps_object
+            self.__fv_to_sc_maps = temp
+        return self.__fv_to_sc_maps
     
     def truncation(self,ceiling):
+        """
+        Return a simplicial complex of simplices with filtration values <= ceiling.
+        """
         temp = SimplicialComplex()
         list_simplices = []
         for k,v in self._fv_to_sc_maps.items():
@@ -117,15 +127,26 @@ class SimplexTree(gudhi_SimplexTree):
         return temp
     
     def insert(self,simplex,filtration_value):
+        self._attributes_reset()
         super().insert(list(simplex),filtration_value)
+    
+    def prune_above_filtration(self,filtration_value):
+        self._attributes_reset()
+        super().prune_above_filtration(filtration_value)
+    
+    def prune_above_dimension(self,dimension):
+        self._attributes_reset()
+        super().prune_above_dimension(dimension)
+        
+        
     
     @property
     def filtration_values(self):
-        if hasattr(self,'filtration_values_list'):
+        if hasattr(self,'_filtration_values'):
             pass
         else:
-            self.filtration_values_list = np.sort(list(set([item[1] for item in self.get_filtration()])))
-        return self.filtration_values_list
+            self._filtration_values = np.sort(list(set([item[1] for item in self.get_filtration()])))
+        return self._filtration_values
     
     
     def critical_radii(self,dimension):

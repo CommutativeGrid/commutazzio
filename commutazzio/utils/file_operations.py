@@ -38,7 +38,7 @@ def filepath_generator(dirname='./',filename=None,extension=None,overwrite=False
     if not os.path.isdir(dirname):
         raise FileNotFoundError(f"{dirname} does not exist.")
     if filename is None:
-        filename=f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{uuid.uuid4().hex[-5:]}'
+        filename=f'{datetime.now().strftime("%Y%m%d_%H%M%S")}_{uuid.uuid4().hex[-10:]}'
     if '.' in filename:
         extension_from_fn=filename.split('.')[-1]
         if extension is None:

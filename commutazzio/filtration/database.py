@@ -20,6 +20,7 @@ class CLFiltrationDB:
             self.conn = sqlite3.connect(':memory:')
             print('Connected to in-memory database.')
             self.create_table(table_name)
+            self.table_name = table_name
             return
         # add .db if no .db in filename
         if '.db' not in filename:

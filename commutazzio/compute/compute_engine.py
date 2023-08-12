@@ -4,6 +4,7 @@ from ..filtration import CLFiltration
 from ..utils import create_directory, delete_file
 from functools import cache
 from icecream import ic
+import gc
 
 #a class for computing the following invariants:
 # 1. total decomposition if finite-type
@@ -26,7 +27,29 @@ class CLInvariants:
         self.num_cores = num_cores
 
 
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self.filtration_file_ready:
+            self.delete_filtration_file()
+            self.filtration_file_ready = False
+        for diagram in self.connected_persistence_diagrams:
+            del diagram
+        self.connected_persistence_diagrams = []
+        gc.collect()
 
+
+    def __del__(self):
+        if self.filtration_file_ready:
+            self.delete_filtration_file()
+            self.filtration_file_ready = False
+        for diagram in self.connected_persistence_diagrams:
+            del diagram
+        self.connected_persistence_diagrams = []
+        gc.collect()
+
+    
     @property
     def cPDs(self):
         return self.connected_persistence_diagrams
@@ -41,8 +64,6 @@ class CLInvariants:
         if self.filtration_file_ready == False:
             self.filtration_filepath=self.clf.random_cech_format_output_file(new_file=True,dirname='./filtration',extension='fltr')
             self.filtration_file_ready = True
-        # ic(self.clf.ladder_length)
-        # ic(self.clf.horizontal_parameters)
         new_diagram=cPD(self.filtration_filepath,\
                         ladder_length=self.clf.ladder_length,\
                         homology_dim=homology_dim,\

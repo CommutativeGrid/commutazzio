@@ -53,7 +53,6 @@ def points_to_clfiltration_constant_removal(pts:np.array,vertical_removal_input:
     for alpha, use .get_point method to match the indices.
     """
     ...
-
 def points_to_clfiltration(pts:np.array,vertical_removal_input:list,radii:list,max_simplex_dim:int,method:str='cech'):
     """
     Convert a point cloud to a commutative ladder filtration.
@@ -125,3 +124,7 @@ def points_to_clfiltration(pts:np.array,vertical_removal_input:list,radii:list,m
         # print progress based on simplex processed and total number of simplices
         # print(f"\rProgress: {100*counter/total_num_simplices:.2f}%", flush=True)
     return CLFiltration(upper=upper,lower=lower,ladder_length=len_radii,h_params=radii,info={'vertical_removal':vertical_removal_input},enable_validation=False)
+
+
+def pointCloud2Filtration(*args,**kwargs):
+    return points_to_clfiltration(*args,**kwargs)

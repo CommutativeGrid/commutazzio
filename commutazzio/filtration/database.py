@@ -8,6 +8,7 @@ from orjson import loads
 from ast import literal_eval
 import os
 from functools import cache
+import gc
 
 class CLFiltrationDB:
     def __init__(self, filename:str='clf_database.db', table_name:str='filtration',create_new_db:bool=False):
@@ -41,6 +42,10 @@ class CLFiltrationDB:
                 print(f"Connected to {self.filename} database.")
             else:
                 raise Exception(f"{self.filename} does not exist.")
+            
+    def close(self):
+        self.conn.close()
+        print(f"Closed {self.filename} database.")
 
     def create_table(self,table_name:str):
         """
@@ -68,19 +73,27 @@ class CLFiltrationDB:
                                 horizontal_parameters TEXT,
                                 info JSON1)''')
 
-    def add_filtration(self, clfiltration):
+    def add_filtration(self, clfiltration, store_minimal_data=False):
         # Serialize the filtration object
         serialized_filtration = clfiltration.serialize()
         
-        # Insert the serialized filtration into the database
-        self.conn.execute(f'''INSERT INTO {self.table_name}
-                            (ladder_length, upper, lower, horizontal_parameters, info)
-                            VALUES (?, ?, ?, ?, ?)''',
-                            (serialized_filtration['ladder_length'],
-                            str(serialized_filtration['upper']),
-                            str(serialized_filtration['lower']),
-                            str(serialized_filtration['horizontal_parameters']),
-                            str(serialized_filtration['info'])))
+        if store_minimal_data:
+            self.conn.execute(f'''INSERT INTO {self.table_name} 
+                              (ladder_length, info) VALUES (?, ?)''',
+                          (serialized_filtration['ladder_length'],
+                           str(serialized_filtration['info'])))
+        else:
+            # Insert the serialized filtration into the database
+            self.conn.execute(f'''INSERT INTO {self.table_name}
+                                (ladder_length, upper, lower, horizontal_parameters, info)
+                                VALUES (?, ?, ?, ?, ?)''',
+                                (serialized_filtration['ladder_length'],
+                                str(serialized_filtration['upper']),
+                                str(serialized_filtration['lower']),
+                                str(serialized_filtration['horizontal_parameters']),
+                                str(serialized_filtration['info'])))
+        del serialized_filtration
+        gc.collect()
         # Save the changes
         self.conn.commit()
     
@@ -94,12 +107,15 @@ class CLFiltrationDB:
             cl_filtration = CLFiltration()
             cl_filtration = CLFiltration()
             cl_filtration.ladder_length = row[1]
-            cl_filtration.upper = cl_filtration.incremental_filtration_creation(eval(row[2]))
-            cl_filtration.lower = cl_filtration.incremental_filtration_creation(eval(row[3]))
-            try:
-                cl_filtration.horizontal_parameters = loads(literal_eval(row[4]))
-            except Exception as e:
-                print(e)
+            if row[2] is not None:
+                cl_filtration.upper = cl_filtration.incremental_filtration_creation(eval(row[2]))
+            if row[3] is not None:
+                cl_filtration.lower = cl_filtration.incremental_filtration_creation(eval(row[3]))
+            if row[4] is not None:
+                try:
+                    cl_filtration.horizontal_parameters = loads(literal_eval(row[4]))
+                except Exception as e:
+                    print(e)
             cl_filtration.info = loads(literal_eval(row[5]))
             return cl_filtration
         else:

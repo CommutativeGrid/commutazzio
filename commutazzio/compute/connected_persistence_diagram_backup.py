@@ -18,8 +18,6 @@ from ..utils import filepath_generator
 from functools import lru_cache
 from .precompute import CommutativeGridPreCompute
 import gc
-from fzzpy import compute as zz_compute
-from fzzpy import parse_filtration_file
 
 #---------Get the path to the binary file of FZZ----------------
 # Get the path to the parent directory of this module
@@ -29,17 +27,51 @@ config = configparser.ConfigParser()
 config.read(os.path.join(parent_dir, 'config.ini'))
 
 if sys.platform == 'darwin':
+    FZZ_BINARY_PATH=config.get('FZZ','binary_path_darwin')
     # try to find the path [PRECOMPUTED] precomputed_intv_directory_darwin
     try:
         PRECOMPUTED_INTV_DIR=config.get('PRECOMPUTED','precomputed_intv_directory_darwin')
     except configparser.NoOptionError:
         PRECOMPUTED_INTV_DIR=''
 elif sys.platform == 'linux':
+    FZZ_BINARY_PATH=config.get('FZZ','binary_path_linux')
     # try to find the path [PRECOMPUTED] precomputed_intv_directory_linux
     try:
         PRECOMPUTED_INTV_DIR=config.get('PRECOMPUTED','precomputed_intv_directory_linux')
     except configparser.NoOptionError:
         PRECOMPUTED_INTV_DIR=''
+
+#raise warning if the path is not set, say that connected persistence diagram is not available
+if FZZ_BINARY_PATH == '':
+    warn("The path to the binary file of FZZ is not set. Connected persistence diagram is not available.")
+
+
+def _fzz_executor(input_file_path, clean_up=True):
+    """https://github.com/taohou01/fzz/"""
+    # moving files add a little unnecessary overhead
+    # but we would like to keep the files well-organized
+    # this is fashion is compatible with the multiprocessing mode
+    # compared with changing the cwd
+    # might need to modify the fzz program directly to 
+    # allow the user to specify the directory to store the output file
+    input_dir = os.path.abspath(os.path.dirname(input_file_path))
+    subprocess.run([FZZ_BINARY_PATH,input_file_path])
+    if clean_up:
+        delete_file(input_file_path)
+    # get the filename of the input file
+    input_file_name = os.path.basename(input_file_path)
+    # file will be generated in cwd, 
+    # with file name being input_file_name removing the extension plus "_pers"
+    # get the current directory
+    current_dir = os.getcwd()
+    fzz_result_fp = os.path.join(current_dir,f"{input_file_name[:-4]}_pers")
+    # do not change the line below as the file name is controled by fzz. 
+    # if you would like to change it, change the filename of the output first
+    target_fp=os.path.join(input_dir,f"{input_file_name[:-4]}_pers")
+    # move the file to the input directory
+    os.rename(fzz_result_fp,target_fp)
+    return target_fp 
+
         
 
 class ConnectedPersistenceDiagram():
@@ -274,7 +306,7 @@ class ConnectedPersistenceDiagram():
         return None
         # return PathToStr
 
-    def fzz_barcode_compute_upper(self):
+    def fzz_generator_upper(self):
         # upper layer
         m=self.m
         # n=self.n
@@ -286,13 +318,9 @@ class ConnectedPersistenceDiagram():
             f.write(self.variables['NodeToStr'][(0, 1)][0]) 
              # add all simplices from (0,1) to (m-1,1) line by line and by insertion order
             f.write(self.variables['PathToStr'][(0, 1, m-1, 1)][0])
-        filt_simps,filt_ops=parse_filtration_file(fzz_input_file_name)
-        barcode = zz_compute(filt_simps,filt_ops)
-        if self.clean_up:
-            delete_file(fzz_input_file_name)
-        return barcode
+        return _fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
     
-    def fzz_barcode_compute_lower(self):
+    def fzz_generator_lower(self):
         # lower layer
         m=self.m
         # n=self.n
@@ -300,11 +328,7 @@ class ConnectedPersistenceDiagram():
         with open(fzz_input_file_name, 'w') as f:
             f.write(self.variables['NodeToStr'][(0, 0)][0])
             f.write(self.variables['PathToStr'][(0, 0, m-1, 0)][0])
-        filt_simps,filt_ops=parse_filtration_file(fzz_input_file_name)
-        barcode = zz_compute(filt_simps,filt_ops)
-        if self.clean_up:
-            delete_file(fzz_input_file_name)
-        return barcode
+        return _fzz_executor(fzz_input_file_name,clean_up=self.clean_up)
 
     @staticmethod
     def write_list_of_lists_of_sets_to_file(file_path, list_of_lists_of_sets):
@@ -332,7 +356,7 @@ class ConnectedPersistenceDiagram():
         m=self.m
         dim=self.dim
         for interval in barcode:
-            current_dim, p, q = interval #map(int, interval.rstrip().split())
+            current_dim, p, q = map(int, interval.rstrip().split())
             if current_dim != dim:
                 continue
             for j in range(m): 
@@ -375,9 +399,13 @@ class ConnectedPersistenceDiagram():
         # starting with the complex K_p and ending with the complex K_q.
         # for i in range(len(barcode)):     
         #-----------------start of upper layer-----------------
+        fzz_output_upper=self.fzz_generator_upper() #initialized with the function
         # notice that S is initialized with S=[0, NodeToStr[(0, 1)][1]] when using this function 
-        barcode = self.fzz_barcode_compute_upper()
-        self._barcode_info_transform_ul(barcode) # change the indexing
+        with open(fzz_output_upper, 'r') as f: # opening the output file of fzz
+            barcode = [line.rstrip() for line in f]
+        if self.clean_up:
+            delete_file(fzz_output_upper)
+        self._barcode_info_transform_ul(barcode)
         #-----------------end of upper layer-----------------
 
         e=(m, -1)
@@ -397,7 +425,11 @@ class ConnectedPersistenceDiagram():
                 self.variables['d_ss'][(i, j)]=0
 
         #-----------------start of lower layer-----------------
-        barcode = self.fzz_barcode_compute_lower()
+        fzz_output_lower=self.fzz_generator_lower()
+        with open(fzz_output_lower, 'r') as f:
+            barcode = [line.rstrip() for line in f]
+        if self.clean_up:
+            delete_file(fzz_output_lower)
         self._barcode_info_transform_ul(barcode)
         #-----------------end of lower layer-----------------
 
@@ -421,6 +453,7 @@ class ConnectedPersistenceDiagram():
         PathToStr=self.variables['PathToStr']
         dirname=self.txf_dir
         fn_prefix=self.txf_basename_wo_ext
+        clean_up=self.clean_up
 
 
         def fzz_compute_inside_loop_local(b0,d1):
@@ -433,10 +466,19 @@ class ConnectedPersistenceDiagram():
                 f.write(PathToStr[(d1, 1, b0, 0)][0])
                 if b0<m-1:
                     f.write(PathToStr[(b0, 0, m-1, 0)][0])
-            filt_simps,filt_ops=parse_filtration_file(fzz_input_file_name)
-            barcode = zz_compute(filt_simps,filt_ops)# time-consuming part of this function (99.9%)
-            if self.clean_up:
-                delete_file(fzz_input_file_name)
+            # time-consuming part of this function (99.9%)
+            # -----------
+            fzz_output_loop=_fzz_executor(fzz_input_file_name,clean_up=clean_up)
+            # -----------
+            # costs little time to read the file
+            try:
+                with open(fzz_output_loop, 'r') as f:
+                    barcode = [line.rstrip() for line in f]
+            except FileNotFoundError:
+                #TODO: add a computation failed flag?
+                raise FileNotFoundError(f"FileNotFoundError: {fzz_output_loop}")
+            if clean_up:
+                delete_file(fzz_output_loop)
             return barcode
     
         if not self.enable_multi_processing:
@@ -522,7 +564,7 @@ class ConnectedPersistenceDiagram():
                     for d0 in range(d1, m): 
                         self.variables['d_ss'][((b0, d0), (b1, d1))]=0
                 for interval in barcodes[f"{b0}_{d1}"]:
-                    current_dim, p, q = interval #map(int, interval.rstrip().split())
+                    current_dim, p, q = map(int, interval.rstrip().split())
                     if current_dim != dim:
                         continue
                     if self.variables['S'][d1+1]<p or q<self.variables['S'][d1+2]: 

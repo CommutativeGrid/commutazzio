@@ -6,7 +6,7 @@ HERE = pathlib.Path(__file__).parent
 VERSION = '0.5.0'
 PACKAGE_NAME = 'commutazzio'
 AUTHOR = '平岡研究室区間近似実用化チーム'
-AUTHOR_EMAIL = 'xucgphi@gmail.com'
+AUTHOR_EMAIL = 'xu.chenguang.k34@kyoto-u.jp'
 URL = ''
 
 LICENSE = 'MIT'

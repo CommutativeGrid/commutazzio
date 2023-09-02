@@ -18,8 +18,7 @@ from ..utils import filepath_generator
 from functools import lru_cache
 from .precompute import CommutativeGridPreCompute
 import gc
-from fzzpy import compute as zz_compute
-from fzzpy import parse_filtration_file
+
 
 #---------Get the path to the binary file of FZZ----------------
 # Get the path to the parent directory of this module
@@ -275,6 +274,8 @@ class ConnectedPersistenceDiagram():
         # return PathToStr
 
     def fzz_barcode_compute_upper(self):
+        from fzzpy import compute as zz_compute
+        from fzzpy import parse_filtration_file
         # upper layer
         m=self.m
         # n=self.n
@@ -293,6 +294,8 @@ class ConnectedPersistenceDiagram():
         return barcode
     
     def fzz_barcode_compute_lower(self):
+        from fzzpy import compute as zz_compute
+        from fzzpy import parse_filtration_file
         # lower layer
         m=self.m
         # n=self.n
@@ -424,6 +427,8 @@ class ConnectedPersistenceDiagram():
 
 
         def fzz_compute_inside_loop_local(b0,d1):
+            from fzzpy import compute as zz_compute
+            from fzzpy import parse_filtration_file
             fzz_input_file_name = filepath_generator(dirname=dirname,filename=fn_prefix+f'_FZZ_{b0}_{d1}',extension='txt')
             # it costs little time to write the file
             with open(fzz_input_file_name, 'w') as f:
@@ -479,13 +484,7 @@ class ConnectedPersistenceDiagram():
             #TODO: maybe we should set up cpu affinity? or use taskset?
             # https://stackoverflow.com/questions/14716659/taskset-python
             with tqdm_joblib(tqdm(desc="Progress",total=len(non_vanishing_parameters))) as progress_bar:
-                results = Parallel(n_jobs=num_cores, timeout=500, prefer='threads')(
-                    # delayed(self.fzz_compute_inside_loop)(b0, d1, m=m, \
-                    #                                     NodeToStr=self.variables['NodeToStr'],\
-                    #                                         PathToStr=self.variables['PathToStr'],\
-                    #                                             dirname=self.txf_dir,\
-                    #                                                 fn_prefix=self.txf_basename_wo_ext,\
-                    #                                                     clean_up=self.clean_up)
+                results = Parallel(n_jobs=num_cores, timeout=500, prefer='processes')(
                     delayed(fzz_compute_inside_loop_local)(*pair)
                     for pair in non_vanishing_parameters
                 )

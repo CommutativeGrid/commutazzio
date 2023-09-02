@@ -38,6 +38,7 @@ INSTALL_REQUIRES = [
 
 DEPENDENCY_LINKS = [
       'https://github.com/Commutative-Ladders/cpes.git',
+      'https://github.com/CommutativeGrids/fzzpy.git',
 ]
 
 

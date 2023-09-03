@@ -5,17 +5,18 @@ Created on Sun Jan  2 17:29:27 2022
 @author: kasumi
 """
 import pandas as pd
+from ..utils import delete_file
 import numpy as np
 from bisect import bisect_left
-import os, sys
+import subprocess, os, sys
 #import gc garbage collection
 import configparser
 import pickle
 from warnings import warn
 from icecream import ic
+from ..utils import filepath_generator
 from functools import lru_cache
 from .precompute import CommutativeGridPreCompute
-# from fzzpy import compute as zz_compute
 # import gc
 
 
@@ -38,36 +39,6 @@ elif sys.platform == 'linux':
         PRECOMPUTED_INTV_DIR=config.get('PRECOMPUTED','precomputed_intv_directory_linux')
     except configparser.NoOptionError:
         PRECOMPUTED_INTV_DIR=''
-
-
-def fzz_compute_inside_loop_local_mp(args):
-    from fzzpy import compute as zz_compute
-    b0, d1,m, NodeToStr, PathToStr  = args
-    # Generate data directly
-    data_sources = [NodeToStr[(0, 1)][0]]
-    if 0 < d1:
-        data_sources.append(PathToStr[(0, 1, d1, 1)][0])
-    data_sources.append(PathToStr[(d1, 1, b0, 0)][0])
-    if b0 < m-1:
-        data_sources.append(PathToStr[(b0, 0, m-1, 0)][0])
-    # Parse the data sources directly to generate filt_simp and filt_op
-    filt_simps = []
-    filt_ops = []
-    for data in data_sources:
-        lines = data.strip().split("\n")
-        for line in lines:
-            parts = line.split()
-            op = parts[0]
-            simp = list(map(int, parts[1:]))
-            filt_simps.append(simp)
-            if op == "i":
-                filt_ops.append(True)
-            elif op == "d":
-                filt_ops.append(False)
-
-    # Compute using the directly generated data
-    barcode = zz_compute(filt_simps, filt_ops)
-    return barcode
         
 
 class ConnectedPersistenceDiagram():
@@ -463,42 +434,44 @@ class ConnectedPersistenceDiagram():
                     non_vanishing_parameters.append((b0,d1))
         barcodes={}
 
+        NodeToStr=self.variables['NodeToStr']
+        PathToStr=self.variables['PathToStr']
+
         # def fzz_compute_inside_loop_local(b0, d1,NodeToStr=self.variables['NodeToStr'],PathToStr=self.variables['PathToStr']):
         # # def fzz_compute_inside_loop_local(b0, d1):
         #     print(f"Subprocess - NodeToStr ID: {id(NodeToStr)}")
         #     print(f"Subprocess - PathToStr ID: {id(PathToStr)}")            
-
+        def fzz_compute_inside_loop_local(b0, d1):
+            from fzzpy import compute as zz_compute
+            # Generate data directly
+            data_sources = [NodeToStr[(0, 1)][0]]
+            if 0 < d1:
+                data_sources.append(PathToStr[(0, 1, d1, 1)][0])
+            data_sources.append(PathToStr[(d1, 1, b0, 0)][0])
+            if b0 < m-1:
+                data_sources.append(PathToStr[(b0, 0, m-1, 0)][0])
+            # Parse the data sources directly to generate filt_simp and filt_op
+            filt_simps = []
+            filt_ops = []
+            for data in data_sources:
+                lines = data.strip().split("\n")
+                for line in lines:
+                    parts = line.split()
+                    op = parts[0]
+                    simp = list(map(int, parts[1:]))
+                    filt_simps.append(simp)
+                    if op == "i":
+                        filt_ops.append(True)
+                    elif op == "d":
+                        filt_ops.append(False)
+            # Compute using the directly generated data
+            barcode = zz_compute(filt_simps, filt_ops)
+            return barcode
     
         if not self.enable_multi_processing:
-            NodeToStr=self.variables['NodeToStr']
-            PathToStr=self.variables['PathToStr']
+            # NodeToStr=self.variables['NodeToStr']
+            # PathToStr=self.variables['PathToStr']
             # Print the progress
-            def fzz_compute_inside_loop_local(b0, d1):
-                from fzzpy import compute as zz_compute
-                # Generate data directly
-                data_sources = [NodeToStr[(0, 1)][0]]
-                if 0 < d1:
-                    data_sources.append(PathToStr[(0, 1, d1, 1)][0])
-                data_sources.append(PathToStr[(d1, 1, b0, 0)][0])
-                if b0 < m-1:
-                    data_sources.append(PathToStr[(b0, 0, m-1, 0)][0])
-                # Parse the data sources directly to generate filt_simp and filt_op
-                filt_simps = []
-                filt_ops = []
-                for data in data_sources:
-                    lines = data.strip().split("\n")
-                    for line in lines:
-                        parts = line.split()
-                        op = parts[0]
-                        simp = list(map(int, parts[1:]))
-                        filt_simps.append(simp)
-                        if op == "i":
-                            filt_ops.append(True)
-                        elif op == "d":
-                            filt_ops.append(False)
-                # Compute using the directly generated data
-                barcode = zz_compute(filt_simps, filt_ops)
-                return barcode
             progress_count=0
             for b0,d1 in non_vanishing_parameters:
                 # barcodes[f"{b0}_{d1}"] = self.fzz_compute_inside_loop(b0,d1,m=m,\
@@ -525,19 +498,14 @@ class ConnectedPersistenceDiagram():
                 num_cores=max_cores
             print('Number of cores being used:',num_cores)
             print(f"Number of non-vanishing parameters: {len(non_vanishing_parameters)}")
-            from multiprocessing import Pool, Manager
 
-            manager = Manager()
-            NodeToStr_shared = manager.dict(self.variables['NodeToStr'])
-            PathToStr_shared = manager.dict(self.variables['PathToStr'])
-            args_list = [(b0, d1, self.m,NodeToStr_shared, PathToStr_shared) for b0, d1 in non_vanishing_parameters]
-            # Use Pool for parallel processing
-            with Pool(processes=num_cores) as pool:
-                results = list(\
-                    tqdm(\
-                        pool.imap_unordered(fzz_compute_inside_loop_local_mp,args_list),
-                                    total=len(non_vanishing_parameters), desc="Progress"))
-                
+            with tqdm_joblib(tqdm(desc="Progress",total=len(non_vanishing_parameters))) as progress_bar:
+                results = Parallel(n_jobs=num_cores, timeout=None, \
+                                   require='sharedmem',prefer='threads', batch_size='auto')(
+                    delayed(fzz_compute_inside_loop_local)(*pair)
+                    for pair in non_vanishing_parameters
+                )
+            print('FFFFFFFF')
             # cost little time
             for b0, d1 in non_vanishing_parameters:
                 barcodes[f"{b0}_{d1}"] = results.pop(0)

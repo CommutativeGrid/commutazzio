@@ -312,6 +312,11 @@ class ConnectedPersistenceDiagram():
                     filt_ops.append(True)
                 elif op == "d":
                     filt_ops.append(False)
+        # write data_sources to file
+        with open("data_sources.txt", 'w') as file:
+            for data in data_sources:
+                file.write(data)
+                
         del data_sources
         print("Computing upper layer barcode...")
         barcode = zz_compute(filt_simps,filt_ops)

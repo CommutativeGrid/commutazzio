@@ -73,8 +73,9 @@ def fzz_compute_inside_loop_local_mp(args):
 class ConnectedPersistenceDiagram():
     __slots__ = ['txf','txf_dir','txf_basename_wo_ext','m','ladder_length',\
                  'enable_multi_processing','num_cores','clean_up','n','dim',\
-                    'times','intv','variables','complexes','delt_ss','dec',\
-                        'S','dots','lines','dotdec','plot_dots']
+                    'times','intv','variables','complexes','delt_ss','d_ss','dec',\
+                        'indexAligner','dots','lines','dotdec','plot_dots',\
+                            'NodeToStr','PathToStr']
 
     def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,enable_multi_processing=False,num_cores="auto",clean_up=True,**kwargs ):
         self.txf = os.path.abspath(filtration_filepath) # filtration file
@@ -99,16 +100,18 @@ class ConnectedPersistenceDiagram():
                 with open(intv_fn,"rb") as f:
                     self.intv = pickle.load(f)
                 with open(variables_fn,"rb") as f:
-                    self.variables = pickle.load(f)
+                    self.variables = pickle.load(f) # get 'cov' and 'c_ss'
                 is_intv_loaded = True
         if not is_intv_loaded:
             temp = CommutativeGridPreCompute(self.m,self.n)
             self.intv = temp.get_intervals()
-            self.variables = temp.get_variables()
+            self.variables = temp.get_variables() # get 'cov' and 'c_ss'
             del temp
+        # print("Preloading/precomputing complete!")
         self.complexes_generator()
         self.node2str_generator()        
         self.path2str_generator()
+        del self.complexes
         self.delt_ss = self.deco()
         self.compute_dec_obj()
         self.compute_connecting_lines()
@@ -143,24 +146,9 @@ class ConnectedPersistenceDiagram():
         plot_data_dict.update({'lines': self.lines.to_csv(index=True)})
         return plot_data_dict
 
-    def temp(self):
-        ttt = {'1,1,10,-1': 5,
-         '4,4,10,-1': 52,
-         '10,-1,0,0': 410,
-         '2,3,10,-1': 9,
-         '4,5,10,-1': 1,
-         '0,0,0,0': 46,
-         '1,3,10,-1': 2,
-         '2,4,10,-1': 9,
-         '4,6,10,-1': 1,
-         '0,1,0,0': 1,
-         '1,4,10,-1': 11,
-         '4,7,10,-1': 1,
-         '1,5,10,-1': 1}
-        self.dec = ttt
 
     #@staticmethod
-    @lru_cache(maxsize=2048)
+    @lru_cache(maxsize=4096)
     def join_intv(self, X, Y):
         """
         helper function to join two intervals
@@ -247,7 +235,7 @@ class ConnectedPersistenceDiagram():
                 L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
                 s='\ni '.join(L) 
                 NodeToStr[(a, b)]=('i '+s+'\n', len(L))
-        self.variables['NodeToStr']=NodeToStr
+        self.NodeToStr=NodeToStr
         del NodeToStr
         return None
     
@@ -297,7 +285,7 @@ class ConnectedPersistenceDiagram():
                 PathToStr[(a, 0, a+l, 1)]=(PathToStr[(a, 0, a+l, 0)][0]+PathToStr[(a+l, 0, a+l, 1)][0], PathToStr[(a, 0, a+l, 0)][1]+PathToStr[(a+l, 0, a+l, 1)][1])
                 PathToStr[(a+l, 1, a, 0)]=(PathToStr[(a+l, 1, a, 1)][0]+PathToStr[(a, 1, a, 0)][0], PathToStr[(a+l, 1, a, 1)][1]+PathToStr[(a, 1, a, 0)][1])
                 a+=1
-        self.variables['PathToStr']=PathToStr
+        self.PathToStr=PathToStr
         del PathToStr
         return None
         # return PathToStr
@@ -311,8 +299,8 @@ class ConnectedPersistenceDiagram():
         filt_ops = []
         # Consolidate data sources
         data_sources = [
-            self.variables['NodeToStr'][(0, 1)][0],
-            self.variables['PathToStr'][(0, 1, m-1, 1)][0]
+            self.NodeToStr[(0, 1)][0],
+            self.PathToStr[(0, 1, m-1, 1)][0]
         ]
         for data in data_sources:
             for line in data.strip().split("\n"):
@@ -324,7 +312,10 @@ class ConnectedPersistenceDiagram():
                     filt_ops.append(True)
                 elif op == "d":
                     filt_ops.append(False)
+        del data_sources
+        print("Computing upper layer barcode...")
         barcode = zz_compute(filt_simps,filt_ops)
+        del filt_simps, filt_ops
         return barcode
     
     def fzz_barcode_compute_lower(self):
@@ -336,8 +327,8 @@ class ConnectedPersistenceDiagram():
         filt_ops = []
         # Consolidate data sources
         data_sources = [
-            self.variables['NodeToStr'][(0, 0)][0],
-            self.variables['PathToStr'][(0, 0, m-1, 0)][0]
+            self.NodeToStr[(0, 0)][0],
+            self.PathToStr[(0, 0, m-1, 0)][0]
         ]
         for data in data_sources:
             for line in data.strip().split("\n"):
@@ -349,7 +340,9 @@ class ConnectedPersistenceDiagram():
                     filt_ops.append(True)
                 elif op == "d":
                     filt_ops.append(False)
+        del data_sources
         barcode = zz_compute(filt_simps,filt_ops)
+        del filt_simps, filt_ops
         return barcode
 
     @staticmethod
@@ -367,8 +360,8 @@ class ConnectedPersistenceDiagram():
 
     @staticmethod
     def write_node_to_str(NodeToStr, file_path):
-        # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
-        # self.write_node_to_str(self.variables['NodeToStr'], "NodeToStr.txt")
+        # self.write_node_to_str(self.NodeToStr, "NodeToStr.txt")
+        # self.write_node_to_str(self.NodeToStr, "NodeToStr.txt")
         with open(file_path, 'w') as file:
             for key, value in NodeToStr.items():
                 file.write(f"{key}: {value[0]}")
@@ -382,37 +375,38 @@ class ConnectedPersistenceDiagram():
             if current_dim != dim:
                 continue
             for j in range(m): 
-                if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
+                if self.indexAligner[j]<p and p<=self.indexAligner[j+1]: 
                     b=j; 
                     break
             for j in range(-1,m): 
-                if self.variables['S'][j+1]<=q and q<self.variables['S'][j+2]: 
+                if self.indexAligner[j+1]<=q and q<self.indexAligner[j+2]: 
                     d=j; 
                     break
             if b<=d: 
-                self.variables['d_ss'][(b, d)]+=1
+                self.d_ss[(b, d)]+=1
 
     def deco(self):
         #deco for decomposition
         #n = self.n
         m = self.m
         dim = self.dim
-        print("全ての道の差分リストを構築")
-
-        self.variables['d_ss'] = {}
-        # self.variables['S'] is used to align the index in the commutative ladder
+        # print("全ての道の差分リストを構築")
+        print("Building the difference list of all paths...")
+        self.d_ss = {}
+        # self.indexAligner is used to align the index in the commutative ladder
         # with the index when all simplicial complex get expanded and inserted one by one
         # and then computed using fzz
-        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 1)][1]] 
+        self.indexAligner = [0, self.NodeToStr[(0, 1)][1]] 
         # (0,1), notice the difference
         for i in range(m-1): 
-            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 1, i+1, 1)][1])
-            # ic(i,self.variables['S'])
-        self.variables['S'].append(self.variables['S'][-1]+1)
-        # ic(self.variables['S'])
+            self.indexAligner.append(self.indexAligner[-1]+self.PathToStr[(i, 1, i+1, 1)][1])
+            # ic(i,self.indexAligner)
+        self.indexAligner.append(self.indexAligner[-1]+1)
+        # ic(self.indexAligner)
         for i in range(m):
             for j in range(i, m): 
-                self.variables['d_ss'][(i, j)]=0
+                self.d_ss[(i, j)]=0
+        print("Difference list building complete.")
 
         # Each line denotes an interval in the barcode, 
         # d p q: dimension, birth, death
@@ -424,33 +418,35 @@ class ConnectedPersistenceDiagram():
         # notice that S is initialized with S=[0, NodeToStr[(0, 1)][1]] when using this function 
         barcode = self.fzz_barcode_compute_upper()
         self._barcode_info_transform_ul(barcode) # change the indexing
+        print("Upper layer barcode computation complete!")
         #-----------------end of upper layer-----------------
 
         e=(m, -1)
         for l in range(m-1, -1, -1):
             for b in range(m-l):
                 d=b+l
-                self.variables['c_ss'][(e, (b, d))]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][(e, (b-1, d))]+self.variables['c_ss'][(e, (b, d+1))]-self.variables['c_ss'][(e, (b-1, d+1))]
+                self.variables['c_ss'][(e, (b, d))]=self.d_ss[(b, d)]+self.variables['c_ss'][(e, (b-1, d))]+self.variables['c_ss'][(e, (b, d+1))]-self.variables['c_ss'][(e, (b-1, d+1))]
 
-        self.variables['d_ss']={}
-        self.variables['S'] = [0, self.variables['NodeToStr'][(0, 0)][1]] 
+        self.d_ss={}
+        self.indexAligner = [0, self.NodeToStr[(0, 0)][1]] 
         # (0,0), notice the difference
         for i in range(m-1): 
-            self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 0, i+1, 0)][1])
-        self.variables['S'].append(self.variables['S'][-1]+1)
+            self.indexAligner.append(self.indexAligner[-1]+self.PathToStr[(i, 0, i+1, 0)][1])
+        self.indexAligner.append(self.indexAligner[-1]+1)
         for i in range(m):
             for j in range(i, m): 
-                self.variables['d_ss'][(i, j)]=0
+                self.d_ss[(i, j)]=0
 
         #-----------------start of lower layer-----------------
         barcode = self.fzz_barcode_compute_lower()
         self._barcode_info_transform_ul(barcode)
+        print("Lower layer barcode computation complete!")
         #-----------------end of lower layer-----------------
 
         for l in range(m-1, -1, -1):
             for b in range(m-l):
                 d=b+l
-                self.variables['c_ss'][((b, d), e)]=self.variables['d_ss'][(b, d)]+self.variables['c_ss'][((b-1, d), e)]+self.variables['c_ss'][((b, d+1), e)]-self.variables['c_ss'][((b-1, d+1), e)]
+                self.variables['c_ss'][((b, d), e)]=self.d_ss[(b, d)]+self.variables['c_ss'][((b-1, d), e)]+self.variables['c_ss'][((b, d+1), e)]-self.variables['c_ss'][((b-1, d+1), e)]
 
         
 
@@ -463,15 +459,15 @@ class ConnectedPersistenceDiagram():
                     non_vanishing_parameters.append((b0,d1))
         barcodes={}
 
-        # def fzz_compute_inside_loop_local(b0, d1,NodeToStr=self.variables['NodeToStr'],PathToStr=self.variables['PathToStr']):
+        # def fzz_compute_inside_loop_local(b0, d1,NodeToStr=self.NodeToStr,PathToStr=self.PathToStr):
         # # def fzz_compute_inside_loop_local(b0, d1):
         #     print(f"Subprocess - NodeToStr ID: {id(NodeToStr)}")
         #     print(f"Subprocess - PathToStr ID: {id(PathToStr)}")            
 
     
         if not self.enable_multi_processing:
-            NodeToStr=self.variables['NodeToStr']
-            PathToStr=self.variables['PathToStr']
+            NodeToStr=self.NodeToStr
+            PathToStr=self.PathToStr
             # Print the progress
             def fzz_compute_inside_loop_local(b0, d1):
                 from fzzpy import compute as zz_compute
@@ -528,8 +524,8 @@ class ConnectedPersistenceDiagram():
             from multiprocessing import Pool, Manager
 
             manager = Manager()
-            NodeToStr_shared = manager.dict(self.variables['NodeToStr'])
-            PathToStr_shared = manager.dict(self.variables['PathToStr'])
+            NodeToStr_shared = manager.dict(self.NodeToStr)
+            PathToStr_shared = manager.dict(self.PathToStr)
             args_list = [(b0, d1, self.m,NodeToStr_shared, PathToStr_shared) for b0, d1 in non_vanishing_parameters]
             # Use Pool for parallel processing
             with Pool(processes=num_cores) as pool:
@@ -551,33 +547,33 @@ class ConnectedPersistenceDiagram():
                 # Recall that e=(m, -1)
                 if self.variables['c_ss'][((b0, d1), e)]==0 or self.variables['c_ss'][(e, (b0, d1))]==0: 
                     continue 
-                self.variables['d_ss']={}
-                self.variables['S']=[0, self.variables['NodeToStr'][(0, 1)][1]]
+                self.d_ss={}
+                self.indexAligner=[0, self.NodeToStr[(0, 1)][1]]
                 for i in range(d1): 
-                    self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 1, i+1, 1)][1])
-                self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(d1, 1, b0, 0)][1])
+                    self.indexAligner.append(self.indexAligner[-1]+self.PathToStr[(i, 1, i+1, 1)][1])
+                self.indexAligner.append(self.indexAligner[-1]+self.PathToStr[(d1, 1, b0, 0)][1])
                 for i in range(b0, m-1): 
-                    self.variables['S'].append(self.variables['S'][-1]+self.variables['PathToStr'][(i, 0, i+1, 0)][1])
-                self.variables['S'].append(self.variables['S'][-1]+1)
+                    self.indexAligner.append(self.indexAligner[-1]+self.PathToStr[(i, 0, i+1, 0)][1])
+                self.indexAligner.append(self.indexAligner[-1]+1)
                 for b1 in range(b0+1):
                     for d0 in range(d1, m): 
-                        self.variables['d_ss'][((b0, d0), (b1, d1))]=0
+                        self.d_ss[((b0, d0), (b1, d1))]=0
                 for interval in barcodes[f"{b0}_{d1}"]:
                     current_dim, p, q = interval #map(int, interval.rstrip().split())
                     if current_dim != dim:
                         continue
-                    if self.variables['S'][d1+1]<p or q<self.variables['S'][d1+2]: 
+                    if self.indexAligner[d1+1]<p or q<self.indexAligner[d1+2]: 
                         continue
                     for j in range(d1+1): 
-                        if self.variables['S'][j]<p and p<=self.variables['S'][j+1]: 
+                        if self.indexAligner[j]<p and p<=self.indexAligner[j+1]: 
                             b1=j
                             break
                     for j in range(b0, m): 
-                        if self.variables['S'][d1+2+j-b0]<=q and q<self.variables['S'][d1+3+j-b0]: 
+                        if self.indexAligner[d1+2+j-b0]<=q and q<self.indexAligner[d1+3+j-b0]: 
                             d0=j
                             break
                     if b1<=d0: 
-                        self.variables['d_ss'][(b0, d0), (b1, d1)]+=1
+                        self.d_ss[(b0, d0), (b1, d1)]+=1
                 self.variables['c_ss'][((b0, m), (-1, d1))]=0
                 for i in range(d1, m): 
                     self.variables['c_ss'][((b0, i), (-1, d1))]=0
@@ -590,7 +586,7 @@ class ConnectedPersistenceDiagram():
                         d0=b1+l
                         if d0<d1 or m-1<d0: 
                             continue
-                        self.variables['c_ss'][((b0, d0), (b1, d1))]=self.variables['d_ss'][((b0, d0), (b1, d1))]+self.variables['c_ss'][((b0, d0), (b1-1, d1))]+self.variables['c_ss'][((b0, d0+1), (b1, d1))]-self.variables['c_ss'][((b0, d0+1), (b1-1, d1))]      
+                        self.variables['c_ss'][((b0, d0), (b1, d1))]=self.d_ss[((b0, d0), (b1, d1))]+self.variables['c_ss'][((b0, d0), (b1-1, d1))]+self.variables['c_ss'][((b0, d0+1), (b1, d1))]-self.variables['c_ss'][((b0, d0+1), (b1-1, d1))]      
         
 
         # last info

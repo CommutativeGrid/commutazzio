@@ -14,7 +14,7 @@ class CompressedDict(dict):
         text, length = value
         # only compress if it's worth it
         # do not double compress
-        if not isinstance(text, bytes) and length > 999:
+        if not isinstance(text, bytes) and length > 1:
             compressed_value = (compress(text.encode()), length)
         else:
             compressed_value = (text, length)

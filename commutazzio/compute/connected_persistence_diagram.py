@@ -216,15 +216,21 @@ class ConnectedPersistenceDiagram():
                 NodeToStr[(a, b)]=('i '+s+'\n', len(L))
 
         if self.enable_multi_processing:
-            from multiprocessing import Manager
-            # return Manager().dict(NodeToStr)
-            # return NodeToStr
-            return Manager().dict(NodeToStr)
+            from commutazzio.utils import CompressedDictManager
+            manager = CompressedDictManager()
+            manager.start()
+            return manager.CompressedDict(CompressedDict(NodeToStr))
+            # from multiprocessing import Manager
+            # # return Manager().dict(NodeToStr)
+            # # return NodeToStr
+            # return Manager().dict(CompressedDict(NodeToStr))
         else:
-            return NodeToStr
+            return CompressedDict(NodeToStr)
     
     def path2str_generator(self):
-        PathToStr=CompressedDict()  #Compressed Dictionary to store string representations of paths 
+        PathToStr=CompressedDict()  
+        # Compressed Dictionary to store string representations of paths 
+        # Starting from CompressedDict instead of copying from dict to reduce memory usage
         m=self.m
         n=self.n
         s=''
@@ -269,6 +275,9 @@ class ConnectedPersistenceDiagram():
                 PathToStr[(a, 0, a+l, 1)]=(PathToStr[(a, 0, a+l, 0)][0]+PathToStr[(a+l, 0, a+l, 1)][0], PathToStr[(a, 0, a+l, 0)][1]+PathToStr[(a+l, 0, a+l, 1)][1])
                 PathToStr[(a+l, 1, a, 0)]=(PathToStr[(a+l, 1, a, 1)][0]+PathToStr[(a, 1, a, 0)][0], PathToStr[(a+l, 1, a, 1)][1]+PathToStr[(a, 1, a, 0)][1])
                 a+=1
+        #get memory usage
+        # from ..utils import print_memory_usage
+        # print_memory_usage(PathToStr)
         if self.enable_multi_processing:
             from commutazzio.utils import CompressedDictManager
             manager = CompressedDictManager()
@@ -443,7 +452,6 @@ class ConnectedPersistenceDiagram():
 
         
         self.print_memory_usage_of_attributes()
-
         # Each line denotes an interval in the barcode, 
         # d p q: dimension, birth, death
         # Note that the birth and death are start and end of the closed integral interval, 

@@ -1,8 +1,8 @@
 from pympler import asizeof
 
-def print_memory_usage():
+def print_memory_usage(var):
     # Print sizes of variables of interest
-    print(f"Size of variable 'a': {asizeof.asizeof(a) / (1024 * 1024):.2f} MB")
+    print(f"Size of variable: {asizeof.asizeof(var) / (1024 * 1024):.2f} MB")
     # ... any other variables you want to monitor
 
 

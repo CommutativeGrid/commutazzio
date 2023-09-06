@@ -15,8 +15,16 @@ from warnings import warn
 from icecream import ic
 from functools import lru_cache
 from .precompute import CommutativeGridPreCompute
+# from ..utils import print_memory_usage_of_all_variables
+from pympler import asizeof
+from ..utils import CompressedDict
 # from fzzpy import compute as zz_compute
 # import gc
+
+#TODO:
+#TODO string compression for PathToStr and NodeToStr by default
+#TODO optional to use a database to store the data
+# store the string or torch tensors?
 
 
 #---------Get the path to the binary file of FZZ----------------
@@ -38,36 +46,6 @@ elif sys.platform == 'linux':
         PRECOMPUTED_INTV_DIR=config.get('PRECOMPUTED','precomputed_intv_directory_linux')
     except configparser.NoOptionError:
         PRECOMPUTED_INTV_DIR=''
-
-
-def fzz_compute_inside_loop_local_mp(args):
-    from fzzpy import compute as zz_compute
-    b0, d1,m, NodeToStr, PathToStr  = args
-    # Generate data directly
-    data_sources = [NodeToStr[(0, 1)][0]]
-    if 0 < d1:
-        data_sources.append(PathToStr[(0, 1, d1, 1)][0])
-    data_sources.append(PathToStr[(d1, 1, b0, 0)][0])
-    if b0 < m-1:
-        data_sources.append(PathToStr[(b0, 0, m-1, 0)][0])
-    # Parse the data sources directly to generate filt_simp and filt_op
-    filt_simps = []
-    filt_ops = []
-    for data in data_sources:
-        lines = data.strip().split("\n")
-        for line in lines:
-            parts = line.split()
-            op = parts[0]
-            simp = list(map(int, parts[1:]))
-            filt_simps.append(simp)
-            if op == "i":
-                filt_ops.append(True)
-            elif op == "d":
-                filt_ops.append(False)
-
-    # Compute using the directly generated data
-    barcode = zz_compute(filt_simps, filt_ops)
-    return barcode
         
 
 class ConnectedPersistenceDiagram():
@@ -109,8 +87,8 @@ class ConnectedPersistenceDiagram():
             del temp
         # print("Preloading/precomputing complete!")
         self.complexes_generator()
-        self.node2str_generator()        
-        self.path2str_generator()
+        self.NodeToStr = self.node2str_generator()        
+        self.PathToStr = self.path2str_generator()
         del self.complexes
         self.delt_ss = self.deco()
         self.compute_dec_obj()
@@ -219,6 +197,7 @@ class ConnectedPersistenceDiagram():
 
     def node2str_generator(self):
         NodeToStr={} #Dictionary to store string representations of nodes
+        # format for each value: simplex, length of simplex (i.e., number of vertices)
         m=self.m
         n=self.n
         s=''
@@ -235,12 +214,17 @@ class ConnectedPersistenceDiagram():
                 L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
                 s='\ni '.join(L) 
                 NodeToStr[(a, b)]=('i '+s+'\n', len(L))
-        self.NodeToStr=NodeToStr
-        del NodeToStr
-        return None
+
+        if self.enable_multi_processing:
+            from multiprocessing import Manager
+            # return Manager().dict(NodeToStr)
+            # return NodeToStr
+            return Manager().dict(NodeToStr)
+        else:
+            return NodeToStr
     
     def path2str_generator(self):
-        PathToStr={}  #Dictionary to store string representations of paths 
+        PathToStr=CompressedDict()  #Compressed Dictionary to store string representations of paths 
         m=self.m
         n=self.n
         s=''
@@ -285,39 +269,59 @@ class ConnectedPersistenceDiagram():
                 PathToStr[(a, 0, a+l, 1)]=(PathToStr[(a, 0, a+l, 0)][0]+PathToStr[(a+l, 0, a+l, 1)][0], PathToStr[(a, 0, a+l, 0)][1]+PathToStr[(a+l, 0, a+l, 1)][1])
                 PathToStr[(a+l, 1, a, 0)]=(PathToStr[(a+l, 1, a, 1)][0]+PathToStr[(a, 1, a, 0)][0], PathToStr[(a+l, 1, a, 1)][1]+PathToStr[(a, 1, a, 0)][1])
                 a+=1
-        self.PathToStr=PathToStr
-        del PathToStr
-        return None
-        # return PathToStr
+        if self.enable_multi_processing:
+            from commutazzio.utils import CompressedDictManager
+            manager = CompressedDictManager()
+            manager.start()
+            return manager.CompressedDict(PathToStr)
+        else:
+            return PathToStr
+
+    @staticmethod
+    def _data_source_to_filts(data_source):
+        filt_simps = []
+        filt_ops = []
+        if data_source:
+            for data in data_source:
+                lines = data.strip().split("\n")
+                for line in lines:
+                    parts = line.split()
+                    try:
+                        op = parts[0]
+                    except IndexError:
+                        # print everything
+                        print(f"data_source: {data_source}")
+                        print(f"line: {line}")
+                        print(f"parts: {parts}")
+                        breakpoint()
+                        1+1
+                    simp = list(map(int, parts[1:]))
+                    filt_simps.append(simp)
+                    if op == "i":
+                        filt_ops.append(True)
+                    elif op == "d":
+                        filt_ops.append(False)
+        return filt_simps, filt_ops
 
     def fzz_barcode_compute_upper(self):
         from fzzpy import compute as zz_compute
         # upper layer
         m=self.m
         # n=self.n
-        filt_simps = []
-        filt_ops = []
-        # Consolidate data sources
-        data_sources = [
+        # Consolidate data source
+        data_source = [
             self.NodeToStr[(0, 1)][0],
             self.PathToStr[(0, 1, m-1, 1)][0]
         ]
-        for data in data_sources:
-            for line in data.strip().split("\n"):
-                parts = line.split()
-                op = parts[0]
-                simp = list(map(int, parts[1:]))
-                filt_simps.append(simp)
-                if op == "i":
-                    filt_ops.append(True)
-                elif op == "d":
-                    filt_ops.append(False)
-        # write data_sources to file
-        with open("data_sources.txt", 'w') as file:
-            for data in data_sources:
-                file.write(data)
-                
-        del data_sources
+        filt_simps, filt_ops = self._data_source_to_filts(data_source)
+        # write data_source to file with random filename 
+        # from uuid import uuid4
+        # filename = uuid4().hex[-6:]
+        # with open(f"data_source_{filename}.txt", 'w') as file:
+        #     for data in data_source:
+        #         file.write(data)
+        # print("Writing data sources to file complete.")
+        del data_source
         print("Computing upper layer barcode...")
         barcode = zz_compute(filt_simps,filt_ops)
         del filt_simps, filt_ops
@@ -331,23 +335,31 @@ class ConnectedPersistenceDiagram():
         filt_simps = []
         filt_ops = []
         # Consolidate data sources
-        data_sources = [
+        data_source = [
             self.NodeToStr[(0, 0)][0],
             self.PathToStr[(0, 0, m-1, 0)][0]
         ]
-        for data in data_sources:
-            for line in data.strip().split("\n"):
-                parts = line.split()
-                op = parts[0]
-                simp = list(map(int, parts[1:]))
-                filt_simps.append(simp)
-                if op == "i":
-                    filt_ops.append(True)
-                elif op == "d":
-                    filt_ops.append(False)
-        del data_sources
+        filt_simps, filt_ops = self._data_source_to_filts(data_source)
+        del data_source
         barcode = zz_compute(filt_simps,filt_ops)
         del filt_simps, filt_ops
+        return barcode
+    
+    @staticmethod
+    def fzz_compute_inside_loop_local_mp(args):
+        from fzzpy import compute as zz_compute
+        b0, d1,m, NodeToStr, PathToStr  = args
+        # Generate data directly
+        data_source = [NodeToStr[(0, 1)][0]]
+        if 0 < d1:
+            data_source.append(PathToStr[(0, 1, d1, 1)][0])
+        data_source.append(PathToStr[(d1, 1, b0, 0)][0])
+        if b0 < m-1:
+            data_source.append(PathToStr[(b0, 0, m-1, 0)][0])
+        # Parse the data source directly to generate filt_simp and filt_op
+        filt_simps, filt_ops = ConnectedPersistenceDiagram._data_source_to_filts(data_source)
+        # Compute using the directly generated data
+        barcode = zz_compute(filt_simps, filt_ops)
         return barcode
 
     @staticmethod
@@ -360,8 +372,6 @@ class ConnectedPersistenceDiagram():
                         file.write(f"{sorted_set}\n")
                     else:
                         file.write(f"{sorted_set}, ")
-
-
 
     @staticmethod
     def write_node_to_str(NodeToStr, file_path):
@@ -390,7 +400,25 @@ class ConnectedPersistenceDiagram():
             if b<=d: 
                 self.d_ss[(b, d)]+=1
 
+
+    def print_memory_usage_of_attributes(obj):
+        for slot in obj.__slots__:
+            value = getattr(obj, slot, None)  # Get the value of the slot/attribute
+            if value is not None:
+                # Check if it's a managed object
+                if hasattr(value, '_getvalue') and 'Proxy' in value.__class__.__name__:
+                    serialized_value = pickle.dumps(value._getvalue())
+                    memory_usage = asizeof.asizeof(serialized_value) / (1024 * 1024)  # Convert to MB
+                    del serialized_value
+                else:
+                    memory_usage = asizeof.asizeof(value) / (1024 * 1024)  # Convert to MB (this will error here since we don't have pympler)
+                print(f"Memory usage of attribute '{slot}': {memory_usage:.2f} MB")
+
+
     def deco(self):
+        # import pdb
+        # pdb.set_trace()
+        # breakpoint()
         #deco for decomposition
         #n = self.n
         m = self.m
@@ -412,6 +440,9 @@ class ConnectedPersistenceDiagram():
             for j in range(i, m): 
                 self.d_ss[(i, j)]=0
         print("Difference list building complete.")
+
+        
+        self.print_memory_usage_of_attributes()
 
         # Each line denotes an interval in the barcode, 
         # d p q: dimension, birth, death
@@ -477,26 +508,15 @@ class ConnectedPersistenceDiagram():
             def fzz_compute_inside_loop_local(b0, d1):
                 from fzzpy import compute as zz_compute
                 # Generate data directly
-                data_sources = [NodeToStr[(0, 1)][0]]
+                data_source = [NodeToStr[(0, 1)][0]]
                 if 0 < d1:
-                    data_sources.append(PathToStr[(0, 1, d1, 1)][0])
-                data_sources.append(PathToStr[(d1, 1, b0, 0)][0])
+                    data_source.append(PathToStr[(0, 1, d1, 1)][0])
+                data_source.append(PathToStr[(d1, 1, b0, 0)][0])
                 if b0 < m-1:
-                    data_sources.append(PathToStr[(b0, 0, m-1, 0)][0])
-                # Parse the data sources directly to generate filt_simp and filt_op
-                filt_simps = []
-                filt_ops = []
-                for data in data_sources:
-                    lines = data.strip().split("\n")
-                    for line in lines:
-                        parts = line.split()
-                        op = parts[0]
-                        simp = list(map(int, parts[1:]))
-                        filt_simps.append(simp)
-                        if op == "i":
-                            filt_ops.append(True)
-                        elif op == "d":
-                            filt_ops.append(False)
+                    data_source.append(PathToStr[(b0, 0, m-1, 0)][0])
+                # Parse the data source directly to generate filt_simp and filt_op
+                filt_simps, filt_ops = self._data_source_to_filts(data_source)
+                del data_source
                 # Compute using the directly generated data
                 barcode = zz_compute(filt_simps, filt_ops)
                 return barcode
@@ -516,6 +536,7 @@ class ConnectedPersistenceDiagram():
             from tqdm import tqdm
             from ..utils import tqdm_joblib
             from joblib import delayed, Parallel  
+            self.print_memory_usage_of_attributes()
             max_cores=cpu_count() 
             num_cores=self.num_cores
             if num_cores == "auto":       
@@ -526,17 +547,14 @@ class ConnectedPersistenceDiagram():
                 num_cores=max_cores
             print('Number of cores being used:',num_cores)
             print(f"Number of non-vanishing parameters: {len(non_vanishing_parameters)}")
-            from multiprocessing import Pool, Manager
-
-            manager = Manager()
-            NodeToStr_shared = manager.dict(self.NodeToStr)
-            PathToStr_shared = manager.dict(self.PathToStr)
-            args_list = [(b0, d1, self.m,NodeToStr_shared, PathToStr_shared) for b0, d1 in non_vanishing_parameters]
+            from multiprocessing import Pool
+            self.print_memory_usage_of_attributes()
+            args_list = [(b0, d1, self.m, self.NodeToStr, self.PathToStr) for b0, d1 in non_vanishing_parameters]
             # Use Pool for parallel processing
             with Pool(processes=num_cores) as pool:
                 results = list(\
                     tqdm(\
-                        pool.imap_unordered(fzz_compute_inside_loop_local_mp,args_list),
+                        pool.imap_unordered(self.fzz_compute_inside_loop_local_mp,args_list),
                                     total=len(non_vanishing_parameters), desc="Progress"))
                 
             # cost little time

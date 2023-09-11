@@ -12,7 +12,9 @@ import gc
 
 
 class CLInvariants:
-    def __init__(self, clf: CLFiltration,enable_multi_processing=False,num_cores="auto"):
+    def __init__(self, clf: CLFiltration,\
+                 enable_multi_processing=False,\
+                    num_cores="auto",algorithm_phat="chunk_reduction",verbose=False):
         self.clf = clf
         if len(clf) in [3,4]:
             self.quiver = CLQ(len(clf))
@@ -22,18 +24,20 @@ class CLInvariants:
             self.ladder_type = "infinite"
         self.connected_persistence_diagrams = []
         create_directory('./filtration')
-        self.filtration_file_ready = False
-        self.enable_multi_processing = enable_multi_processing
-        self.num_cores = num_cores
+        self._filtration_file_ready = False
+        self._enable_multi_processing = enable_multi_processing
+        self._num_cores = num_cores
+        self._algorithm_phat = algorithm_phat
+        self._verbose = verbose
 
 
     def __enter__(self):
         return self
     
     def __exit__(self, exc_type, exc_value, traceback):
-        if self.filtration_file_ready:
+        if self._filtration_file_ready:
             self.delete_filtration_file()
-            self.filtration_file_ready = False
+            self._filtration_file_ready = False
         for diagram in self.connected_persistence_diagrams:
             del diagram
         self.connected_persistence_diagrams = []
@@ -41,9 +45,9 @@ class CLInvariants:
 
 
     def __del__(self):
-        if self.filtration_file_ready:
+        if self._filtration_file_ready:
             self.delete_filtration_file()
-            self.filtration_file_ready = False
+            self._filtration_file_ready = False
         for diagram in self.connected_persistence_diagrams:
             del diagram
         self.connected_persistence_diagrams = []
@@ -61,24 +65,29 @@ class CLInvariants:
         (Can choose other finite field if we use dionysus2)
         """
         print(f"Computing connected persistence diagram at homology dimension {homology_dim}")
-        if self.filtration_file_ready == False:
+        if self._filtration_file_ready == False:
             self.filtration_filepath=self.clf.random_cech_format_output_file(new_file=True,dirname='./filtration',extension='fltr')
-            self.filtration_file_ready = True
-        new_diagram=cPD(self.filtration_filepath,\
-                        ladder_length=self.clf.ladder_length,\
-                        homology_dim=homology_dim,\
-                        filtration_values=self.clf.horizontal_parameters,\
-                            enable_multi_processing=self.enable_multi_processing,\
-                                num_cores=self.num_cores)
+            self._filtration_file_ready = True
+        params={
+            'filtration_filepath':self.filtration_filepath,
+            'ladder_length':self.clf.ladder_length,
+            'homology_dim':homology_dim,
+            'filtration_values':self.clf.horizontal_parameters,
+            'enable_multi_processing':self._enable_multi_processing,
+            'num_cores':self._num_cores,
+            'algorithm_phat':self._algorithm_phat,
+            'verbose':self._verbose
+        }
+        new_diagram=cPD(**params)
         self.connected_persistence_diagrams.append(new_diagram)
 
     def delete_filtration_file(self):
-        if self.filtration_file_ready == False:
+        if self._filtration_file_ready == False:
             print("Filtration file not generated yet.")
             return
         try:
             delete_file(self.filtration_filepath)
-            self.filtration_file_ready = False
+            self._filtration_file_ready = False
             print("Filtration file deleted.")
         except Exception as e:
             print(f"Error: {e}")
@@ -102,7 +111,7 @@ class CLInvariants:
             raise ValueError("Total decomposition is only available for finite-type commutative ladders.")
         if not self.repr_filled:
             self.repr_generation()
-        self.quiver.multiplicity_computation(dim=dim,prime=prime,recalculate=recalculate,output_message=output_message,enable_multi_processing=self.enable_multi_processing,num_cores=self.num_cores)
+        self.quiver.multiplicity_computation(dim=dim,prime=prime,recalculate=recalculate,output_message=output_message,enable_multi_processing=self._enable_multi_processing,num_cores=self._num_cores)
         print(f"Total decomposition of the homology module at dimension {dim} and finite field F{prime} is computed.")
         
     @property

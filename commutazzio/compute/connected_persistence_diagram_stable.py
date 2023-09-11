@@ -229,7 +229,8 @@ class ConnectedPersistenceDiagram():
         for i in range(1, self.m):
             for j in range(1, self.n):
                 C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
-
+        with open(f"test_complexes_stable.pkl", 'wb') as f:
+            pickle.dump(C, f)
         self.complexes = C
 
 
@@ -251,6 +252,8 @@ class ConnectedPersistenceDiagram():
                 L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
                 s='\ni '.join(L) 
                 NodeToStr[(a, b)]=('i '+s+'\n', len(L))
+        with open(f"nts_stable.pkl", 'wb') as f:
+            pickle.dump(NodeToStr, f)
         self.variables['NodeToStr']=NodeToStr
         del NodeToStr
         return None
@@ -301,6 +304,8 @@ class ConnectedPersistenceDiagram():
                 PathToStr[(a, 0, a+l, 1)]=(PathToStr[(a, 0, a+l, 0)][0]+PathToStr[(a+l, 0, a+l, 1)][0], PathToStr[(a, 0, a+l, 0)][1]+PathToStr[(a+l, 0, a+l, 1)][1])
                 PathToStr[(a+l, 1, a, 0)]=(PathToStr[(a+l, 1, a, 1)][0]+PathToStr[(a, 1, a, 0)][0], PathToStr[(a+l, 1, a, 1)][1]+PathToStr[(a, 1, a, 0)][1])
                 a+=1
+        with open(f"pts_stable.pkl", 'wb') as f:
+            pickle.dump(PathToStr, f)
         self.variables['PathToStr']=PathToStr
         del PathToStr
         return None
@@ -478,7 +483,11 @@ class ConnectedPersistenceDiagram():
                 #TODO: add a computation failed flag?
                 raise FileNotFoundError(f"FileNotFoundError: {fzz_output_loop}")
             if clean_up:
+                delete_file(fzz_input_file_name)
                 delete_file(fzz_output_loop)
+            if b0 == 1 and d1 == 24:
+                with open("filenames_stable.txt", 'w') as f:
+                    f.write(f"INPUT:{fzz_input_file_name}\n OUTPUT:{fzz_output_loop}\n")
             return barcode
     
         if not self.enable_multi_processing:
@@ -547,6 +556,10 @@ class ConnectedPersistenceDiagram():
         # [b1,d1]
         #   [b0,d0]
         # the loop below costs very little time
+        # store barcodes
+        with open("barcodes_stable.pkl", 'wb') as f:
+            pickle.dump(barcodes, f)
+
         for b0 in range(m):
             for d1 in range(b0, m):
                 # Recall that e=(m, -1)

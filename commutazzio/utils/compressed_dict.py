@@ -1,35 +1,67 @@
-from bz2 import compress, decompress
+import lz4.frame
+compress = lambda x: lz4.frame.compress(x, compression_level=3)
+decompress = lz4.frame.decompress
+# from zlib import compress, decompress
+from multiprocessing import Pool
+MIN_COMPRESS_LENGTH = 9999
 
 class CompressedDict(dict):
-    _exposed_ = ['__setitem__', '__getitem__', 'keys', '__contains__', '__delitem__', '__len__']
+    _exposed_ = ['__setitem__','__getitem__', '__contains__', '__delitem__','keys','values','items']
+    
+    def _parallel_init(self, kv_pair):
+        # print(f"Compressing key:{k}")
+        k, v = kv_pair
+        return {k: self._compress(v)}
 
     def __init__(self, data=None):
-        super().__init__()  # Initialize the underlying dictionary
-        if data:
-            if isinstance(data, CompressedDict) or isinstance(data, dict):
-                for k, v in data.items():
-                    self[k] = v  # This will invoke the overridden __setitem__ method
+            super().__init__()  # Initialize the underlying dictionary
+            if data:
+                if isinstance(data, dict):
+                    with Pool(processes=8) as pool:
+                        results = pool.map(self._parallel_init, data.items())
+                    for r in results:
+                        super().update(r)
+                elif isinstance(data, CompressedDict):
+                    super().__init__(data)
+    
+    # @property
+    # def count(self):
+    #     if not hasattr(self, '_count'):
+    #         self._count = 0
+    #     return self._count
 
-    def __setitem__(self, key, value):
+    # @count.setter
+    # def count(self, value):
+    #     self._count = value
+
+    # def __init__(self, data=None):
+    #     super().__init__()  # Initialize the underlying dictionary
+    #     self._count=0
+    #     if data:
+    #         if isinstance(data, CompressedDict) or isinstance(data, dict):
+    #             for k, v in data.items():
+    #                 self[k] = v  # This will invoke the overridden __setitem__ method
+
+    @staticmethod
+    def _compress(value):
         text, length = value
         # only compress if it's worth it
         # do not double compress
-        if not isinstance(text, bytes) and length > 1:
+        if not isinstance(text, bytes) and length > MIN_COMPRESS_LENGTH:
             compressed_value = (compress(text.encode()), length)
         else:
             compressed_value = (text, length)
-        super().__setitem__(key, compressed_value)
+        return compressed_value
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key, self._compress(value))
 
     def __getitem__(self, key):
         compressed_value, length = super().__getitem__(key)
-
         if isinstance(compressed_value, bytes):
             return decompress(compressed_value).decode(), length
         else:
             return compressed_value, length
-    
-    def __keys__(self):
-        return self.keys()
         
 from multiprocessing.managers import BaseManager
 class CompressedDictManager(BaseManager):

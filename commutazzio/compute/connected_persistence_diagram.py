@@ -13,18 +13,20 @@ import configparser
 import pickle
 from warnings import warn
 from icecream import ic
-from functools import lru_cache
+from functools import lru_cache, partial
 from .precompute import CommutativeGridPreCompute
 # from ..utils import print_memory_usage_of_all_variables
 from pympler import asizeof
-from ..utils import CompressedDict
+from ..utils import CompressedDict, print_memory_usage
+import logging
+from ..utils.watch import timeit
 # from fzzpy import compute as zz_compute
+# zz_compute = partial(zz_compute, algorithm=self._algorithm_phat)
 # import gc
 
 #TODO:
-#TODO string compression for PathToStr and NodeToStr by default
 #TODO optional to use a database to store the data
-# store the string or torch tensors?
+#TODO store the string or torch tensors?
 
 
 #---------Get the path to the binary file of FZZ----------------
@@ -50,25 +52,27 @@ elif sys.platform == 'linux':
 
 class ConnectedPersistenceDiagram():
     __slots__ = ['txf','txf_dir','txf_basename_wo_ext','m','ladder_length',\
-                 'enable_multi_processing','num_cores','clean_up','n','dim',\
+                 '_enable_multi_processing','_num_cores','_algorithm_phat','clean_up','n','dim',\
                     'times','intv','variables','complexes','delt_ss','d_ss','dec',\
                         'indexAligner','dots','lines','dotdec','plot_dots',\
                             'NodeToStr','PathToStr']
 
-    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,enable_multi_processing=False,num_cores="auto",clean_up=True,**kwargs ):
+    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,enable_multi_processing=False,num_cores="auto",verbose=True,clean_up=True,algorithm_phat='chunk_reduction',**kwargs ):
         self.txf = os.path.abspath(filtration_filepath) # filtration file
         #TODO: validate the txf file, check if all faces are contained, etc. But validation costs time. do we really need to do that?
         self.txf_dir = os.path.dirname(self.txf)
         self.txf_basename_wo_ext = os.path.splitext(os.path.basename(self.txf))[0]
         self.m = ladder_length # default length is 10
         self.ladder_length = self.m
-        self.enable_multi_processing = enable_multi_processing
-        self.num_cores = num_cores
-        self.clean_up = clean_up # clean up the temporary files
+        self._enable_multi_processing = enable_multi_processing
+        self._num_cores = num_cores
+        self._algorithm_phat = algorithm_phat
+        # self.clean_up = clean_up # clean up the temporary files
         self.n = 2 # two layers by default
         self.dim = homology_dim # homology dimension
         self.times = self.preprocess_filtration_values(filtration_values)
-
+        if verbose:
+            logging.basicConfig(level=logging.DEBUG)
         is_intv_loaded = False
         if PRECOMPUTED_INTV_DIR:
             intv_fn=f"{PRECOMPUTED_INTV_DIR}/intv_{self.m:03d}_{self.n:03d}.pkl"
@@ -80,14 +84,15 @@ class ConnectedPersistenceDiagram():
                 with open(variables_fn,"rb") as f:
                     self.variables = pickle.load(f) # get 'cov' and 'c_ss'
                 is_intv_loaded = True
+                logging.debug("Preloading complete!")
         if not is_intv_loaded:
             temp = CommutativeGridPreCompute(self.m,self.n)
             self.intv = temp.get_intervals()
             self.variables = temp.get_variables() # get 'cov' and 'c_ss'
             del temp
         # print("Preloading/precomputing complete!")
-        self.complexes_generator()
-        self.NodeToStr = self.node2str_generator()        
+        self.complexes = self.complexes_generator()
+        self.NodeToStr = self.node2str_generator()    
         self.PathToStr = self.path2str_generator()
         del self.complexes
         self.delt_ss = self.deco()
@@ -95,6 +100,7 @@ class ConnectedPersistenceDiagram():
         self.compute_connecting_lines()
         self.compute_dotdec()
         self.compute_plot_dots()
+
 
     # def __del__(self):
     #     self.variables.clear()
@@ -147,6 +153,7 @@ class ConnectedPersistenceDiagram():
             Z[t] = (Z[t][0]-1, Z[t][1])
         return tuple(Z)
     
+    @timeit
     def complexes_generator(self):
         """compute complexes based on the time parameter in the filtration file"""
         # C[i][j], i in range(m), j in range(n)
@@ -180,7 +187,10 @@ class ConnectedPersistenceDiagram():
             # check if sorted here is sufficient, or if it is necessary to sort
             # I believe that it works well as long as it is sorted, no matter the order'
             # maybe better to change it to the one below
+            # breakpoint()
             C[x_index][y_index].add(' '.join(sorted(data[4:], key=lambda x: (len(x), x))))
+            # C[x_index][y_index].add(tuple(sorted(map(int, data[4:])))) # sort the representation for a single simplex to be added 
+            # using integers too slow
         # up to now, C contains each simplices newly added at each step.
         for i in range(1, self.m): # Reconstruct the lower layer
             C[i][0] = C[i][0] | C[i-1][0] # union
@@ -191,12 +201,12 @@ class ConnectedPersistenceDiagram():
         for i in range(1, self.m):
             for j in range(1, self.n):
                 C[i][j] = C[i][j] | C[i-1][j] | C[i][j-1]
+        return C
 
-        self.complexes = C
-
-
+    @timeit
     def node2str_generator(self):
         NodeToStr={} #Dictionary to store string representations of nodes
+        # NodeToStr = CompressedDict()
         # format for each value: simplex, length of simplex (i.e., number of vertices)
         m=self.m
         n=self.n
@@ -208,14 +218,25 @@ class ConnectedPersistenceDiagram():
         for a in range(m):
             for b in range(n):
                 L=list(C[a][b])
-                if len(L)==0: #TODO: check correctness
+                # if len(L)==0: #TODO: check correctness
+                #     NodeToStr[(a, b)]=('', 0)
+                #     continue
+                L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
+                # s='\ni '.join(L) 
+                # NodeToStr[(a, b)]=('i '+s+'\n', len(L))
+                # L=list(C[a][b]) # a set of tuples, representing a simplicial complex, inherently not sorted in python
+                # L.sort(key=lambda x: (len(x), x)) # sort by length first, then by the tuple itself
+                # L = list(map(lambda x: ' '.join(map(str, x)), L)) # convert each tuple to a string
+                if len(L)==0:
                     NodeToStr[(a, b)]=('', 0)
                     continue
-                L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
-                s='\ni '.join(L) 
-                NodeToStr[(a, b)]=('i '+s+'\n', len(L))
-
-        if self.enable_multi_processing:
+                # map_obj=[map(str, tup) for tup in L] #too slow
+                # str_rep = '\n'.join([f"i {' '.join(simplex)}" for simplex in map_obj]) #too slow
+                str_rep = '\n'.join([f"i {simplex}" for simplex in L])
+                NodeToStr[(a, b)]=(str_rep, len(L))
+        if isinstance(NodeToStr, dict):
+            NodeToStr = CompressedDict(NodeToStr)
+        if self._enable_multi_processing:
             from commutazzio.utils import CompressedDictManager
             manager = CompressedDictManager()
             manager.start()
@@ -225,60 +246,80 @@ class ConnectedPersistenceDiagram():
             # # return NodeToStr
             # return Manager().dict(CompressedDict(NodeToStr))
         else:
-            return CompressedDict(NodeToStr)
-    
+            return NodeToStr
+        
+    @timeit
     def path2str_generator(self):
-        PathToStr=CompressedDict()  
-        # Compressed Dictionary to store string representations of paths 
+        def _path_join(path1,path2):
+            str1,l1=path1
+            str2,l2=path2
+            if l1==0: return path2
+            if l2==0: return path1
+            return ('\n'.join([str1,str2]),l1+l2)
+        PathToStr=CompressedDict() #Compressed Dictionary to store string representations of paths 
         # Starting from CompressedDict instead of copying from dict to reduce memory usage
+        # PathToStr={}
         m=self.m
         n=self.n
-        s=''
+        # s=''        
         if not hasattr(self, 'complexes'):
             raise AttributeError("self.complexes is not defined. Please run self.complexes_generator() first.")       
-        C=self.complexes
+        C=self.complexes # C is a list of lists of sets, each set contains strings of vertices, each string represents a simplex
         for a in range(m):
             L=list(C[a][1]-C[a][0]); 
+            # L.sort(key=lambda x: (len(x), x))
+            # L = list(map(lambda x: ' '.join(map(str, x)), L)) # convert each tuple to a string
             L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
-            if len(L)<1: 
+            if len(L) == 0: 
                 PathToStr[(a, 0, a, 1)]=('', 0)
                 PathToStr[(a, 1, a, 0)]=('', 0)
                 continue
-            s='\ni '.join(L) 
-            PathToStr[(a, 0, a, 1)]=('i '+s+'\n', len(L))
-            L.reverse() 
-            s='\nd '.join(L) 
-            PathToStr[(a, 1, a, 0)]=('d '+s+'\n', len(L))
+            # map_obj=[map(str, tup) for tup in L]
+            # str_rep = '\n'.join([f"i {' '.join(simplex)}" for simplex in map_obj])
+            str_rep = '\n'.join([f"i {simplex}" for simplex in L])
+            PathToStr[(a, 0, a, 1)]=(str_rep, len(L))
+            # map_obj_rev=[map(str, tup) for tup in reversed(L)]
+            # str_rep_rev = '\n'.join([f"d {' '.join(simplex)}" for simplex in map_obj_rev])
+            str_rep_rev = '\n'.join([f"d {simplex}" for simplex in reversed(L)])
+            PathToStr[(a, 1, a, 0)]=(str_rep_rev, len(L))
         
         for a in range(m-1):
             for b in range(n):
                 L=list(C[a+1][b]-C[a][b]); 
-                L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))  
-                if len(L)<1: 
+                # L.sort(key=lambda x: (len(x), x))
+                # L = list(map(lambda x: ' '.join(map(str, x)), L)) # convert each tuple to a string
+                L.sort(key=lambda x: (len(x.split(' ')),tuple(map(int,x.split(' ')))))
+                if len(L) == 0: 
                     PathToStr[(a, b, a+1, b)]=('', 0)
                     PathToStr[(a+1, b, a, b)]=('', 0)
                     continue
-                s='\ni '.join(L)
-                PathToStr[(a, b, a+1, b)]=('i '+s+'\n', len(L))
-                L.reverse() 
-                s='\nd '.join(L) 
-                PathToStr[(a+1, b, a, b)]=('d '+s+'\n', len(L))
-            PathToStr[(a, 0, a+1, 1)]=(PathToStr[(a, 0, a+1, 0)][0]+PathToStr[(a+1, 0, a+1, 1)][0], PathToStr[(a, 0, a+1, 0)][1]+PathToStr[(a+1, 0, a+1, 1)][1])
-            PathToStr[(a+1, 1, a, 0)]=(PathToStr[(a+1, 1, a, 1)][0]+PathToStr[(a, 1, a, 0)][0], PathToStr[(a+1, 1, a, 1)][1]+PathToStr[(a, 1, a, 0)][1])
+                # map_obj=[map(str, tup) for tup in L]
+                # str_rep = '\n'.join([f"i {' '.join(simplex)}" for simplex in map_obj])
+                str_rep = '\n'.join([f"i {simplex}" for simplex in L])
+                PathToStr[(a, b, a+1, b)]=(str_rep, len(L))
+                # map_obj_rev=[map(str, tup) for tup in reversed(L)]
+                # str_rep_rev = '\n'.join([f"d {' '.join(simplex)}" for simplex in map_obj_rev]) 
+                str_rep_rev = '\n'.join([f"d {simplex}" for simplex in reversed(L)])
+                PathToStr[(a+1, b, a, b)]=(str_rep_rev, len(L))
+            PathToStr[(a, 0, a+1, 1)]=_path_join(PathToStr[(a, 0, a+1, 0)], PathToStr[(a+1, 0, a+1, 1)])
+            PathToStr[(a+1, 1, a, 0)]=_path_join(PathToStr[(a+1, 1, a, 1)], PathToStr[(a, 1, a, 0)])
         
         for l in range(2, m):
             a=0
             while a+l<m:
                 for b in range(n):
-                    PathToStr[(a, b, a+l, b)]=(PathToStr[(a, b, a+l-1, b)][0]+PathToStr[(a+l-1, b, a+l, b)][0], PathToStr[(a, b, a+l-1, b)][1]+PathToStr[(a+l-1, b, a+l, b)][1])
-                    PathToStr[(a+l, b, a, b)]=(PathToStr[(a+l, b, a+1, b)][0]+PathToStr[(a+1, b, a, b)][0], PathToStr[(a+l, b, a+1, b)][1]+PathToStr[(a+1, b, a, b)][1])
-                PathToStr[(a, 0, a+l, 1)]=(PathToStr[(a, 0, a+l, 0)][0]+PathToStr[(a+l, 0, a+l, 1)][0], PathToStr[(a, 0, a+l, 0)][1]+PathToStr[(a+l, 0, a+l, 1)][1])
-                PathToStr[(a+l, 1, a, 0)]=(PathToStr[(a+l, 1, a, 1)][0]+PathToStr[(a, 1, a, 0)][0], PathToStr[(a+l, 1, a, 1)][1]+PathToStr[(a, 1, a, 0)][1])
+                    PathToStr[(a, b, a+l, b)]=_path_join(PathToStr[(a, b, a+l-1, b)], PathToStr[(a+l-1, b, a+l, b)])
+                    PathToStr[(a+l, b, a, b)]=_path_join(PathToStr[(a+l, b, a+1, b)], PathToStr[(a+1, b, a, b)])
+                PathToStr[(a, 0, a+l, 1)]=_path_join(PathToStr[(a, 0, a+l, 0)], PathToStr[(a+l, 0, a+l, 1)])
+                PathToStr[(a+l, 1, a, 0)]=_path_join(PathToStr[(a+l, 1, a, 1)], PathToStr[(a, 1, a, 0)])
                 a+=1
         #get memory usage
         # from ..utils import print_memory_usage
         # print_memory_usage(PathToStr)
-        if self.enable_multi_processing:
+        # logging.debug("PathToStr dict object generated.")
+        if isinstance(PathToStr, dict):
+            PathToStr = CompressedDict(PathToStr)
+        if self._enable_multi_processing:
             from commutazzio.utils import CompressedDictManager
             manager = CompressedDictManager()
             manager.start()
@@ -290,20 +331,12 @@ class ConnectedPersistenceDiagram():
     def _data_source_to_filts(data_source):
         filt_simps = []
         filt_ops = []
-        if data_source:
-            for data in data_source:
-                lines = data.strip().split("\n")
-                for line in lines:
+        for data in data_source: # each data represents a path
+            lines = data.strip().split("\n")
+            for line in lines:
+                if line: # can encounter '', which means no change in the filtration, does not affect the indexAligner
                     parts = line.split()
-                    try:
-                        op = parts[0]
-                    except IndexError:
-                        # print everything
-                        print(f"data_source: {data_source}")
-                        print(f"line: {line}")
-                        print(f"parts: {parts}")
-                        breakpoint()
-                        1+1
+                    op = parts[0]
                     simp = list(map(int, parts[1:]))
                     filt_simps.append(simp)
                     if op == "i":
@@ -312,8 +345,11 @@ class ConnectedPersistenceDiagram():
                         filt_ops.append(False)
         return filt_simps, filt_ops
 
+    @timeit
     def fzz_barcode_compute_upper(self):
         from fzzpy import compute as zz_compute
+        zz_compute = partial(zz_compute, algorithm=self._algorithm_phat)
+
         # upper layer
         m=self.m
         # n=self.n
@@ -331,13 +367,14 @@ class ConnectedPersistenceDiagram():
         #         file.write(data)
         # print("Writing data sources to file complete.")
         del data_source
-        print("Computing upper layer barcode...")
+        logging.debug("Computing upper layer barcode...")
         barcode = zz_compute(filt_simps,filt_ops)
         del filt_simps, filt_ops
         return barcode
     
     def fzz_barcode_compute_lower(self):
         from fzzpy import compute as zz_compute
+        zz_compute = partial(zz_compute, algorithm=self._algorithm_phat)
         # lower layer
         m=self.m
         # n=self.n
@@ -356,8 +393,9 @@ class ConnectedPersistenceDiagram():
     
     @staticmethod
     def fzz_compute_inside_loop_local_mp(args):
+        b0, d1,m, NodeToStr, PathToStr,algorithm_phat  = args
         from fzzpy import compute as zz_compute
-        b0, d1,m, NodeToStr, PathToStr  = args
+        zz_compute = partial(zz_compute, algorithm=algorithm_phat)
         # Generate data directly
         data_source = [NodeToStr[(0, 1)][0]]
         if 0 < d1:
@@ -423,11 +461,8 @@ class ConnectedPersistenceDiagram():
                     memory_usage = asizeof.asizeof(value) / (1024 * 1024)  # Convert to MB (this will error here since we don't have pympler)
                 print(f"Memory usage of attribute '{slot}': {memory_usage:.2f} MB")
 
-
+    @timeit
     def deco(self):
-        # import pdb
-        # pdb.set_trace()
-        # breakpoint()
         #deco for decomposition
         #n = self.n
         m = self.m
@@ -451,7 +486,7 @@ class ConnectedPersistenceDiagram():
         print("Difference list building complete.")
 
         
-        self.print_memory_usage_of_attributes()
+        # self.print_memory_usage_of_attributes()
         # Each line denotes an interval in the barcode, 
         # d p q: dimension, birth, death
         # Note that the birth and death are start and end of the closed integral interval, 
@@ -484,7 +519,7 @@ class ConnectedPersistenceDiagram():
         #-----------------start of lower layer-----------------
         barcode = self.fzz_barcode_compute_lower()
         self._barcode_info_transform_ul(barcode)
-        print("Lower layer barcode computation complete!")
+        logging.debug("Lower layer barcode computation complete!")
         #-----------------end of lower layer-----------------
 
         for l in range(m-1, -1, -1):
@@ -509,12 +544,13 @@ class ConnectedPersistenceDiagram():
         #     print(f"Subprocess - PathToStr ID: {id(PathToStr)}")            
 
     
-        if not self.enable_multi_processing:
+        if not self._enable_multi_processing:
             NodeToStr=self.NodeToStr
             PathToStr=self.PathToStr
             # Print the progress
             def fzz_compute_inside_loop_local(b0, d1):
                 from fzzpy import compute as zz_compute
+                zz_compute = partial(zz_compute, algorithm=self._algorithm_phat)
                 # Generate data directly
                 data_source = [NodeToStr[(0, 1)][0]]
                 if 0 < d1:
@@ -523,7 +559,7 @@ class ConnectedPersistenceDiagram():
                 if b0 < m-1:
                     data_source.append(PathToStr[(b0, 0, m-1, 0)][0])
                 # Parse the data source directly to generate filt_simp and filt_op
-                filt_simps, filt_ops = self._data_source_to_filts(data_source)
+                filt_simps, filt_ops = ConnectedPersistenceDiagram._data_source_to_filts(data_source)
                 del data_source
                 # Compute using the directly generated data
                 barcode = zz_compute(filt_simps, filt_ops)
@@ -544,33 +580,41 @@ class ConnectedPersistenceDiagram():
             from tqdm import tqdm
             from ..utils import tqdm_joblib
             from joblib import delayed, Parallel  
-            self.print_memory_usage_of_attributes()
+            # self.print_memory_usage_of_attributes()
+            logging.debug("Starting parallel computation of barcodes...")
             max_cores=cpu_count() 
-            num_cores=self.num_cores
+            num_cores=self._num_cores
             if num_cores == "auto":       
                 num_cores = max(1,max_cores-2)
-            elif self.num_cores > max_cores:
+            elif self._num_cores > max_cores:
                 print(f"Number of cores specified ({num_cores}) is larger than the maximum number of cores ({max_cores}).")
                 print(f"Resetting number of cores to {max_cores}.")
                 num_cores=max_cores
             print('Number of cores being used:',num_cores)
             print(f"Number of non-vanishing parameters: {len(non_vanishing_parameters)}")
-            from multiprocessing import Pool
-            self.print_memory_usage_of_attributes()
-            args_list = [(b0, d1, self.m, self.NodeToStr, self.PathToStr) for b0, d1 in non_vanishing_parameters]
+            args_list = [(b0, d1, self.m, self.NodeToStr, self.PathToStr, self._algorithm_phat) for b0, d1 in non_vanishing_parameters]
+            # ----Pool----
             # Use Pool for parallel processing
+            from multiprocessing import Pool
             with Pool(processes=num_cores) as pool:
                 results = list(\
                     tqdm(\
-                        pool.imap_unordered(self.fzz_compute_inside_loop_local_mp,args_list),
+                        pool.imap(self.fzz_compute_inside_loop_local_mp,args_list),
                                     total=len(non_vanishing_parameters), desc="Progress"))
-                
+                #imap_unordered returns results as soon as they are ready, not in order
+            #----
+            #----joblib----
+            # from joblib import Parallel, delayed
+            # with tqdm_joblib(tqdm(desc="Progress",total=len(non_vanishing_parameters))) as progress_bar:
+            #     results = Parallel(n_jobs=num_cores,prefer='threads')(
+            #         delayed(self.fzz_compute_inside_loop_local_mp)(param) 
+            #         for param in args_list
+            #         )
+            #----
+    
             # cost little time
             for b0, d1 in non_vanishing_parameters:
                 barcodes[f"{b0}_{d1}"] = results.pop(0)
-                # progress_bar.update(1)   
-            # del results
-            # gc.collect()
         
         # the loop below costs very little time
         for b0 in range(m):
@@ -604,7 +648,12 @@ class ConnectedPersistenceDiagram():
                             d0=j
                             break
                     if b1<=d0: 
-                        self.d_ss[(b0, d0), (b1, d1)]+=1
+                        try:
+                            self.d_ss[(b0, d0), (b1, d1)]+=1
+                        except KeyError:
+                            import pdb
+                            pdb.set_trace()
+                            1+1
                 self.variables['c_ss'][((b0, m), (-1, d1))]=0
                 for i in range(d1, m): 
                     self.variables['c_ss'][((b0, i), (-1, d1))]=0

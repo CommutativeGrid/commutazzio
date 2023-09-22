@@ -43,6 +43,12 @@ class CLFiltrationDB:
             else:
                 raise Exception(f"{self.filename} does not exist.")
             
+    def reset_table_name_for_legacy(self):
+        c=self.conn.cursor()
+        c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = c.fetchall()
+        self.table_name = tables[0][0]
+            
     def close(self):
         self.conn.close()
         print(f"Closed {self.filename} database.")

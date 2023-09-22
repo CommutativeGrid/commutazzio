@@ -94,10 +94,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
             # add prompt telling that the progress bar is for xxxx
             print(f"Computing multiplicity vector @ dim={dim} with prime={prime}...")
             with tqdm_joblib(tqdm(desc="Progress",total=total_courses)) as progress_bar:
-                results = Parallel(n_jobs=num_cores)(
-                    delayed(self.multiplicity_zigzag)(*param) 
-                    for param in params
-                    )
+                results = Parallel(n_jobs=num_cores)(delayed(self.multiplicity_zigzag)(*param) for param in params)
             # results = Parallel(n_jobs=8)(delayed(self.multiplicity_zigzag)(*param) for param in params)
             # results= Parallel(n_jobs=2)(delayed(self.computePD)(param) for param in params)
             # with Pool() as pool: # the same as Pool(os.cpu_count())

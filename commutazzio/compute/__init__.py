@@ -3,5 +3,6 @@ from .compute_engine import CLInvariants
 from .connected_persistence_diagram import ConnectedPersistenceDiagram
 from .decomposition_container import Decomposition
 from .precompute import CommutativeGridPreCompute
+from .connected_persistence_diagram import ConnectedPersistenceDiagram as cPD
 # from .connected_persistence_diagram_stable import ConnectedPersistenceDiagram as cPDS
 # from .connected_persistence_diagram_nightly import ConnectedPersistenceDiagram as cPDN

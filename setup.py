@@ -24,6 +24,7 @@ CLASSIFIERS = [
 
 INSTALL_REQUIRES = [
       'numpy',
+      'matplotlib',
       'plotly',
       'pandas',
       'fire',
@@ -33,7 +34,12 @@ INSTALL_REQUIRES = [
       'networkx',
       'icecream',
       'orjson',
-      'joblib'
+      'joblib',
+      'dionysus',
+      'tqdm',
+      'pympler',
+      'lz4',
+      'numba'
 ]
 
 DEPENDENCY_LINKS = [

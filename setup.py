@@ -39,13 +39,11 @@ INSTALL_REQUIRES = [
       'tqdm',
       'pympler',
       'lz4',
-      'numba'
+      'numba',
+      'cpes @ git+https://github.com/Commutative-Ladders/cpes.git',
+      'fzzpy @ git+https://github.com/CommutativeGrids/fzzpy.git',
 ]
 
-DEPENDENCY_LINKS = [
-      'https://github.com/Commutative-Ladders/cpes.git',
-      'https://github.com/CommutativeGrids/fzzpy.git',
-]
 
 
 setup(name=PACKAGE_NAME,
@@ -59,6 +57,6 @@ setup(name=PACKAGE_NAME,
       author_email=AUTHOR_EMAIL,
       url=URL,
       install_requires=INSTALL_REQUIRES,
-      dependency_links=DEPENDENCY_LINKS,
-      packages=find_packages()
+      packages=find_packages(),
+      include_package_data=True,
       )

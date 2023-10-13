@@ -24,6 +24,7 @@ CLASSIFIERS = [
 
 INSTALL_REQUIRES = [
       'numpy',
+      'matplotlib',
       'plotly',
       'pandas',
       'fire',
@@ -33,7 +34,14 @@ INSTALL_REQUIRES = [
       'networkx',
       'icecream',
       'orjson',
-      'joblib'
+      'joblib',
+      'dionysus',
+      'tqdm',
+      'pympler',
+      'lz4',
+      'numba',
+      'cpes @ git+https://github.com/Commutative-Ladders/cpes.git',
+      'fzzpy @ git+https://github.com/CommutativeGrids/fzzpy.git',
 ]
 
 DEPENDENCY_LINKS = [

@@ -1,0 +1,2 @@
+recursive-include commutazzio/statistics/weights *
+recursive-include commutazzio/compute/data *

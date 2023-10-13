@@ -47,6 +47,19 @@ If you want to modify the source code, you can install the package in developeme
 pip install -e .
 ```
 
+### Precompute
+
+```
+commutazzio_precompute
+```
+#default m_threshold=80
+
+```
+commutazzio_precompute --m_threshold=100
+```
+
+
+
 ## Basic usage
 
 TBD

@@ -37,7 +37,7 @@ INSTALL_REQUIRES = [
 ]
 
 DEPENDENCY_LINKS = [
-      'https://github.com/Commutative-Ladders/cpes.git',
+      'https://github.com/CommutativeGrids/cpes.git',
       'https://github.com/CommutativeGrids/fzzpy.git',
 ]
 
@@ -54,5 +54,15 @@ setup(name=PACKAGE_NAME,
       url=URL,
       install_requires=INSTALL_REQUIRES,
       dependency_links=DEPENDENCY_LINKS,
-      packages=find_packages()
+      packages=find_packages(),
+      package_data={
+            'commutazzio': ['compute/data/*',
+                            'statistics/weights/weights_0_to_10.npy',
+                            ]
+      },
+      entry_points={
+          'console_scripts': [
+              'commutazzio_precompute = commutazzio.compute.data.precompute_execution:main',
+          ],
+      },
       )

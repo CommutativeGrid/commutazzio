@@ -12,26 +12,26 @@ import plotly.graph_objects as go
 class NonIntervalCL4():
     """Store info of a point cloud data that has a non-interval"""
     def __init__(self,input):
-        self.pt=np.array(input['pt'])
+        self.pts=np.array(input['pts'])
         self.removal=np.array(input['removal'])
         self.radii=np.array(input['radii'])
         self.total_decomp=input['total_decomp']
-        self.dim = self.pt.shape[1]
+        self.dim = self.pts.shape[1]
     
     def __repr__(self) -> str:
-        return f"NonIntervalCL4(\npt={self.pt.__repr__()},\nremoval={self.removal},\nradii={self.radii.__repr__()},\ntotal_decomp={self.total_decomp})"
+        return f"NonIntervalCL4(\npt={self.pts.__repr__()},\nremoval={self.removal},\nradii={self.radii.__repr__()},\ntotal_decomp={self.total_decomp})"
 
     @property
     def upper(self):
-        return self.pt
+        return self.pts
 
     @property
     def lower(self):
-        return self.pt[[_ for _ in range(self.pt.shape[0]) if _ not in self.removal]]
+        return self.pts[[_ for _ in range(self.pts.shape[0]) if _ not in self.removal]]
 
     @property
     def df_repr(self):
-        return pd.DataFrame({'dim':self.pt.shape[1],'num_pts_upper':self.pt.shape[0],'num_pts_lower':self.pt.shape[0]-self.removal.shape[0]} | self.total_decomp,index=[0])
+        return pd.DataFrame({'dim':self.pts.shape[1],'num_pts_upper':self.pts.shape[0],'num_pts_lower':self.pts.shape[0]-self.removal.shape[0]} | self.total_decomp,index=[0])
     
     def write2file(self,filepath=None,style='homcloud'):
         """
@@ -50,10 +50,10 @@ class NonIntervalCL4():
                 return 0 # will be added at the zeroth layer
 
         if self.dim==2:
-            labelled_data = [(label_rule(i), *vec, 1e-5*np.random.random()-2e-5) for i, vec in enumerate(self.pt)]
-            # labelled_data = [(label_rule(i), *vec, 0.0) for i, vec in enumerate(self.pt)]
+            labelled_data = [(label_rule(i), *vec, 1e-5*np.random.random()-2e-5) for i, vec in enumerate(self.pts)]
+            # labelled_data = [(label_rule(i), *vec, 0.0) for i, vec in enumerate(self.pts)]
         elif self.dim==3:
-            labelled_data = [(label_rule(i), *vec,) for i, vec in enumerate(self.pt)]
+            labelled_data = [(label_rule(i), *vec,) for i, vec in enumerate(self.pts)]
         else:
             raise NotImplementedError("dim>3 is not supported yet.")
             

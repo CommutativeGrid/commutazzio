@@ -28,27 +28,20 @@ from ..utils.watch import timeit
 #TODO optional to use a database to store the data
 #TODO store the string or torch tensors?
 
+# set the dir to be ./data/precomputed_results
+# use pathlib instead of os.path
+from pathlib import Path
 
-#---------Get the path to the binary file of FZZ----------------
-# Get the path to the parent directory of this module
-parent_dir = os.path.dirname(os.path.abspath(__file__)) + '/../..'
-# Initialize the configparser object and read the configuration file
-config = configparser.ConfigParser()
-config.read(os.path.join(parent_dir, 'config.ini'))
+# Get the absolute path of the current script's directory
+BASE_DIR = Path(__file__).resolve().parent
 
-if sys.platform == 'darwin':
-    # try to find the path [PRECOMPUTED] precomputed_intv_directory_darwin
-    try:
-        PRECOMPUTED_INTV_DIR=config.get('PRECOMPUTED','precomputed_intv_directory_darwin')
-    except configparser.NoOptionError:
-        PRECOMPUTED_INTV_DIR=''
-elif sys.platform == 'linux':
-    # try to find the path [PRECOMPUTED] precomputed_intv_directory_linux
-    try:
-        PRECOMPUTED_INTV_DIR=config.get('PRECOMPUTED','precomputed_intv_directory_linux')
-    except configparser.NoOptionError:
-        PRECOMPUTED_INTV_DIR=''
-        
+# Potential path for precomputed results relative to the script's directory
+potential_path = BASE_DIR / "data" / "precomputed_results"
+
+# Check if the directory exists, if not, set the path variable to an empty string
+PRECOMPUTED_INTV_DIR = potential_path if potential_path.exists() else ''
+
+print(PRECOMPUTED_INTV_DIR)
 
 class ConnectedPersistenceDiagram():
     __slots__ = ['txf','txf_dir','txf_basename_wo_ext','m','ladder_length',\

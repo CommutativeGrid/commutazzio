@@ -1,5 +1,4 @@
 cachetools==5.3.0
-cpes==0.1.0
 dionysus==2.0.9
 fire==0.5.0
 giotto_tda==0.6.0

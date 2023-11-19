@@ -23,31 +23,25 @@ CLASSIFIERS = [
 ]
 
 INSTALL_REQUIRES = [
-      'numpy',
-      'matplotlib',
-      'plotly',
-      'pandas',
-      'fire',
-      'gudhi',
-      'giotto-tda',
-      'pytest',
-      'networkx',
-      'icecream',
-      'orjson',
-      'joblib',
-      'dionysus',
-      'tqdm',
-      'pympler',
-      'lz4',
-      'numba',
+      'numpy~=1.24.3',
+      'plotly~= 5.15.0',
+      'pandas~= 2.0.3',
+      'fire~= 0.5.0',
+      'gudhi~= 3.7.1',
+      'giotto-tda~= 0.6.0',
+      'pytest~= 7.2.2',
+      'networkx~= 3.0',
+      'icecream~= 2.1.3',
+      'orjson~= 3.8.10',
+      'joblib~= 1.2.0',
+      'dionysus~= 2.0.9',
+      'tqdm~= 4.64.1',
+      'pympler~= 1.0.1',
+      'lz4~= 4.3.2',
       'cpes @ git+https://github.com/Commutative-Ladders/cpes.git',
       'fzzpy @ git+https://github.com/CommutativeGrids/fzzpy.git',
 ]
 
-DEPENDENCY_LINKS = [
-      'https://github.com/CommutativeGrids/cpes.git',
-      'https://github.com/CommutativeGrids/fzzpy.git',
-]
 
 
 setup(name=PACKAGE_NAME,
@@ -61,16 +55,11 @@ setup(name=PACKAGE_NAME,
       author_email=AUTHOR_EMAIL,
       url=URL,
       install_requires=INSTALL_REQUIRES,
-      dependency_links=DEPENDENCY_LINKS,
       packages=find_packages(),
       package_data={
             'commutazzio': ['compute/data/*',
                             'statistics/weights/weights_0_to_10.npy',
+                            'config.ini',
                             ]
-      },
-      entry_points={
-          'console_scripts': [
-              'commutazzio_precompute = commutazzio.compute.data.precompute_execution:main',
-          ],
       },
       )

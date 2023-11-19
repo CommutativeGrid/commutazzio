@@ -18,7 +18,7 @@ For installing dionysus2 (MacOS):
 * brew install boost
 
 ```
-git clone https://github.com/Commutative-Ladder/classia.git
+git clone https://github.com/Commutative-Ladder/commutazzio.git
 ```
 then `cd` to the cloned foler, and
 ```
@@ -63,3 +63,7 @@ commutazzio_precompute --m_threshold=100
 ## Basic usage
 
 TBD
+
+## License
+
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE.md) file for details.

@@ -29,6 +29,29 @@ class SimplexTree(gudhi_SimplexTree):
 
     def __len__(self):
         return len(self.maximum_simplicial_complex)
+    
+    def __iter__(self):
+        """
+        Magic method to make the SimplexTree iterable in the specified order.
+        """
+        return self.ordered_simplices()
+    
+    def ordered_simplices(self):
+        """
+        Generator that yields simplices ordered by filtration value, dimension, and then dictionary order.
+        """
+        simplices_with_filtration = self.get_filtration()
+
+        def sorting_key(item):
+            simplex, filtration_value = item
+            return (filtration_value, len(simplex), simplex)
+
+        sorted_simplices = sorted(simplices_with_filtration, key=sorting_key)
+
+        for simplex, filtration_value in sorted_simplices:
+            yield simplex, filtration_value
+
+
 
     def to_ordinal_number_indexing(self,fvs:list):
         """
@@ -86,8 +109,9 @@ class SimplexTree(gudhi_SimplexTree):
         temp.from_simplices([tuple(s[0]) for s in self.get_filtration()])
         return temp
     
-    def maximum_simplices(self):
-        return self.maximum_simplicial_complex
+    # the maximumum simplicial complex is not the same as the maximum simplices
+    # def maximum_simplices(self):
+    #     return self.maximum_simplicial_complex
     
     def _attributes_reset(self):
         if hasattr(self, 'filtration_values_list'):

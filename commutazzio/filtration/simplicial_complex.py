@@ -8,6 +8,7 @@ Created on Wed Oct 27 16:21:47 2021
 import dionysus as d
 import numpy as np
 from gudhi import SimplexTree as gudhi_SimplexTree
+from itertools import combinations
 
     
 class SimplicialComplex(gudhi_SimplexTree):
@@ -159,7 +160,46 @@ class SimplicialComplex(gudhi_SimplexTree):
     def dimension(self):
         """Return the dimension of the simplicial complex"""
         return max([len(s) for s in self.simplices])
-        
+    
+
+    @property
+    def maximum_simplices(self):
+        """
+        Returns a list of maximum simplices in the simplicial complex.
+        A maximum simplex is not a proper face of any other simplex in the complex.
+        """
+        # Group simplices by their dimension
+        simplices_by_dim = {}
+        for simplex in self.simplices:
+            dim = len(simplex) - 1  # Dimension is one less than the length of the simplex
+            if dim not in simplices_by_dim:
+                simplices_by_dim[dim] = set()
+            simplices_by_dim[dim].add(simplex)
+
+        # Sort dimensions in descending order
+        sorted_dims = sorted(simplices_by_dim.keys(), reverse=True)
+        max_simplices = set()
+
+        # Iterate from higher to lower dimensions
+        for dim in sorted_dims:
+            current_simplices = simplices_by_dim[dim]
+            for simplex in current_simplices:
+                max_simplices.add(simplex)
+                # Remove all faces of the current simplex from consideration in lower dimensions
+                for d in range(dim - 1, -1, -1):
+                    faces = self.get_faces(simplex, d)
+                    simplices_by_dim[d] -= set(faces)
+
+        return list(max_simplices)
+
+    def get_faces(self, simplex, dim):
+        """
+        Generate all faces of a given simplex of a specific dimension.
+        """
+        if dim < 0 or dim >= len(simplex):
+            return []
+        return [tuple(sorted(face)) for face in combinations(simplex, dim + 1)]
+
         
     
 # if __name__ == "__main__":

@@ -30,6 +30,7 @@ INSTALL_REQUIRES = [
       'gudhi~= 3.7.1',
       'giotto-tda~= 0.6.0',
       'pytest~= 7.2.2',
+      'pytest>=7.2.2,<8.0.0',
       'networkx~= 3.0',
       'icecream~= 2.1.3',
       'orjson~= 3.8.10',

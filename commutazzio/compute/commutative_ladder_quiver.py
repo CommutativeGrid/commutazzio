@@ -39,8 +39,6 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
         self.courses=OrderedDict((f"t_{i+1}",course) for (i,course) in enumerate(self.courses_list))
         del(self.courses_list)
 
-
-
     #TODO:move to another class
     def filtration_input(self,upper_row,lower_row):
         """

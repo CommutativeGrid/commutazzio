@@ -1,51 +1,23 @@
 # Commutazzio
 
-**Commutazzio** is a python package for computing topological invariants of commutative ladders.
+Commutazzio is a Python package designed for computing topological invariants of commutative ladders.
+Examples and documentation will be added soon.
 
 ## Installation
 
-TODO: 
-1. prepare the requirements.txt file, 
-2. prepare the conda environment yaml file.
+This package is compatible with Python 3.10 and may not work correctly with earlier versions. Before installing Commutazzio, you need to install `fzzpy`. Follow these steps for a smooth installation process:
 
-`python3.10` is required for installing this module.
+1. **Install fzzpy:**
 
-External dependencies:
-* [dionysus2](https://mrzv.org/software/dionysus2/) (for computing persistent homology)
-* [fzz](https://github.com/taohou01/fzz)
+   Visit the [fzzpy GitHub repository](https://github.com/CommutativeGrids/fzzpy) and follow the instructions provided there to install `fzzpy`.
 
-For installing dionysus2 (MacOS):
-* brew install boost
+2. **Install Commutazzio:**
 
-```
-git clone https://github.com/Commutative-Ladder/commutazzio.git
-```
-then `cd` to the cloned foler, and
-```
-pip install .
-```
+   After installing `fzzpy`, you can install Commutazzio using pip. Run the following command in your terminal:
 
-To upgrade, run
-```
-pip install . --upgrade
-```
-
-### Installation in user mode
-
-If you do not have root access, you can install the package in user mode. This will install the package in a user-specific location, and it will not be available to other users on the system.
-
-```
-pip install --user .
-```
-
-
-### Installation in development (editable) mode
-
-If you want to modify the source code, you can install the package in developement mode. This will create a link to the source code, so that any changes to the source code will be reflected in the installed package.
-
-```
-pip install -e .
-```
+   ```bash
+   pip install --user .
+   ```
 
 ### Precompute
 
@@ -57,12 +29,6 @@ commutazzio_precompute
 ```
 commutazzio_precompute --m_threshold=100
 ```
-
-
-
-## Basic usage
-
-TBD
 
 ## License
 

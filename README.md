@@ -14,21 +14,9 @@ This package is compatible with Python 3.10 and may not work correctly with earl
 2. **Install Commutazzio:**
 
    After installing `fzzpy`, you can install Commutazzio using pip. Run the following command in your terminal:
-
    ```bash
    pip install --user .
    ```
-
-### Precompute
-
-```
-commutazzio_precompute
-```
-#default m_threshold=80
-
-```
-commutazzio_precompute --m_threshold=100
-```
 
 ## License
 

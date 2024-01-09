@@ -73,14 +73,15 @@ class ComplementaryTrianglesPlot():
         #self.compute_colorscales()
         self.colorscales = colorscales
 
-    def render(self, export_mode, **kwargs):
+    def render(self):
         """Combine scatter and line chart together and generate the final plot
         Parameters
         ----------
-        export_mode : str
-            'full_html' or 'div
-        **kwargs :
-            for fig.write_image
+
+        Returns
+        -------
+        fig : plotly.graph_objects.Figure
+            the final plot
         """
         offset = 1.25  # offset to beautify the plot
         offset_diag = 0  # offset for the diagonal line
@@ -115,12 +116,8 @@ class ComplementaryTrianglesPlot():
         self.render_ticks(fig)
         if self.legend:
             self.render_legend(fig)
-        if export_mode in ['full_html', 'div']:
-            self.render_output(fig, export_mode, **kwargs)
-        elif export_mode in ['object','fig']:
-            return fig
-        else:
-            raise ValueError('export_mode must be "full_html", "div" or "object"')
+        return fig
+        
 
 
     def render_general_layout(self, fig):
@@ -233,8 +230,6 @@ class ComplementaryTrianglesPlot():
             legend_title='',
         )
 
-    
-
 
     @staticmethod
     def check_cdn_access():
@@ -242,38 +237,47 @@ class ComplementaryTrianglesPlot():
         url = 'https://cdn.plot.ly/plotly-2.24.1.min.js'
         response = requests.get(url)
         return response.status_code == 200
+    
+    def render_and_export_figure(self, export_mode="full_html", **kwargs):
+        """
+        Render the figure and export it based on the specified mode.
 
-    def render_output(self, fig, export_mode, **kwargs):
-        # see https://plotly.com/python/interactive-html-export/
-        # for parameters
+        Parameters
+        ----------
+        export_mode : str
+            The mode to export the figure. Options are 'full_html' or 'div'.
+        **kwargs : dict
+            Keyword arguments for the figure rendering and exporting.
+            see https://plotly.com/python/interactive-html-export/ for parameters
+
+        Returns
+        -------
+        filepath : str
+        """
+        # Render the figure
+        fig = self.render()
+
+        # Define the directory name for saving figures
         dir_name = 'diagrams'
         create_directory(dir_name)
         overwrite = kwargs.pop('overwrite', False)
-        if export_mode == 'full_html':
-            if 'filename' in kwargs:
-                filename = kwargs.pop('filename')
-                filepath = filepath_generator(dir_name, filename, extension='html', overwrite=overwrite)
-            else:
-                filepath = filepath_generator(
-                    dir_name, 'test', 'html', overwrite=overwrite)
-            if self.check_cdn_access():
-                fig.write_html(file=filepath, include_plotlyjs='cdn')
-            else:
-                fig.write_html(file=filepath, include_plotlyjs=True)
-            #print("Saved to", file)
-        elif export_mode == 'div':
-            if 'filename' in kwargs:
-                filename = kwargs.pop('filename')
-                filepath = filepath_generator(dir_name, filename, extension='html', overwrite=overwrite)
-            else:
-                filepath = filepath_generator(
-                    dir_name, 'div', 'html', overwrite=overwrite)
-            # TODO decorate the write_html function in an inherited class
-            fig.write_html(file=filepath, full_html=False,
-                           include_plotlyjs=False, **kwargs)
-            #print("Saved to", file)
+
+        # Handle the export based on the mode
+        if export_mode in ['full_html', 'div']:
+            # default filename set to 'cPD'
+            filename = kwargs.pop('filename', 'cPD')
+            extension = 'html'
+            filepath = filepath_generator(dir_name, filename, extension, overwrite=overwrite)
+            # Handle different export modes
+            if export_mode == 'full_html':
+                include_plotlyjs = 'cdn' if self.check_cdn_access() else True
+                fig.write_html(file=filepath, include_plotlyjs=include_plotlyjs, **kwargs)
+            elif export_mode == 'div':
+                fig.write_html(file=filepath, full_html=False, include_plotlyjs=False, **kwargs)
+            return filepath
         else:
-            raise ValueError('export_mode should be either full_html or div')
+            raise ValueError('export_mode must be "full_html", "div", or "object"')
+
 
     def data_preprocessing_dots(self):
         """Add some auxiliary columns to dots

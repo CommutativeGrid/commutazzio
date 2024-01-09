@@ -47,7 +47,7 @@ class ConnectedPersistenceDiagram():
                         'indexAligner','dots','lines','dotdec','plot_dots',\
                             'NodeToStr','PathToStr']
 
-    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,enable_multi_processing=False,num_cores="auto",verbose=True,clean_up=True,algorithm_phat='chunk_reduction',**kwargs ):
+    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,enable_multi_processing=False,num_cores="auto",verbose=False,clean_up=True,algorithm_phat='chunk_reduction',**kwargs ):
         self.txf = os.path.abspath(filtration_filepath) # filtration file
         #TODO: validate the txf file, check if all faces are contained, etc. But validation costs time. do we really need to do that?
         self.txf_dir = os.path.dirname(self.txf)
@@ -657,10 +657,8 @@ class ConnectedPersistenceDiagram():
                         if d0<d1 or m-1<d0: 
                             continue
                         self.variables['c_ss'][((b0, d0), (b1, d1))]=self.d_ss[((b0, d0), (b1, d1))]+self.variables['c_ss'][((b0, d0), (b1-1, d1))]+self.variables['c_ss'][((b0, d0+1), (b1, d1))]-self.variables['c_ss'][((b0, d0+1), (b1-1, d1))]      
-        
-
         # last info
-        print("仕上がり中..")
+        print("Finishing up...")
         delt_ss={}
 
         for I in self.intv:

@@ -36,8 +36,6 @@ Next, you'll need to update the `precomputed_intv_dir` parameter in the `config.
 python config_setup.py set_precomputed_intv_dir "./precomputed_results"
 ```
 
-This simple setup process equips `commutazzio` with the necessary precomputed data, paving the way 
-
 ## License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE.md) file for details.

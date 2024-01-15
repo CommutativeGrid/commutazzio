@@ -1,15 +1,16 @@
 # Commutazzio
 
-Commutazzio is a Python package designed for computing topological invariants of commutative ladders.
-Examples and documentation will be added soon.
+**Commutazzio** is a Python package designed for computing topological invariants of commutative ladders specified in the paper [Refinement of Interval Approximations for Fully Commutative Quivers](https://arxiv.org/abs/2310.03649).
+
+We are continually expanding our library with more examples and extensive documentation.
 
 ## Installation
 
-This package is compatible with Python 3.10 and may not work correctly with earlier versions. Before installing Commutazzio, you need to install `fzzpy`. Follow these steps for a smooth installation process:
+This package is compatible with Python 3.10 and may not work correctly with earlier versions. To install Commutazzio, please first install fzzpy as a prerequisite. Follow these steps for a smooth installation process:
 
 1. **Install fzzpy:**
 
-   Visit the [fzzpy GitHub repository](https://github.com/CommutativeGrids/fzzpy) and follow the instructions provided there to install `fzzpy`.
+   Navigate to the [fzzpy GitHub repository](https://github.com/CommutativeGrids/fzzpy) and follow the instructions provided there.
 
 2. **Install commutazzio:**
 
@@ -18,7 +19,12 @@ This package is compatible with Python 3.10 and may not work correctly with earl
    pip install --user .
    ```
 
-### Using Precomputed Intervals 
+## How to Use
+
+To get started with Commutazzio, refer to the examples/cPDs.ipynb notebook. This notebook demonstrates how to plot the connected persistence diagrams as seen in Figure 14 of our accompanying paper.
+
+
+### Use Precomputed Intervals for Faster Computations
 
 For faster and more efficient computations, consider using precomputed intervals data. This approach can reduce the time spent on calculations. Here's how you can set it up:
 

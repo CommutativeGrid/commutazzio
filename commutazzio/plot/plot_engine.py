@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jan  4 12:21:08 2022
-
-@author: kasumi
+Module for visualizing connected persistence diagrams via complementary triangles plots.
+This module contains the ComplementaryTrianglesPlot class which provides functionalities
+for generating and displaying these plots using Plotly.
 """
 import numpy as np
 import pandas as pd
@@ -13,7 +13,9 @@ from io import StringIO
 
 from ..utils import create_directory, filepath_generator
 from .colors_helper import get_color
+from ..compute import ConnectedPersistenceDiagram
 
+# global variables for the plot
 diagonal_line_color="LightSteelBlue"
 legend_background_color="WhiteSmoke"
 legend_border_color="black"
@@ -26,19 +28,51 @@ line_opacity=0.4
 
 class ComplementaryTrianglesPlot():
     """
-    visualizing a connected persistence diagram
-    via a complementary triangles plot
+    A class for visualizing a connected persistence diagram via a complementary triangles plot. 
+    This class supports initialization with either a ConnectedPersistenceDiagram instance 
+    or custom data in the form of dictionaries.
+
+    Parameters:
+    - cPD (ConnectedPersistenceDiagram, optional): The persistence diagram to be visualized.
+    - title (str, optional): Title of the plot.
+    - convention (str, optional): Convention used for the plot, defaults to "[b,d)", which means inclusive for birth and exclusive for death.
+    - **kwargs: Additional keyword arguments for custom data initialization.
     """
 
-    def __init__(self, title=None, convention="[b,d)",**kwargs):
-        """acquire data
+    def __init__(self,cPD:ConnectedPersistenceDiagram = None,title = None, convention = "[b,d)",**kwargs):
+        """
+        Initialize the ComplementaryTrianglesPlot instance. 
+        """
+        self.title = title
+        self.legend = True
+        self.colorscales = colorscales
+        self.template = 'plotly'
+        self.size_area_min = 5  # min dot size in area
+        self.size_area_max = 24  # max dot size in area
+        self.convention = convention
+        # if in kwargs there is a ConnectedPersistenceDiagram object, use it
+        if isinstance(cPD, ConnectedPersistenceDiagram):
+            self._preprocessing(**cPD.plot_data)
+        else:
+            self._preprocessing(**kwargs)
+
+    def _preprocessing(self,**kwargs):
+        """
+        parse the data and do some preprocessing
         """
         self.dots = pd.read_csv(StringIO(kwargs.get("dots")),index_col=0)
         self.lines = pd.read_csv(StringIO(kwargs.get("lines")),index_col=0)
         self.radii = kwargs.get("radii")
         self.radii = np.array(self.radii)
-        self.convention = convention
-        if convention == "[b,d)":
+        self.ladder_length = kwargs.get("ladder_length", None)
+        self.multi_dots_min = min(self.dots.multiplicity,default=0)
+        self.multi_dots_max = max(self.dots.multiplicity,default=0)
+        self.data_preprocessing_dots()
+        if self.lines.empty is False:
+            self.multi_lines_min = min(self.lines.multiplicity)
+            self.multi_lines_max = max(self.lines.multiplicity)
+            self.data_preprocessing_lines()
+        if self.convention == "[b,d)":
             # add a finite number to the last element used to 
             # represents the infinite radius
             # use only three digits to avoid numerical error
@@ -57,24 +91,19 @@ class ComplementaryTrianglesPlot():
             # for all area == U, y plus one
             self.dots.loc[self.dots["area"]=="D","x"] += 1
             self.dots.loc[self.dots["area"]=="U","y"] += 1
-        self.ladder_length = kwargs.get("ladder_length", None)
-        self.title = title
-        self.legend = True
-        self.multi_dots_min = min(self.dots.multiplicity,default=0)
-        self.multi_dots_max = max(self.dots.multiplicity,default=0)
-        self.data_preprocessing_dots()
-        if self.lines.empty is False:
-            self.multi_lines_min = min(self.lines.multiplicity)
-            self.multi_lines_max = max(self.lines.multiplicity)
-            self.data_preprocessing_lines()
-        self.template = 'plotly'
-        self.size_area_min = 5  # min dot size in area
-        self.size_area_max = 24  # max dot size in area
-        #self.compute_colorscales()
-        self.colorscales = colorscales
 
+    def show(self):
+        """
+        a synonym for render and show
+        """
+        fig = self.render()
+        fig.show()
+
+    
     def render(self):
-        """Combine scatter and line chart together and generate the final plot
+        """
+        Combine scatter and line chart together and generate the final plot
+
         Parameters
         ----------
 
@@ -192,20 +221,6 @@ class ComplementaryTrianglesPlot():
                 showticklabels=True,
             ),
         )
-        # fig.update_layout(
-        #     # consider about using array mode to
-        #     # specify the tick texts
-        #     xaxis=dict(
-        #         tickmode='linear',
-        #         tick0=0,
-        #         dtick=self.ladder_length/10,
-        #     ),
-        #     yaxis=dict(
-        #         tickmode='linear',
-        #         tick0=0,
-        #         dtick=self.ladder_length/10,
-        #     ),
-        # )
 
     def render_legend(self, fig):
         fig.update_layout(
@@ -280,7 +295,7 @@ class ComplementaryTrianglesPlot():
 
 
     def data_preprocessing_dots(self):
-        """Add some auxiliary columns to dots
+        """Add auxiliary columns to dots
         """
         df = self.dots # temp df
         # dot_size_min=10 #obsolete
@@ -301,7 +316,7 @@ class ComplementaryTrianglesPlot():
         #     , np.log10(self.multi_dots_max)), (0, 1))
 
     def data_preprocessing_lines(self):
-        """Add some auxiliary columns to lines
+        """Add auxiliary columns to lines
         """
         df = self.lines
         ribbon_width_coord_min = 0.15
@@ -319,18 +334,6 @@ class ComplementaryTrianglesPlot():
         self.lines["colorscale"] = np.interp(
             df.log_abs_multi, (np.log10(self.multi_dots_min)
             , np.log10(self.multi_dots_max)), (0, 1))
-
-    def compute_colorscales(self):
-        """Specify the continuous colorscales to be used"""
-        """obsolete"""
-        original_colorscales = colorscales
-        # anchor_point = np.interp(
-        #     self.multi_lines_max, (self.multi_dots_min, self.multi_dots_max), (0, 1))
-        # values = np.append(np.linspace(
-        #     0, anchor_point, len(original_colorscales)-1), 1)
-        # self.colorscales = tuple((v, color)
-        #                          for v, color in zip(values, original_colorscales))
-        self.colorscales = original_colorscales
 
     def scatter_chart(self):
         """generate the scatter plot, which is a joint of two one-parameter persistence diagrams
@@ -396,23 +399,6 @@ class ComplementaryTrianglesPlot():
             # +"death: %{customdata[2]:.d},%{customdata[4]:.3f}",
         )
         )
-        # although plotly express is easier, graph object provides more customizability
-        # fig = px.scatter(df, x="x", y="y",
-        #                  color="multiplicity",
-        #                  # opacity=1,
-        #                  size="dot_size",
-        #                  # hover_name="multiplicity",
-        #                  hover_data={
-        #                      'x': False,  # remove x from hover data
-        #                      'y': False,  # remove y from hover data
-        #                      'dot_size': False,  # remove log_abs_multi from hover data
-        #                      'multiplicity': True,
-        #                      'area': False,
-        #                      'birth': True,
-        #                      'death': True,
-        #                  },
-        #                  )
-
         # hover ref: https://plotly.com/python/hover-text-and-formatting/
         # print("plotly express hovertemplate:", fig.data[0].hovertemplate)
         fig.update_traces(
@@ -427,8 +413,6 @@ class ComplementaryTrianglesPlot():
                 line=dict(width=0,),
             )
         )
-        # fig.data[0].marker.color
-        #self.colorscales = fig.data[0].marker.colorscale
         return fig
 
     @staticmethod

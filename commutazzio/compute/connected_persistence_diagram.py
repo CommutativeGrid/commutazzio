@@ -438,7 +438,10 @@ class ConnectedPersistenceDiagram():
                 self.d_ss[(b, d)]+=1
 
 
-    def print_memory_usage_of_attributes(obj):
+    def logging_memory_usage_of_attributes(obj):
+        """
+        Print the memory usage of each attribute of an object
+        """
         for slot in obj.__slots__:
             value = getattr(obj, slot, None)  # Get the value of the slot/attribute
             if value is not None:
@@ -449,7 +452,8 @@ class ConnectedPersistenceDiagram():
                     del serialized_value
                 else:
                     memory_usage = asizeof.asizeof(value) / (1024 * 1024)  # Convert to MB (this will error here since we don't have pympler)
-                print(f"Memory usage of attribute '{slot}': {memory_usage:.2f} MB")
+                # print(f"Memory usage of attribute '{slot}': {memory_usage:.2f} MB"
+                logging.debug(f"Memory usage of attribute '{slot}': {memory_usage:.2f} MB")
 
     @timeit
     def deco(self):
@@ -476,7 +480,6 @@ class ConnectedPersistenceDiagram():
         print("Difference list building complete.")
 
         
-        # self.print_memory_usage_of_attributes()
         # Each line denotes an interval in the barcode, 
         # d p q: dimension, birth, death
         # Note that the birth and death are start and end of the closed integral interval, 
@@ -570,7 +573,6 @@ class ConnectedPersistenceDiagram():
             from tqdm import tqdm
             from ..utils import tqdm_joblib
             from joblib import delayed, Parallel  
-            # self.print_memory_usage_of_attributes()
             logging.debug("Starting parallel computation of barcodes...")
             max_cores=cpu_count() 
             num_cores=self._num_cores
@@ -682,7 +684,7 @@ class ConnectedPersistenceDiagram():
 
         del self.NodeToStr
         del self.PathToStr
-        self.print_memory_usage_of_attributes()
+        self.logging_memory_usage_of_attributes()
         return delt_ss
 
     def compute_dec_obj(self):

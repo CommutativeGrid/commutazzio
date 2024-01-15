@@ -57,7 +57,7 @@ class SC2DViz():
             self.simplex_tree=alpha_complex.create_simplex_tree()
             # The vertices in the output simplex tree are not guaranteed to match the order of the input points. 
             # https://gudhi.inria.fr/python/latest/alpha_complex_ref.html#gudhi.AlphaComplex.get_point
-            self.points=np.array([alpha_complex.get_point(i) for i in range(simplex_tree.num_vertices())])
+            self.points=np.array([alpha_complex.get_point(i) for i in range(self.simplex_tree.num_vertices())])
         else:
             raise NotImplementedError("The simplicial complex type is not implemented.")
         print(f"using {sc_type} complex")

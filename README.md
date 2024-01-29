@@ -21,8 +21,13 @@ This package is compatible with Python 3.10 and may not work correctly with earl
 
 ## How to Use
 
-To get started with `commutazzio`, refer to the `examples/cPDs.ipynb` notebook. This notebook demonstrates how to plot the connected persistence diagrams as seen in Figure 14 of our accompanying paper.
+### Indecomposable Decomposition
 
+This section is currently under development and will be updated shortly. 
+
+### Connected Persistence Diagrams
+
+For a practical demonstration of Connected Persistence Diagrams, please refer to the Jupyter notebook located at `examples/cPDs.ipynb`. This notebook is designed to guide you through the process of plotting Connected Persistence Diagrams, as illustrated in Figure 14 of our research paper.
 
 ### Use Precomputed Intervals for Faster Computations
 

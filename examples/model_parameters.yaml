@@ -1,0 +1,18 @@
+point_cloud:
+  ladder_len_min: 4
+  ladder_len_max: 50
+  pts_min: 5
+  pts_max: 30
+  enable_multi_processing: True
+  num_cores: 'auto'
+  verbose: False
+
+clique_ER:
+  num_vertices_min: 4
+  num_vertices_max: 30
+  ladder_length_4: 4
+  ladder_length_min: 4
+  ladder_length_max: 50
+  enable_multi_processing: True
+  num_cores: 'auto'
+d_LM:

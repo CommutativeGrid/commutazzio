@@ -18,7 +18,6 @@ extensions = [
     'sphinx_rtd_theme',
     'numpydoc',
     'sphinx.ext.autodoc',
-    "myst_parser",
 ]
 
 

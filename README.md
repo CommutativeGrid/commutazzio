@@ -23,7 +23,7 @@ This package is compatible with Python 3.10 and may not work correctly with earl
    pip install --user .
    ```
 
-## Quick Start
+## Quickstart
 
 Several examples are provided in the `examples/` directory to help you get started with `commutazzio` for its different functionalities.
 

@@ -36,7 +36,7 @@ class ComplementaryTrianglesPlot():
     - cPD (ConnectedPersistenceDiagram, optional): The persistence diagram to be visualized.
     - title (str, optional): Title of the plot.
     - convention (str, optional): Convention used for the plot, defaults to "[b,d)", which means inclusive for birth and exclusive for death.
-    - **kwargs: Additional keyword arguments for custom data initialization.
+    - kwargs: Additional keyword arguments for custom data initialization.
     """
 
     def __init__(self,cPD:ConnectedPersistenceDiagram = None,title = None, convention = "[b,d)",**kwargs):
@@ -102,15 +102,13 @@ class ComplementaryTrianglesPlot():
     
     def render(self):
         """
-        Combine scatter and line chart together and generate the final plot
-
-        Parameters
-        ----------
+        Generates and returns a Plotly figure that combines scatter and line charts to visualize 
+        the connected persistence diagram via a complementary triangles plot.
 
         Returns
         -------
-        fig : plotly.graph_objects.Figure
-            the final plot
+        plotly.graph_objects.Figure
+            A Plotly figure object representing the final plot. 
         """
         offset = 1.25  # offset to beautify the plot
         offset_diag = 0  # offset for the diagonal line

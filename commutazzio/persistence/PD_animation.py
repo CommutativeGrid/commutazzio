@@ -7,7 +7,7 @@ Created on Wed Jan 19 11:51:00 2022
 """
 import numpy as np
 import pandas as pd
-from pd_points3d import PD_Points3D
+from .pd_points3d import PD_Points3D
 from cpes import FaceCenteredCubic as FCC
 from cpes import HexagonalClosePacking as HCP
 import plotly.express as px

@@ -28,12 +28,21 @@ class Decomposition:
             return self._mult[cl4_equi_isoclasses[item]]
 
     def to_dict(self,skip_zero:bool=True,verbose=True):
-        """Return a json-serializable dictionary of the decomposition 
-            Parameters:
-                skip_zero (bool): If True, only include nonzero components in the dictionary.
-                    Default is True.
-            Returns:
-                dict: A dictionary with keys 'mult', 'dim', and 'prime'.
+        """
+        Return a json-serializable dictionary of the decomposition.
+
+        Parameters
+        ----------
+        skip_zero : bool, optional
+            If True, only include nonzero components in the dictionary. Default is True.
+        verbose : bool, optional
+            If True, print additional information. Default is True.
+
+        Returns
+        -------
+        dict
+            A dictionary with keys 'mult', 'dim', and 'prime', representing the 
+            multiplicity, dimension, and prime components of the decomposition, respectively.
         """
         if not isinstance(skip_zero, bool):
             raise TypeError("skip_zero must be a boolean")

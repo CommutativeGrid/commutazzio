@@ -13,6 +13,11 @@ __pycache__/
 # C extensions
 *.so
 
+# filtrations and databases in the examples folder
+examples/filtration/
+examples/**/*.db
+examples/tutorial_databases/
+
 # Distribution / packaging
 .Python
 build/

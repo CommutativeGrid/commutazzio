@@ -4,6 +4,10 @@
 
 We are continually expanding our library with more examples and extensive documentation.
 
+## Documentation
+
+The documentation can be found at [https://commutativegrids.github.io/commutazzio/](https://commutativegrids.github.io/commutazzio/).
+
 ## Installation
 
 This package is compatible with Python 3.10 and may not work correctly with earlier versions. To install `commutazzio`, please first install fzzpy as a prerequisite. Follow these steps for a smooth installation process:
@@ -19,15 +23,18 @@ This package is compatible with Python 3.10 and may not work correctly with earl
    pip install --user .
    ```
 
-## How to Use
+## Quick Start
+
+Several examples are provided in the `examples/` directory to help you get started with `commutazzio` for its different functionalities.
 
 ### Indecomposable Decomposition
 
 This section is currently under development and will be updated shortly. 
+(`examples/indecomposable_decomposition_CL(4).ipynb`)
 
 ### Connected Persistence Diagrams
 
-For a practical demonstration of Connected Persistence Diagrams, please refer to the Jupyter notebook located at `examples/cPDs.ipynb`. This notebook is designed to guide you through the process of plotting Connected Persistence Diagrams, as illustrated in Figure 14 of our research paper.
+For a practical demonstration of Connected Persistence Diagrams, please refer to the Jupyter notebook located at `examples/connected_persistence_diagrams.ipynb`. This notebook is designed to guide you through the process of plotting Connected Persistence Diagrams, as illustrated in Figure 14 of our research paper.
 
 ### Use Precomputed Intervals for Faster Computations
 

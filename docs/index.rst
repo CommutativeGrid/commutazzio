@@ -6,7 +6,7 @@
 Welcome to commutazzio's documentation!
 =======================================
 
-.. image:: _static/logo.jpg
+.. image:: _static/logo.png
    :width: 100px
    :align: center
 

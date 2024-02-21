@@ -35,6 +35,13 @@ class SimplicialComplex(gudhi_SimplexTree):
         ss.sort(key=lambda x: (len(x),tuple(x)))
         return [tuple(_) for _ in ss]
     
+    @property
+    def sc(self):
+        return self.simplices
+    
+    def __iter__(self):
+        return self.simplices
+    
     @simplices.setter
     def simplices(self, value):
         self.from_simplices(value)

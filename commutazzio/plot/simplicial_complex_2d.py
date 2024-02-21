@@ -12,7 +12,7 @@ class SC2DViz():
     """
     Plot the simplicial complex of a 2D point cloud.
     """
-    EPSILON=1e-10
+    EPSILON=0#1e-10
     NUM_COLS=3
     #POINT_COLOR="darkcyan"
     POINT_COLOR="rgba(0,174,239,1)"
@@ -32,7 +32,7 @@ class SC2DViz():
     PAPER_BGCOLOR='rgba(0,0,0,0)'
     PLOT_BGCOLOR='rgba(0,0,0,0)'
 
-    def __init__(self, points, radius_max=np.inf, sc_type="cech",):
+    def __init__(self, points:np.array, radius_max=np.inf, sc_type="cech"):
         """
         Initialize the simplicial complex.
 
@@ -42,7 +42,9 @@ class SC2DViz():
             The point cloud.
         sc_type : str
             The type of simplicial complex. cech or alpha
+            alpha complex shall not be used for visualizing CL(4) configurations.
         """
+        points=np.array(points)
         if points.shape[1] != 2:
             # check if dimension of point cloud is 2d
             raise ValueError("The point cloud should be a 2d array.")

@@ -40,6 +40,7 @@ INSTALL_REQUIRES = [
       'lz4~= 4.3.2',
       'cpes @ git+https://github.com/Commutative-Ladders/cpes.git',
       'fzzpy @ git+https://github.com/CommutativeGrids/fzzpy.git',
+      'chromatic_tda~=1.0.8',
 ]
 
 

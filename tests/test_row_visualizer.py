@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from commutazzio.plot.row_visualizer import RowVisualizer  # Adjust the import according to your project structure
+from commutazzio.plot.row_visualizer import RowVisualizerChroAlpha  # Adjust the import according to your project structure
 import plotly.graph_objects as go
 
 # Provided sample data and weight function
@@ -31,12 +31,12 @@ weight_function = {
 
 @pytest.fixture
 def row_visualizer():
-    return RowVisualizer(points, weight_function)
+    return RowVisualizerChroAlpha(points, weight_function)
 
 def test_initialization():
     # Test successful initialization
-    rv = RowVisualizer(points, weight_function)
-    assert isinstance(rv, RowVisualizer)
+    rv = RowVisualizerChroAlpha(points, weight_function)
+    assert isinstance(rv, RowVisualizerChroAlpha)
 
 def test_get_edges(row_visualizer):
     edges = row_visualizer.get_edges(0.5)

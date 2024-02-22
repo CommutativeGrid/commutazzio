@@ -27,7 +27,7 @@ PAPER_BGCOLOR='rgba(0,0,0,0)'
 PLOT_BGCOLOR='rgba(0,0,0,0)'
 
 
-class RowVisualizer():
+class RowVisualizerChroAlpha():
     def __init__(self, points:np.array, weight_function:dict):
         self.points=np.array(points)
         if points.shape[1] != 2:

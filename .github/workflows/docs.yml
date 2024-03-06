@@ -21,7 +21,6 @@ jobs:
       run: |
         pip install sphinx==7.2.6 sphinx-rtd-theme==1.3.0 numpydoc==1.6.0
         pip install chromatic_tda
-        git clone https://github.com/CommutativeGrids/commutazzio.git
         cd commutazzio
         pip install -e .
 

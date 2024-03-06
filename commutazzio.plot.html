@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>commutazzio.plot package &mdash; commutazzio 0.5.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -53,10 +51,66 @@
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.persistence.html">commutazzio/persistence</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">commutazzio/plot</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-plot-colors-helper-module">commutazzio.plot.colors_helper module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-plot-plot-engine-module">commutazzio.plot.plot_engine module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-plot-simplicial-complex-2d-module">commutazzio.plot.simplicial_complex_2d module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.plot.colors_helper">commutazzio.plot.colors_helper module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.colors_helper.get_color"><code class="docutils literal notranslate"><span class="pre">get_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.colors_helper.get_continuous_color"><code class="docutils literal notranslate"><span class="pre">get_continuous_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.colors_helper.show_named_plotly_colours"><code class="docutils literal notranslate"><span class="pre">show_named_plotly_colours()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.plot.plot_engine">commutazzio.plot.plot_engine module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.add_line"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.add_line()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.check_cdn_access"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.check_cdn_access()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.data_preprocessing_dots"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.data_preprocessing_dots()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.data_preprocessing_lines"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.data_preprocessing_lines()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.legend_grouping"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.legend_grouping()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.line_chart"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.line_chart()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.one_legend_in_each_group"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.one_legend_in_each_group()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.render()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_and_export_figure"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.render_and_export_figure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_axes"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.render_axes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_general_layout"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.render_general_layout()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_legend"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.render_legend()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_ticks"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.render_ticks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.ribbonise"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.ribbonise()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.scatter_chart"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.scatter_chart()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.show"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.show()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.plot.simplicial_complex_2d">commutazzio.plot.simplicial_complex_2d module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz"><code class="docutils literal notranslate"><span class="pre">SC2DViz</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.CIRCUMFERENCE_COLOR"><code class="docutils literal notranslate"><span class="pre">SC2DViz.CIRCUMFERENCE_COLOR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.CIRCUMFERENCE_WIDTH"><code class="docutils literal notranslate"><span class="pre">SC2DViz.CIRCUMFERENCE_WIDTH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.DISK_COLOR"><code class="docutils literal notranslate"><span class="pre">SC2DViz.DISK_COLOR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.EDGE_COLOR"><code class="docutils literal notranslate"><span class="pre">SC2DViz.EDGE_COLOR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.EDGE_WIDTH"><code class="docutils literal notranslate"><span class="pre">SC2DViz.EDGE_WIDTH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.EPSILON"><code class="docutils literal notranslate"><span class="pre">SC2DViz.EPSILON</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.NUM_COLS"><code class="docutils literal notranslate"><span class="pre">SC2DViz.NUM_COLS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.PAPER_BGCOLOR"><code class="docutils literal notranslate"><span class="pre">SC2DViz.PAPER_BGCOLOR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.PLOT_BGCOLOR"><code class="docutils literal notranslate"><span class="pre">SC2DViz.PLOT_BGCOLOR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.POINT_COLOR"><code class="docutils literal notranslate"><span class="pre">SC2DViz.POINT_COLOR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.POINT_SIZE"><code class="docutils literal notranslate"><span class="pre">SC2DViz.POINT_SIZE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.TRIANGLE_COLOR"><code class="docutils literal notranslate"><span class="pre">SC2DViz.TRIANGLE_COLOR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.add_circle"><code class="docutils literal notranslate"><span class="pre">SC2DViz.add_circle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_edges"><code class="docutils literal notranslate"><span class="pre">SC2DViz.get_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_n_simplices"><code class="docutils literal notranslate"><span class="pre">SC2DViz.get_n_simplices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_points"><code class="docutils literal notranslate"><span class="pre">SC2DViz.get_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_triangles"><code class="docutils literal notranslate"><span class="pre">SC2DViz.get_triangles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_edges"><code class="docutils literal notranslate"><span class="pre">SC2DViz.plot_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_points"><code class="docutils literal notranslate"><span class="pre">SC2DViz.plot_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_triangle"><code class="docutils literal notranslate"><span class="pre">SC2DViz.plot_triangle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_triangles"><code class="docutils literal notranslate"><span class="pre">SC2DViz.plot_triangles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.radii_critical"><code class="docutils literal notranslate"><span class="pre">SC2DViz.radii_critical()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_all"><code class="docutils literal notranslate"><span class="pre">SC2DViz.render_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_circles"><code class="docutils literal notranslate"><span class="pre">SC2DViz.render_circles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_sc"><code class="docutils literal notranslate"><span class="pre">SC2DViz.render_sc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.plot">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.random.html">commutazzio/random</a></li>
@@ -94,17 +148,343 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="commutazzio-plot-colors-helper-module">
-<h2>commutazzio.plot.colors_helper module<a class="headerlink" href="#commutazzio-plot-colors-helper-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.plot.colors_helper">
+<span id="commutazzio-plot-colors-helper-module"></span><h2>commutazzio.plot.colors_helper module<a class="headerlink" href="#module-commutazzio.plot.colors_helper" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.plot.colors_helper.get_color">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.plot.colors_helper.</span></span><span class="sig-name descname"><span class="pre">get_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colorscale_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.colors_helper.get_color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.plot.colors_helper.get_continuous_color">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.plot.colors_helper.</span></span><span class="sig-name descname"><span class="pre">get_continuous_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">colorscale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intermed</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.colors_helper.get_continuous_color" title="Link to this definition"></a></dt>
+<dd><p>Plotly continuous colorscales assign colors to the range [0, 1]. This function computes the intermediate
+color for any value in that range.</p>
+<p>Plotly doesn’t make the colorscales directly accessible in a common format.
+Some are ready to use:</p>
+<blockquote>
+<div><p>colorscale = plotly.colors.PLOTLY_SCALES[“Greens”]</p>
+</div></blockquote>
+<p>Others are just swatches that need to be constructed into a colorscale:</p>
+<blockquote>
+<div><p>viridis_colors, scale = plotly.colors.convert_colors_to_same_type(plotly.colors.sequential.Viridis)
+colorscale = plotly.colors.make_colorscale(viridis_colors, scale=scale)</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>colorscale</strong> – A plotly continuous colorscale defined with RGB string colors.</p></li>
+<li><p><strong>intermed</strong> – value in the range [0, 1]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>color in rgb string format</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.plot.colors_helper.show_named_plotly_colours">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.plot.colors_helper.</span></span><span class="sig-name descname"><span class="pre">show_named_plotly_colours</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.colors_helper.show_named_plotly_colours" title="Link to this definition"></a></dt>
+<dd><p>function to display to user the colours to match plotly’s named
+css colours.</p>
+<dl class="simple">
+<dt>Reference:</dt><dd><p>#https://community.plotly.com/t/plotly-colours-list/11730/3</p>
+</dd>
+<dt>Returns:</dt><dd><p>plotly dataframe with cell colour to match named colour name</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="commutazzio-plot-plot-engine-module">
-<h2>commutazzio.plot.plot_engine module<a class="headerlink" href="#commutazzio-plot-plot-engine-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.plot.plot_engine">
+<span id="commutazzio-plot-plot-engine-module"></span><h2>commutazzio.plot.plot_engine module<a class="headerlink" href="#module-commutazzio.plot.plot_engine" title="Link to this heading"></a></h2>
+<p>Module for visualizing connected persistence diagrams via complementary triangles plots.
+This module contains the ComplementaryTrianglesPlot class which provides functionalities
+for generating and displaying these plots using Plotly.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.plot.plot_engine.</span></span><span class="sig-name descname"><span class="pre">ComplementaryTrianglesPlot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cPD</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="commutazzio.compute.html#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram" title="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram"><span class="pre">ConnectedPersistenceDiagram</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">convention</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'[b,d)'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for visualizing a connected persistence diagram via a complementary triangles plot. 
+This class supports initialization with either a ConnectedPersistenceDiagram instance 
+or custom data in the form of dictionaries.</p>
+<p>Parameters:
+- cPD (ConnectedPersistenceDiagram, optional): The persistence diagram to be visualized.
+- title (str, optional): Title of the plot.
+- convention (str, optional): Convention used for the plot, defaults to “[b,d)”, which means inclusive for birth and exclusive for death.
+- kwargs: Additional keyword arguments for custom data initialization.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.add_line">
+<span class="sig-name descname"><span class="pre">add_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.add_line" title="Link to this definition"></a></dt>
+<dd><p>add a line connecting two dots from two PDs respectively</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.check_cdn_access">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_cdn_access</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.check_cdn_access" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.data_preprocessing_dots">
+<span class="sig-name descname"><span class="pre">data_preprocessing_dots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.data_preprocessing_dots" title="Link to this definition"></a></dt>
+<dd><p>Add auxiliary columns to dots</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.data_preprocessing_lines">
+<span class="sig-name descname"><span class="pre">data_preprocessing_lines</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.data_preprocessing_lines" title="Link to this definition"></a></dt>
+<dd><p>Add auxiliary columns to lines</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.legend_grouping">
+<span class="sig-name descname"><span class="pre">legend_grouping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.legend_grouping" title="Link to this definition"></a></dt>
+<dd><p>group the legend by the multiplicity</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.line_chart">
+<span class="sig-name descname"><span class="pre">line_chart</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.line_chart" title="Link to this definition"></a></dt>
+<dd><p>generate the line chart, connect related generators</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.one_legend_in_each_group">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">one_legend_in_each_group</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.one_legend_in_each_group" title="Link to this definition"></a></dt>
+<dd><p>An iterator that yields True if the sent value not in container,
+else yields False</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render">
+<span class="sig-name descname"><span class="pre">render</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render" title="Link to this definition"></a></dt>
+<dd><p>Generates and returns a Plotly figure that combines scatter and line charts to visualize 
+the connected persistence diagram via a complementary triangles plot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>plotly.graph_objects.Figure</dt><dd><p>A Plotly figure object representing the final plot.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_and_export_figure">
+<span class="sig-name descname"><span class="pre">render_and_export_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">export_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'full_html'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_and_export_figure" title="Link to this definition"></a></dt>
+<dd><p>Render the figure and export it based on the specified mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>export_mode</strong><span class="classifier">str</span></dt><dd><p>The mode to export the figure. Options are ‘full_html’ or ‘div’.</p>
+</dd>
+<dt><strong>**kwargs</strong><span class="classifier">dict</span></dt><dd><p>Keyword arguments for the figure rendering and exporting.
+see <a class="reference external" href="https://plotly.com/python/interactive-html-export/">https://plotly.com/python/interactive-html-export/</a> for parameters</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>filepath</strong><span class="classifier">str</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_axes">
+<span class="sig-name descname"><span class="pre">render_axes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_axes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_general_layout">
+<span class="sig-name descname"><span class="pre">render_general_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_general_layout" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_legend">
+<span class="sig-name descname"><span class="pre">render_legend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_legend" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_ticks">
+<span class="sig-name descname"><span class="pre">render_ticks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_ticks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.ribbonise">
+<span class="sig-name descname"><span class="pre">ribbonise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.ribbonise" title="Link to this definition"></a></dt>
+<dd><p>Expanding a line to a rectangle</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.scatter_chart">
+<span class="sig-name descname"><span class="pre">scatter_chart</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.scatter_chart" title="Link to this definition"></a></dt>
+<dd><p>generate the scatter plot, which is a joint of two one-parameter persistence diagrams</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.show" title="Link to this definition"></a></dt>
+<dd><p>a synonym for render and show</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="commutazzio-plot-simplicial-complex-2d-module">
-<h2>commutazzio.plot.simplicial_complex_2d module<a class="headerlink" href="#commutazzio-plot-simplicial-complex-2d-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.plot.simplicial_complex_2d">
+<span id="commutazzio-plot-simplicial-complex-2d-module"></span><h2>commutazzio.plot.simplicial_complex_2d module<a class="headerlink" href="#module-commutazzio.plot.simplicial_complex_2d" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.plot.simplicial_complex_2d.</span></span><span class="sig-name descname"><span class="pre">SC2DViz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sc_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cech'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Plot the simplicial complex of a 2D point cloud.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.CIRCUMFERENCE_COLOR">
+<span class="sig-name descname"><span class="pre">CIRCUMFERENCE_COLOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rgba(0,174,239,1)'</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.CIRCUMFERENCE_COLOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.CIRCUMFERENCE_WIDTH">
+<span class="sig-name descname"><span class="pre">CIRCUMFERENCE_WIDTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.CIRCUMFERENCE_WIDTH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.DISK_COLOR">
+<span class="sig-name descname"><span class="pre">DISK_COLOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rgba(0,174,239,0.05)'</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.DISK_COLOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.EDGE_COLOR">
+<span class="sig-name descname"><span class="pre">EDGE_COLOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rgba(247,148,29,0.9)'</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.EDGE_COLOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.EDGE_WIDTH">
+<span class="sig-name descname"><span class="pre">EDGE_WIDTH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.EDGE_WIDTH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.EPSILON">
+<span class="sig-name descname"><span class="pre">EPSILON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.EPSILON" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.NUM_COLS">
+<span class="sig-name descname"><span class="pre">NUM_COLS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.NUM_COLS" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.PAPER_BGCOLOR">
+<span class="sig-name descname"><span class="pre">PAPER_BGCOLOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rgba(0,0,0,0)'</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.PAPER_BGCOLOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.PLOT_BGCOLOR">
+<span class="sig-name descname"><span class="pre">PLOT_BGCOLOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rgba(0,0,0,0)'</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.PLOT_BGCOLOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.POINT_COLOR">
+<span class="sig-name descname"><span class="pre">POINT_COLOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rgba(0,174,239,1)'</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.POINT_COLOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.POINT_SIZE">
+<span class="sig-name descname"><span class="pre">POINT_SIZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.POINT_SIZE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.TRIANGLE_COLOR">
+<span class="sig-name descname"><span class="pre">TRIANGLE_COLOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'rgba(0,174,239,0.35)'</span></em><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.TRIANGLE_COLOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.add_circle">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_circle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.add_circle" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.get_edges">
+<span class="sig-name descname"><span class="pre">get_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_edges" title="Link to this definition"></a></dt>
+<dd><p>return all edges with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.get_n_simplices">
+<span class="sig-name descname"><span class="pre">get_n_simplices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_n_simplices" title="Link to this definition"></a></dt>
+<dd><p>return all n-simplices with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.get_points">
+<span class="sig-name descname"><span class="pre">get_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_points" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.get_triangles">
+<span class="sig-name descname"><span class="pre">get_triangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_triangles" title="Link to this definition"></a></dt>
+<dd><p>return all triangles with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_edges">
+<span class="sig-name descname"><span class="pre">plot_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_edges" title="Link to this definition"></a></dt>
+<dd><p>plot all edges with filtration value not greater than radius</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_points">
+<span class="sig-name descname"><span class="pre">plot_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_points" title="Link to this definition"></a></dt>
+<dd><p>Plot the point cloud.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_triangle">
+<span class="sig-name descname"><span class="pre">plot_triangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triangle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_triangle" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_triangles">
+<span class="sig-name descname"><span class="pre">plot_triangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_triangles" title="Link to this definition"></a></dt>
+<dd><p>plot all triangles with filtration value not greater than radius</p>
+<p>using this function causes unexpected behaviour when triangles overlap</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.radii_critical">
+<span class="sig-name descname"><span class="pre">radii_critical</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.radii_critical" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.render_all">
+<span class="sig-name descname"><span class="pre">render_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">330</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_circles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_all" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.render_circles">
+<span class="sig-name descname"><span class="pre">render_circles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_circles" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.simplicial_complex_2d.SC2DViz.render_sc">
+<span class="sig-name descname"><span class="pre">render_sc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_circles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_sc" title="Link to this definition"></a></dt>
+<dd><p>Render the simplicial complex.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.plot">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-commutazzio.plot" title="Link to this heading"></a></h2>
 </section>
 </section>
 

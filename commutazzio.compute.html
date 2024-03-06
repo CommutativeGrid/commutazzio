@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>commutazzio.compute package &mdash; commutazzio 0.5.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -49,14 +47,136 @@
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.html">commutazzio</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">commutazzio/compute</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-compute-commutative-grid-quiver-module">commutazzio.compute.commutative_grid_quiver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-compute-commutative-ladder-quiver-module">commutazzio.compute.commutative_ladder_quiver module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-compute-compute-engine-module">commutazzio.compute.compute_engine module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-compute-connected-persistence-diagram-module">commutazzio.compute.connected_persistence_diagram module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-compute-courses-module">commutazzio.compute.courses module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-compute-decomposition-container-module">commutazzio.compute.decomposition_container module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-compute-precompute-module">commutazzio.compute.precompute module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.compute.commutative_grid_quiver">commutazzio.compute.commutative_grid_quiver module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGrid2DQuiver"><code class="docutils literal notranslate"><span class="pre">CommutativeGrid2DQuiver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGrid2DQuiver.plot"><code class="docutils literal notranslate"><span class="pre">CommutativeGrid2DQuiver.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver"><code class="docutils literal notranslate"><span class="pre">CommutativeGridQuiver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.attribute_sequence"><code class="docutils literal notranslate"><span class="pre">CommutativeGridQuiver.attribute_sequence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.computePD"><code class="docutils literal notranslate"><span class="pre">CommutativeGridQuiver.computePD()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.multiplicity_zigzag"><code class="docutils literal notranslate"><span class="pre">CommutativeGridQuiver.multiplicity_zigzag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.plot"><code class="docutils literal notranslate"><span class="pre">CommutativeGridQuiver.plot()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.longest_matching"><code class="docutils literal notranslate"><span class="pre">longest_matching()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.one_based_numbering"><code class="docutils literal notranslate"><span class="pre">one_based_numbering()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.compute.commutative_ladder_quiver">commutazzio.compute.commutative_ladder_quiver module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver"><code class="docutils literal notranslate"><span class="pre">CommutativeLadderQuiver</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.filtration_input"><code class="docutils literal notranslate"><span class="pre">CommutativeLadderQuiver.filtration_input()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.info"><code class="docutils literal notranslate"><span class="pre">CommutativeLadderQuiver.info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.multiplicity_computation"><code class="docutils literal notranslate"><span class="pre">CommutativeLadderQuiver.multiplicity_computation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.plot"><code class="docutils literal notranslate"><span class="pre">CommutativeLadderQuiver.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.tours_vector"><code class="docutils literal notranslate"><span class="pre">CommutativeLadderQuiver.tours_vector()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.compute.compute_engine">commutazzio.compute.compute_engine module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.compute_engine.CLInvariants"><code class="docutils literal notranslate"><span class="pre">CLInvariants</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.compute_engine.CLInvariants.cPD_computation"><code class="docutils literal notranslate"><span class="pre">CLInvariants.cPD_computation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.compute_engine.CLInvariants.cPDs"><code class="docutils literal notranslate"><span class="pre">CLInvariants.cPDs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.compute_engine.CLInvariants.decompositions_all"><code class="docutils literal notranslate"><span class="pre">CLInvariants.decompositions_all</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.compute_engine.CLInvariants.delete_filtration_file"><code class="docutils literal notranslate"><span class="pre">CLInvariants.delete_filtration_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.compute_engine.CLInvariants.lower_sc_array"><code class="docutils literal notranslate"><span class="pre">CLInvariants.lower_sc_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.compute_engine.CLInvariants.repr_generation"><code class="docutils literal notranslate"><span class="pre">CLInvariants.repr_generation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.compute_engine.CLInvariants.total_decomposition_computation"><code class="docutils literal notranslate"><span class="pre">CLInvariants.total_decomposition_computation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.compute_engine.CLInvariants.upper_sc_array"><code class="docutils literal notranslate"><span class="pre">CLInvariants.upper_sc_array()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.compute.connected_persistence_diagram">commutazzio.compute.connected_persistence_diagram module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.NodeToStr"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.NodeToStr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.PathToStr"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.PathToStr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.clean_up"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.clean_up</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.complexes"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.complexes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.complexes_generator"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.complexes_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_connecting_lines"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.compute_connecting_lines()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_dec_obj"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.compute_dec_obj()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_dotdec"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.compute_dotdec()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_plot_dots"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.compute_plot_dots()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.d_ss"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.d_ss</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dec"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.dec</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.deco"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.deco()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.delt_ss"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.delt_ss</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dim"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.dim</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dotdec"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.dotdec</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dots"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.dots</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.fzz_barcode_compute_lower"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.fzz_barcode_compute_lower()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.fzz_barcode_compute_upper"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.fzz_barcode_compute_upper()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.fzz_compute_inside_loop_local_mp"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.fzz_compute_inside_loop_local_mp()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.indexAligner"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.indexAligner</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.intv"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.intv</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.join_intv"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.join_intv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.ladder_length"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.ladder_length</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.lines"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.lines</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.logging_memory_usage_of_attributes"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.logging_memory_usage_of_attributes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.m"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.m</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.n"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.n</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.node2str_generator"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.node2str_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.path2str_generator"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.path2str_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.plot_data"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.plot_data</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.plot_dots"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.plot_dots</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.preprocess_filtration_values"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.preprocess_filtration_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.times"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.times</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.txf"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.txf</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.txf_basename_wo_ext"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.txf_basename_wo_ext</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.txf_dir"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.txf_dir</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.variables"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.variables</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.wake"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.wake()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.write_list_of_lists_of_sets_to_file"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.write_list_of_lists_of_sets_to_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.write_node_to_str"><code class="docutils literal notranslate"><span class="pre">ConnectedPersistenceDiagram.write_node_to_str()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.compute.courses">commutazzio.compute.courses module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.courses.courses_cl3"><code class="docutils literal notranslate"><span class="pre">courses_cl3()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.courses.courses_cl4"><code class="docutils literal notranslate"><span class="pre">courses_cl4()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.courses.read_numpy_array"><code class="docutils literal notranslate"><span class="pre">read_numpy_array()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.courses.read_numpy_array_from_txt"><code class="docutils literal notranslate"><span class="pre">read_numpy_array_from_txt()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.compute.decomposition_container">commutazzio.compute.decomposition_container module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition"><code class="docutils literal notranslate"><span class="pre">Decomposition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition.dim"><code class="docutils literal notranslate"><span class="pre">Decomposition.dim</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition.m"><code class="docutils literal notranslate"><span class="pre">Decomposition.m</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition.mult"><code class="docutils literal notranslate"><span class="pre">Decomposition.mult</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition.nonzero_components"><code class="docutils literal notranslate"><span class="pre">Decomposition.nonzero_components</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition.nonzero_nonintervals"><code class="docutils literal notranslate"><span class="pre">Decomposition.nonzero_nonintervals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition.pretty_print"><code class="docutils literal notranslate"><span class="pre">Decomposition.pretty_print()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition.prime"><code class="docutils literal notranslate"><span class="pre">Decomposition.prime</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition.statistics"><code class="docutils literal notranslate"><span class="pre">Decomposition.statistics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.Decomposition.to_dict"><code class="docutils literal notranslate"><span class="pre">Decomposition.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.decomposition_container.DecompositionCollection"><code class="docutils literal notranslate"><span class="pre">DecompositionCollection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.DecompositionCollection.add"><code class="docutils literal notranslate"><span class="pre">DecompositionCollection.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.DecompositionCollection.dim"><code class="docutils literal notranslate"><span class="pre">DecompositionCollection.dim()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.DecompositionCollection.mult"><code class="docutils literal notranslate"><span class="pre">DecompositionCollection.mult()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.decomposition_container.DecompositionCollection.prime"><code class="docutils literal notranslate"><span class="pre">DecompositionCollection.prime()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.compute.precompute">commutazzio.compute.precompute module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.compute.precompute.CommutativeGridPreCompute"><code class="docutils literal notranslate"><span class="pre">CommutativeGridPreCompute</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.c_ss_initializer"><code class="docutils literal notranslate"><span class="pre">CommutativeGridPreCompute.c_ss_initializer()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.cover_generator"><code class="docutils literal notranslate"><span class="pre">CommutativeGridPreCompute.cover_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.get_intervals"><code class="docutils literal notranslate"><span class="pre">CommutativeGridPreCompute.get_intervals()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.get_variables"><code class="docutils literal notranslate"><span class="pre">CommutativeGridPreCompute.get_variables()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.interval_generator"><code class="docutils literal notranslate"><span class="pre">CommutativeGridPreCompute.interval_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.save_intv_to_file"><code class="docutils literal notranslate"><span class="pre">CommutativeGridPreCompute.save_intv_to_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.save_variables_to_file"><code class="docutils literal notranslate"><span class="pre">CommutativeGridPreCompute.save_variables_to_file()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.compute">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.filtration.html">commutazzio/filtration</a></li>
@@ -98,29 +218,620 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="commutazzio-compute-commutative-grid-quiver-module">
-<h2>commutazzio.compute.commutative_grid_quiver module<a class="headerlink" href="#commutazzio-compute-commutative-grid-quiver-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.compute.commutative_grid_quiver">
+<span id="commutazzio-compute-commutative-grid-quiver-module"></span><h2>commutazzio.compute.commutative_grid_quiver module<a class="headerlink" href="#module-commutazzio.compute.commutative_grid_quiver" title="Link to this heading"></a></h2>
+<p>This module defines classes and functions for creating commutative grid quivers, converting coordinate
+numbering systems, and performing topological computations such as longest matching and multiplicity of zigzag filtrations.</p>
+<dl class="simple">
+<dt>Dependencies:</dt><dd><ul class="simple">
+<li><p>networkx: For creating and manipulating graph structures.</p></li>
+<li><p>numpy: For numerical operations.</p></li>
+<li><p>itertools.product: For generating Cartesian products.</p></li>
+<li><p>ZigzagFiltration: Custom class from the ‘filtration’ module for handling zigzag filtrations.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_grid_quiver.CommutativeGrid2DQuiver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.compute.commutative_grid_quiver.</span></span><span class="sig-name descname"><span class="pre">CommutativeGrid2DQuiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'equi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_based</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGrid2DQuiver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver" title="commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommutativeGridQuiver</span></code></a></p>
+<p>A subclass of CommutativeGridQuiver for generating and manipulating 2-dimensional grid quivers.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>orientation (str): A string representing the orientation of arrows between nodes in the grid.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_grid_quiver.CommutativeGrid2DQuiver.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGrid2DQuiver.plot" title="Link to this definition"></a></dt>
+<dd><p>Plots the 2D grid quiver using matplotlib, with nodes positioned according to their grid coordinates.</p>
+<p>This overridden method ensures that the grid is visualized in a manner consistent with its 2D structure,
+with node positions reflecting their actual locations within the grid layout.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.compute.commutative_grid_quiver.</span></span><span class="sig-name descname"><span class="pre">CommutativeGridQuiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim_vector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_based</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to represent a directed graph (quiver) constructed from a grid, supporting commutative diagrams.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>G (networkx.DiGraph): The directed graph representing the quiver.
+shape (list of int): The dimensions of the grid.
+one_based (bool): Flag to use 1-based indexing for grid coordinates.</p>
+</dd>
+<dt>Methods:</dt><dd><p>plot(): Plots the quiver using networkx drawing facilities.
+attribute_sequence(nodes, attribute): Generates a list of attributes for given nodes.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.attribute_sequence">
+<span class="sig-name descname"><span class="pre">attribute_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'simplicial_complex'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.attribute_sequence" title="Link to this definition"></a></dt>
+<dd><p>Generates a sequence of attributes for a given list of nodes in the quiver.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>nodes (list): A list of node identifiers within the quiver.
+attribute (str, optional): The attribute to extract for each node. Defaults to “simplicial_complex”.</p>
+</dd>
+<dt>Returns:</dt><dd><p>list: A list containing the specified attributes of the given nodes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.computePD">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">computePD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.computePD" title="Link to this definition"></a></dt>
+<dd><p>Static method (placeholder) for computing persistence diagrams, intended for compatibility testing.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>i (int): An arbitrary input parameter for testing purposes.</p>
+</dd>
+<dt>Returns:</dt><dd><p>int: A random integer, simulating a computation result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.multiplicity_zigzag">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">multiplicity_zigzag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sc_zigzag_list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.multiplicity_zigzag" title="Link to this definition"></a></dt>
+<dd><p>Computes the multiplicity of the longest interval in a given zigzag filtration of simplicial complexes.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>sc_zigzag_list (list): A list of simplicial complexes in the zigzag filtration.
+dim (int, optional): The dimension in which to compute the multiplicity. Defaults to 1.
+prime (int, optional): The prime base for field coefficients in homology computations. Defaults to 2.</p>
+</dd>
+<dt>Returns:</dt><dd><p>int: The multiplicity of the longest interval in the specified dimension.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGridQuiver.plot" title="Link to this definition"></a></dt>
+<dd><p>Plots the quiver using matplotlib, with nodes labeled according to their grid coordinates.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_grid_quiver.longest_matching">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.compute.commutative_grid_quiver.</span></span><span class="sig-name descname"><span class="pre">longest_matching</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagram_point</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_grid_quiver.longest_matching" title="Link to this definition"></a></dt>
+<dd><p>Determine if a given diagram point is of the form (0, infinity), indicating an infinite persistence interval.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>diagram_point: A point in the persistence diagram, typically a tuple (birth, death).</p>
+</dd>
+<dt>Returns:</dt><dd><p>bool: True if the point represents an infinite interval, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_grid_quiver.one_based_numbering">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.compute.commutative_grid_quiver.</span></span><span class="sig-name descname"><span class="pre">one_based_numbering</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim_vector</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_grid_quiver.one_based_numbering" title="Link to this definition"></a></dt>
+<dd><p>Generate a mapping from 0-based to 1-based indexing for coordinates within given dimensions.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><p>dim_vector (list of int): Dimension sizes for each axis of the grid.</p>
+</dd>
+<dt>Returns:</dt><dd><p>dict: A dictionary mapping 0-based indices to 1-based indices.</p>
+</dd>
+<dt>Example:</dt><dd><p>If dim_vector = [2, 2], the function returns {(0, 0): (1, 1), (0, 1): (1, 2), (1, 0): (2, 1), (1, 1): (2, 2)}.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="commutazzio-compute-commutative-ladder-quiver-module">
-<h2>commutazzio.compute.commutative_ladder_quiver module<a class="headerlink" href="#commutazzio-compute-commutative-ladder-quiver-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.compute.commutative_ladder_quiver">
+<span id="commutazzio-compute-commutative-ladder-quiver-module"></span><h2>commutazzio.compute.commutative_ladder_quiver module<a class="headerlink" href="#module-commutazzio.compute.commutative_ladder_quiver" title="Link to this heading"></a></h2>
+<p>Created on Sun Oct 31 19:20:11 2021</p>
+<p>&#64;author: kasumi</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.compute.commutative_ladder_quiver.</span></span><span class="sig-name descname"><span class="pre">CommutativeLadderQuiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'equi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">one_based</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#commutazzio.compute.commutative_grid_quiver.CommutativeGrid2DQuiver" title="commutazzio.compute.commutative_grid_quiver.CommutativeGrid2DQuiver"><code class="xref py py-class docutils literal notranslate"><span class="pre">CommutativeGrid2DQuiver</span></code></a></p>
+<p>Equi-oriented by default</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.filtration_input">
+<span class="sig-name descname"><span class="pre">filtration_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.filtration_input" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.info" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.multiplicity_computation">
+<span class="sig-name descname"><span class="pre">multiplicity_computation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_multi_processing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.multiplicity_computation" title="Link to this definition"></a></dt>
+<dd><p>Return the vector of multiplicities</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.plot" title="Link to this definition"></a></dt>
+<dd><p>Plots the 2D grid quiver using matplotlib, with nodes positioned according to their grid coordinates.</p>
+<p>This overridden method ensures that the grid is visualized in a manner consistent with its 2D structure,
+with node positions reflecting their actual locations within the grid layout.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.tours_vector">
+<span class="sig-name descname"><span class="pre">tours_vector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_multi_processing</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cores</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.commutative_ladder_quiver.CommutativeLadderQuiver.tours_vector" title="Link to this definition"></a></dt>
+<dd><p>Returns the vector of all the tours over the simplicial complex.
+mp_method: multiprocessing method, 0 for none, 1 for pool
+num_cores: int or ‘auto’</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="commutazzio-compute-compute-engine-module">
-<h2>commutazzio.compute.compute_engine module<a class="headerlink" href="#commutazzio-compute-compute-engine-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.compute.compute_engine">
+<span id="commutazzio-compute-compute-engine-module"></span><h2>commutazzio.compute.compute_engine module<a class="headerlink" href="#module-commutazzio.compute.compute_engine" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.compute.compute_engine.CLInvariants">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.compute.compute_engine.</span></span><span class="sig-name descname"><span class="pre">CLInvariants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="commutazzio.filtration.html#commutazzio.filtration.clfiltration.CLFiltration" title="commutazzio.filtration.clfiltration.CLFiltration"><span class="pre">CLFiltration</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_multi_processing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm_phat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chunk_reduction'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.compute_engine.CLInvariants" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.compute_engine.CLInvariants.cPD_computation">
+<span class="sig-name descname"><span class="pre">cPD_computation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">homology_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.compute_engine.CLInvariants.cPD_computation" title="Link to this definition"></a></dt>
+<dd><p>Compute the connected persistence diagram of the filtration at dimension dim.
+The coefficient field is GF(2). (using FZZ)
+(Can choose other finite field if we use dionysus2)</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.compute.compute_engine.CLInvariants.cPDs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cPDs</span></span><a class="headerlink" href="#commutazzio.compute.compute_engine.CLInvariants.cPDs" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.compute.compute_engine.CLInvariants.decompositions_all">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decompositions_all</span></span><a class="headerlink" href="#commutazzio.compute.compute_engine.CLInvariants.decompositions_all" title="Link to this definition"></a></dt>
+<dd><p>Return a list of all decompositions computed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.compute_engine.CLInvariants.delete_filtration_file">
+<span class="sig-name descname"><span class="pre">delete_filtration_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.compute_engine.CLInvariants.delete_filtration_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.compute_engine.CLInvariants.lower_sc_array">
+<span class="sig-name descname"><span class="pre">lower_sc_array</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.compute_engine.CLInvariants.lower_sc_array" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.compute_engine.CLInvariants.repr_generation">
+<span class="sig-name descname"><span class="pre">repr_generation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.compute_engine.CLInvariants.repr_generation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.compute_engine.CLInvariants.total_decomposition_computation">
+<span class="sig-name descname"><span class="pre">total_decomposition_computation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recalculate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.compute_engine.CLInvariants.total_decomposition_computation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.compute_engine.CLInvariants.upper_sc_array">
+<span class="sig-name descname"><span class="pre">upper_sc_array</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.compute_engine.CLInvariants.upper_sc_array" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="commutazzio-compute-connected-persistence-diagram-module">
-<h2>commutazzio.compute.connected_persistence_diagram module<a class="headerlink" href="#commutazzio-compute-connected-persistence-diagram-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.compute.connected_persistence_diagram">
+<span id="commutazzio-compute-connected-persistence-diagram-module"></span><h2>commutazzio.compute.connected_persistence_diagram module<a class="headerlink" href="#module-commutazzio.compute.connected_persistence_diagram" title="Link to this heading"></a></h2>
+<p>Created on Sun Jan  2 17:29:27 2022</p>
+<p>&#64;author: kasumi</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.compute.connected_persistence_diagram.</span></span><span class="sig-name descname"><span class="pre">ConnectedPersistenceDiagram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filtration_filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ladder_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">homology_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filtration_values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_multi_processing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clean_up</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm_phat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chunk_reduction'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.NodeToStr">
+<span class="sig-name descname"><span class="pre">NodeToStr</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.NodeToStr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.PathToStr">
+<span class="sig-name descname"><span class="pre">PathToStr</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.PathToStr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.clean_up">
+<span class="sig-name descname"><span class="pre">clean_up</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.clean_up" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.complexes">
+<span class="sig-name descname"><span class="pre">complexes</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.complexes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.complexes_generator">
+<span class="sig-name descname"><span class="pre">complexes_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.complexes_generator" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_connecting_lines">
+<span class="sig-name descname"><span class="pre">compute_connecting_lines</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_connecting_lines" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_dec_obj">
+<span class="sig-name descname"><span class="pre">compute_dec_obj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_dec_obj" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_dotdec">
+<span class="sig-name descname"><span class="pre">compute_dotdec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_dotdec" title="Link to this definition"></a></dt>
+<dd><p>Generate decomposition for dots</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_plot_dots">
+<span class="sig-name descname"><span class="pre">compute_plot_dots</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.compute_plot_dots" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.d_ss">
+<span class="sig-name descname"><span class="pre">d_ss</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.d_ss" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dec">
+<span class="sig-name descname"><span class="pre">dec</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dec" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.deco">
+<span class="sig-name descname"><span class="pre">deco</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.deco" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.delt_ss">
+<span class="sig-name descname"><span class="pre">delt_ss</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.delt_ss" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dim" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dotdec">
+<span class="sig-name descname"><span class="pre">dotdec</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dotdec" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dots">
+<span class="sig-name descname"><span class="pre">dots</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.dots" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.fzz_barcode_compute_lower">
+<span class="sig-name descname"><span class="pre">fzz_barcode_compute_lower</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.fzz_barcode_compute_lower" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.fzz_barcode_compute_upper">
+<span class="sig-name descname"><span class="pre">fzz_barcode_compute_upper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.fzz_barcode_compute_upper" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.fzz_compute_inside_loop_local_mp">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fzz_compute_inside_loop_local_mp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.fzz_compute_inside_loop_local_mp" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.indexAligner">
+<span class="sig-name descname"><span class="pre">indexAligner</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.indexAligner" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.intv">
+<span class="sig-name descname"><span class="pre">intv</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.intv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.join_intv">
+<span class="sig-name descname"><span class="pre">join_intv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.join_intv" title="Link to this definition"></a></dt>
+<dd><p>helper function to join two intervals
+works for 2D commutative grid</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.ladder_length">
+<span class="sig-name descname"><span class="pre">ladder_length</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.ladder_length" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.lines">
+<span class="sig-name descname"><span class="pre">lines</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.lines" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.logging_memory_usage_of_attributes">
+<span class="sig-name descname"><span class="pre">logging_memory_usage_of_attributes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.logging_memory_usage_of_attributes" title="Link to this definition"></a></dt>
+<dd><p>Print the memory usage of each attribute of an object</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.m">
+<span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.m" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.n">
+<span class="sig-name descname"><span class="pre">n</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.n" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.node2str_generator">
+<span class="sig-name descname"><span class="pre">node2str_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.node2str_generator" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.path2str_generator">
+<span class="sig-name descname"><span class="pre">path2str_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.path2str_generator" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.plot_data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plot_data</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.plot_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.plot_dots">
+<span class="sig-name descname"><span class="pre">plot_dots</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.plot_dots" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.preprocess_filtration_values">
+<span class="sig-name descname"><span class="pre">preprocess_filtration_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filtration_values</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.preprocess_filtration_values" title="Link to this definition"></a></dt>
+<dd><p>Preprocess the filtration values</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.times">
+<span class="sig-name descname"><span class="pre">times</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.times" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.txf">
+<span class="sig-name descname"><span class="pre">txf</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.txf" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.txf_basename_wo_ext">
+<span class="sig-name descname"><span class="pre">txf_basename_wo_ext</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.txf_basename_wo_ext" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.txf_dir">
+<span class="sig-name descname"><span class="pre">txf_dir</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.txf_dir" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.variables">
+<span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.variables" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.wake">
+<span class="sig-name descname"><span class="pre">wake</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">I</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.wake" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.write_list_of_lists_of_sets_to_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write_list_of_lists_of_sets_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_of_lists_of_sets</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.write_list_of_lists_of_sets_to_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.write_node_to_str">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write_node_to_str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">NodeToStr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.write_node_to_str" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="commutazzio-compute-courses-module">
-<h2>commutazzio.compute.courses module<a class="headerlink" href="#commutazzio-compute-courses-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.compute.courses">
+<span id="commutazzio-compute-courses-module"></span><h2>commutazzio.compute.courses module<a class="headerlink" href="#module-commutazzio.compute.courses" title="Link to this heading"></a></h2>
+<p>Created on Fri Oct 29 16:15:49 2021</p>
+<p>&#64;author: kasumi</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.compute.courses.courses_cl3">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.compute.courses.</span></span><span class="sig-name descname"><span class="pre">courses_cl3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one_based</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.courses.courses_cl3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.compute.courses.courses_cl4">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.compute.courses.</span></span><span class="sig-name descname"><span class="pre">courses_cl4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">one_based</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.courses.courses_cl4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.compute.courses.read_numpy_array">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.compute.courses.</span></span><span class="sig-name descname"><span class="pre">read_numpy_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.courses.read_numpy_array" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.compute.courses.read_numpy_array_from_txt">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.compute.courses.</span></span><span class="sig-name descname"><span class="pre">read_numpy_array_from_txt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.courses.read_numpy_array_from_txt" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="commutazzio-compute-decomposition-container-module">
-<h2>commutazzio.compute.decomposition_container module<a class="headerlink" href="#commutazzio-compute-decomposition-container-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.compute.decomposition_container">
+<span id="commutazzio-compute-decomposition-container-module"></span><h2>commutazzio.compute.decomposition_container module<a class="headerlink" href="#module-commutazzio.compute.decomposition_container" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.compute.decomposition_container.</span></span><span class="sig-name descname"><span class="pre">Decomposition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mult</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A namedtuple-like class to store 
+information of multiplicity values.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition.dim">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dim</span></span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition.dim" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition.m">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">m</span></span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition.m" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition.mult">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mult</span></span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition.mult" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition.nonzero_components">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nonzero_components</span></span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition.nonzero_components" title="Link to this definition"></a></dt>
+<dd><p>Return the nonzero components of the multiplicity vector</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition.nonzero_nonintervals">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nonzero_nonintervals</span></span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition.nonzero_nonintervals" title="Link to this definition"></a></dt>
+<dd><p>Return non-trivial non-intervals</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition.pretty_print">
+<span class="sig-name descname"><span class="pre">pretty_print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition.pretty_print" title="Link to this definition"></a></dt>
+<dd><p>Print out the multiplicity values line by line</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition.prime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prime</span></span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition.prime" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition.statistics">
+<span class="sig-name descname"><span class="pre">statistics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition.statistics" title="Link to this definition"></a></dt>
+<dd><p>Print out the statistics of the multiplicity values</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.Decomposition.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">skip_zero</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.decomposition_container.Decomposition.to_dict" title="Link to this definition"></a></dt>
+<dd><p>Return a json-serializable dictionary of the decomposition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>skip_zero</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, only include nonzero components in the dictionary. Default is True.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, print additional information. Default is True.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>dict</dt><dd><p>A dictionary with keys ‘mult’, ‘dim’, and ‘prime’, representing the 
+multiplicity, dimension, and prime components of the decomposition, respectively.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.DecompositionCollection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.compute.decomposition_container.</span></span><span class="sig-name descname"><span class="pre">DecompositionCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">decompositions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.decomposition_container.DecompositionCollection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.DecompositionCollection.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mult</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.decomposition_container.DecompositionCollection.add" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.DecompositionCollection.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.decomposition_container.DecompositionCollection.dim" title="Link to this definition"></a></dt>
+<dd><p>Return all decompositions that was computed at a given dimension</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.DecompositionCollection.mult">
+<span class="sig-name descname"><span class="pre">mult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.decomposition_container.DecompositionCollection.mult" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.decomposition_container.DecompositionCollection.prime">
+<span class="sig-name descname"><span class="pre">prime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.decomposition_container.DecompositionCollection.prime" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="commutazzio-compute-precompute-module">
-<h2>commutazzio.compute.precompute module<a class="headerlink" href="#commutazzio-compute-precompute-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.compute.precompute">
+<span id="commutazzio-compute-precompute-module"></span><h2>commutazzio.compute.precompute module<a class="headerlink" href="#module-commutazzio.compute.precompute" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.compute.precompute.CommutativeGridPreCompute">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.compute.precompute.</span></span><span class="sig-name descname"><span class="pre">CommutativeGridPreCompute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.precompute.CommutativeGridPreCompute" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.precompute.CommutativeGridPreCompute.c_ss_initializer">
+<span class="sig-name descname"><span class="pre">c_ss_initializer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.c_ss_initializer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.precompute.CommutativeGridPreCompute.cover_generator">
+<span class="sig-name descname"><span class="pre">cover_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.cover_generator" title="Link to this definition"></a></dt>
+<dd><p>generate interval covers
+some values of c_ss is initialized</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.precompute.CommutativeGridPreCompute.get_intervals">
+<span class="sig-name descname"><span class="pre">get_intervals</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.get_intervals" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.precompute.CommutativeGridPreCompute.get_variables">
+<span class="sig-name descname"><span class="pre">get_variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.get_variables" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.precompute.CommutativeGridPreCompute.interval_generator">
+<span class="sig-name descname"><span class="pre">interval_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.interval_generator" title="Link to this definition"></a></dt>
+<dd><p>Generate intervals</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.precompute.CommutativeGridPreCompute.save_intv_to_file">
+<span class="sig-name descname"><span class="pre">save_intv_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirpath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.save_intv_to_file" title="Link to this definition"></a></dt>
+<dd><p>save intv to file</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.compute.precompute.CommutativeGridPreCompute.save_variables_to_file">
+<span class="sig-name descname"><span class="pre">save_variables_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirpath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.compute.precompute.CommutativeGridPreCompute.save_variables_to_file" title="Link to this definition"></a></dt>
+<dd><p>save variables to file</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.compute">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-commutazzio.compute" title="Link to this heading"></a></h2>
 </section>
 </section>
 

@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>commutazzio.statistics package &mdash; commutazzio 0.5.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -55,10 +53,29 @@
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.random.html">commutazzio/random</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">commutazzio/statistics</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-statistics-aggregate-dimension-module">commutazzio.statistics.aggregate_dimension module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-statistics-non-interval-scores-module">commutazzio.statistics.non_interval_scores module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-statistics-non-interval-scores-numba-module">commutazzio.statistics.non_interval_scores_numba module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.statistics.aggregate_dimension">commutazzio.statistics.aggregate_dimension module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.statistics.non_interval_scores">commutazzio.statistics.non_interval_scores module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.statistics.non_interval_scores.CL4_NIScores"><code class="docutils literal notranslate"><span class="pre">CL4_NIScores</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.statistics.non_interval_scores.CL4_NIScores.ns_const"><code class="docutils literal notranslate"><span class="pre">CL4_NIScores.ns_const</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.statistics.non_interval_scores.CL4_NIScores.ns_logistic"><code class="docutils literal notranslate"><span class="pre">CL4_NIScores.ns_logistic()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.statistics.non_interval_scores_numba">commutazzio.statistics.non_interval_scores_numba module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.statistics.non_interval_scores_numba.CL4_NIScores"><code class="docutils literal notranslate"><span class="pre">CL4_NIScores</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.statistics.non_interval_scores_numba.CL4_NIScores.ns_const"><code class="docutils literal notranslate"><span class="pre">CL4_NIScores.ns_const</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.statistics.non_interval_scores_numba.CL4_NIScores.ns_logistic"><code class="docutils literal notranslate"><span class="pre">CL4_NIScores.ns_logistic()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.statistics.non_interval_scores_numba.CLN_NIScores"><code class="docutils literal notranslate"><span class="pre">CLN_NIScores</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.statistics.non_interval_scores_numba.CLN_NIScores.agg_total"><code class="docutils literal notranslate"><span class="pre">CLN_NIScores.agg_total</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.statistics.non_interval_scores_numba.CLN_NIScores.ns_c_prime"><code class="docutils literal notranslate"><span class="pre">CLN_NIScores.ns_c_prime</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.statistics">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.utils.html">commutazzio/utils</a></li>
@@ -94,17 +111,77 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="commutazzio-statistics-aggregate-dimension-module">
-<h2>commutazzio.statistics.aggregate_dimension module<a class="headerlink" href="#commutazzio-statistics-aggregate-dimension-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.statistics.aggregate_dimension">
+<span id="commutazzio-statistics-aggregate-dimension-module"></span><h2>commutazzio.statistics.aggregate_dimension module<a class="headerlink" href="#module-commutazzio.statistics.aggregate_dimension" title="Link to this heading"></a></h2>
 </section>
-<section id="commutazzio-statistics-non-interval-scores-module">
-<h2>commutazzio.statistics.non_interval_scores module<a class="headerlink" href="#commutazzio-statistics-non-interval-scores-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.statistics.non_interval_scores">
+<span id="commutazzio-statistics-non-interval-scores-module"></span><h2>commutazzio.statistics.non_interval_scores module<a class="headerlink" href="#module-commutazzio.statistics.non_interval_scores" title="Link to this heading"></a></h2>
+<p>Finish the code according to the following latex code:</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.statistics.non_interval_scores.CL4_NIScores">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.statistics.non_interval_scores.</span></span><span class="sig-name descname"><span class="pre">CL4_NIScores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decomp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.statistics.non_interval_scores.CL4_NIScores" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to calculate the non-interval scores of
+from the total decomposition of a CL4 representation.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.statistics.non_interval_scores.CL4_NIScores.ns_const">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ns_const</span></span><a class="headerlink" href="#commutazzio.statistics.non_interval_scores.CL4_NIScores.ns_const" title="Link to this definition"></a></dt>
+<dd><p>Compute n-Score_c</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.statistics.non_interval_scores.CL4_NIScores.ns_logistic">
+<span class="sig-name descname"><span class="pre">ns_logistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.statistics.non_interval_scores.CL4_NIScores.ns_logistic" title="Link to this definition"></a></dt>
+<dd><p>Compute the non-interval score 
+using the logistic function to assign the weights.
+d0 for offset.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="commutazzio-statistics-non-interval-scores-numba-module">
-<h2>commutazzio.statistics.non_interval_scores_numba module<a class="headerlink" href="#commutazzio-statistics-non-interval-scores-numba-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.statistics.non_interval_scores_numba">
+<span id="commutazzio-statistics-non-interval-scores-numba-module"></span><h2>commutazzio.statistics.non_interval_scores_numba module<a class="headerlink" href="#module-commutazzio.statistics.non_interval_scores_numba" title="Link to this heading"></a></h2>
+<p>Finish the code according to the following latex code:</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.statistics.non_interval_scores_numba.CL4_NIScores">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.statistics.non_interval_scores_numba.</span></span><span class="sig-name descname"><span class="pre">CL4_NIScores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decomp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.statistics.non_interval_scores_numba.CL4_NIScores" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to calculate the non-interval scores of
+from the total decomposition of a CL4 representation.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.statistics.non_interval_scores_numba.CL4_NIScores.ns_const">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ns_const</span></span><a class="headerlink" href="#commutazzio.statistics.non_interval_scores_numba.CL4_NIScores.ns_const" title="Link to this definition"></a></dt>
+<dd><p>Compute n-Score_c</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.statistics.non_interval_scores_numba.CL4_NIScores.ns_logistic">
+<span class="sig-name descname"><span class="pre">ns_logistic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.statistics.non_interval_scores_numba.CL4_NIScores.ns_logistic" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.statistics.non_interval_scores_numba.CLN_NIScores">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.statistics.non_interval_scores_numba.</span></span><span class="sig-name descname"><span class="pre">CLN_NIScores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dots_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.statistics.non_interval_scores_numba.CLN_NIScores" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.statistics.non_interval_scores_numba.CLN_NIScores.agg_total">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">agg_total</span></span><a class="headerlink" href="#commutazzio.statistics.non_interval_scores_numba.CLN_NIScores.agg_total" title="Link to this definition"></a></dt>
+<dd><p>Compute the aggregate dimension of the representation</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.statistics.non_interval_scores_numba.CLN_NIScores.ns_c_prime">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ns_c_prime</span></span><a class="headerlink" href="#commutazzio.statistics.non_interval_scores_numba.CLN_NIScores.ns_c_prime" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.statistics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-commutazzio.statistics" title="Link to this heading"></a></h2>
 </section>
 </section>
 

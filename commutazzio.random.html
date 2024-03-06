@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>commutazzio.random package &mdash; commutazzio 0.5.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -54,9 +52,18 @@
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.plot.html">commutazzio/plot</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">commutazzio/random</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-random-db-conversion-utils-module">commutazzio.random.db_conversion_utils module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-random-point-cloud-model-module">commutazzio.random.point_cloud_model module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.random.db_conversion_utils">commutazzio.random.db_conversion_utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.random.db_conversion_utils.collect_data_from_db_files"><code class="docutils literal notranslate"><span class="pre">collect_data_from_db_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.random.db_conversion_utils.sqlite_to_df_cl4_pc"><code class="docutils literal notranslate"><span class="pre">sqlite_to_df_cl4_pc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.random.db_conversion_utils.sqlite_to_df_cln_pc"><code class="docutils literal notranslate"><span class="pre">sqlite_to_df_cln_pc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.random.point_cloud_model">commutazzio.random.point_cloud_model module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.random.point_cloud_model.RandomFiltrationPointCloudModel"><code class="docutils literal notranslate"><span class="pre">RandomFiltrationPointCloudModel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.random.point_cloud_model.join_and_unique"><code class="docutils literal notranslate"><span class="pre">join_and_unique()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.random">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.statistics.html">commutazzio/statistics</a></li>
@@ -93,14 +100,157 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="commutazzio-random-db-conversion-utils-module">
-<h2>commutazzio.random.db_conversion_utils module<a class="headerlink" href="#commutazzio-random-db-conversion-utils-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.random.db_conversion_utils">
+<span id="commutazzio-random-db-conversion-utils-module"></span><h2>commutazzio.random.db_conversion_utils module<a class="headerlink" href="#module-commutazzio.random.db_conversion_utils" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.random.db_conversion_utils.collect_data_from_db_files">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.random.db_conversion_utils.</span></span><span class="sig-name descname"><span class="pre">collect_data_from_db_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirnames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn_pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_2_df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.random.db_conversion_utils.collect_data_from_db_files" title="Link to this definition"></a></dt>
+<dd><p>Loop through all files in the directory of form “{fn_pattern}_*.db”. For each file, 
+read the database by applying the provided function (db_2_df), which returns a DataFrame.
+All DataFrames are then combined into one DataFrame.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>dirname (str): The directory containing the db files.
+fn_pattern (str): The filename pattern to match.
+db_2_df (function): Function to convert db data into DataFrame.</p>
+</dd>
+<dt>Returns:</dt><dd><p>DataFrame: The combined data from all matched db files.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.random.db_conversion_utils.sqlite_to_df_cl4_pc">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.random.db_conversion_utils.</span></span><span class="sig-name descname"><span class="pre">sqlite_to_df_cl4_pc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.random.db_conversion_utils.sqlite_to_df_cl4_pc" title="Link to this definition"></a></dt>
+<dd><p>Convert SQLite database records to a pandas DataFrame for CL(4) filtrations generated using the Point Cloud Model.</p>
+<p>This function iterates over each record in the provided database, extracting specific
+information and organizing them into a structured DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>db</strong><span class="classifier">Database connection object</span></dt><dd><p>The database connection from which to retrieve CL(4) filtration data.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><p>A DataFrame containing the structured data from the CL4 filtration records.
+Columns include space dimension, homology dimension, number of points, critical radii number,
+ladder length, dots, lines, number of points removal, and decompositions.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.random.db_conversion_utils.sqlite_to_df_cln_pc">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.random.db_conversion_utils.</span></span><span class="sig-name descname"><span class="pre">sqlite_to_df_cln_pc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.random.db_conversion_utils.sqlite_to_df_cln_pc" title="Link to this definition"></a></dt>
+<dd><p>Convert SQLite database records to a pandas DataFrame for CL(n) filtrations generated using the Point Cloud Model.</p>
+<p>Similar to the CL4 conversion, this function processes records from a database containing
+CL(n) filtrations. Each record’s information is extracted and compiled into a DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>db</strong><span class="classifier">Database connection object</span></dt><dd><p>The database connection from which to retrieve CL(n) filtration data.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>pandas.DataFrame</dt><dd><p>A DataFrame representing the CL(n) database records.
+Columns include space dimension, homology dimension, number of points, critical radii number,
+ladder length, dots, lines, and number of points removed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="commutazzio-random-point-cloud-model-module">
-<h2>commutazzio.random.point_cloud_model module<a class="headerlink" href="#commutazzio-random-point-cloud-model-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.random.point_cloud_model">
+<span id="commutazzio-random-point-cloud-model-module"></span><h2>commutazzio.random.point_cloud_model module<a class="headerlink" href="#module-commutazzio.random.point_cloud_model" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.random.point_cloud_model.RandomFiltrationPointCloudModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.random.point_cloud_model.</span></span><span class="sig-name descname"><span class="pre">RandomFiltrationPointCloudModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_pts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ladder_length_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ladder_length_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_multi_processing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_cores</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.random.point_cloud_model.RandomFiltrationPointCloudModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class to generate random commutative ladder filtrations using the Point Cloud Model, 
+aiming to facilitate the search for non-intervals.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>num_pts</strong><span class="classifier">int, optional</span></dt><dd><p>The number of points in the generated point cloud. Defaults to 50.</p>
+</dd>
+<dt><strong>space_dim</strong><span class="classifier">str or int, optional</span></dt><dd><p>The dimensionality of the space for the point cloud. If “random”, 
+chooses randomly between 2 and 3. Defaults to “random”.</p>
+</dd>
+<dt><strong>ladder_length_min</strong><span class="classifier">int, optional</span></dt><dd><p>The minimum ladder length for the filtration. Defaults to 4.</p>
+</dd>
+<dt><strong>ladder_length_max</strong><span class="classifier">int, optional</span></dt><dd><p>The maximum ladder length for the filtration. Defaults to 50.</p>
+</dd>
+<dt><strong>enable_multi_processing</strong><span class="classifier">bool, optional</span></dt><dd><p>Enables multiprocessing if True. Defaults to False.</p>
+</dd>
+<dt><strong>num_cores</strong><span class="classifier">str or int, optional</span></dt><dd><p>The number of cores to use for multiprocessing. “auto” for automatic 
+selection. Defaults to “auto”.</p>
+</dd>
+<dt><strong>verbose</strong><span class="classifier">bool, optional</span></dt><dd><p>Enables verbose output if True. Defaults to False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The class dynamically generates point clouds based on specified parameters, 
+computes filtrations for these clouds, and then analyzes them to produce 
+connected persistence diagrams. It uses the SimplexTree structure for 
+persistence computation and CLInvariants for decomposition analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>output</strong><span class="classifier">dict</span></dt><dd><p>A dictionary holding the generated CL(4) and CL(n) filtrations if any non-trivial 
+decomposition or non-empty connected persistence diagrams are found.</p>
+</dd>
+<dt><strong>cPD</strong><span class="classifier">pandas.DataFrame</span></dt><dd><p>The connected persistence diagram of the CL(n) filtration.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><strong>__init__(self, num_pts=50, space_dim=”random”, ladder_length_min=4,</strong></p></td>
+<td><p>ladder_length_max=50, enable_multi_processing=False, num_cores=”auto”, verbose=False) Initializes the RandomNISearch instance, generates point clouds, computes filtrations, and their connected persistence diagrams.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.random.point_cloud_model.join_and_unique">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.random.point_cloud_model.</span></span><span class="sig-name descname"><span class="pre">join_and_unique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arr2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.random.point_cloud_model.join_and_unique" title="Link to this definition"></a></dt>
+<dd><p>Join two arrays into a single, sorted array without duplicates, rounding to a specified precision.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>arr1</strong><span class="classifier">array_like</span></dt><dd><p>First input array.</p>
+</dd>
+<dt><strong>arr2</strong><span class="classifier">array_like</span></dt><dd><p>Second input array.</p>
+</dd>
+<dt><strong>precision</strong><span class="classifier">int, optional</span></dt><dd><p>The decimal precision to round to before removing duplicates. Defaults to 3.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>A sorted, unique array resulting from the concatenation of <cite>arr1</cite> and <cite>arr2</cite>, 
+with values rounded to the specified precision.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.random">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-commutazzio.random" title="Link to this heading"></a></h2>
 </section>
 </section>
 

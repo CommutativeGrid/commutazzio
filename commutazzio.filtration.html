@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>commutazzio.filtration package &mdash; commutazzio 0.5.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -50,12 +48,96 @@
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.compute.html">commutazzio/compute</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">commutazzio/filtration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-filtration-clfiltration-module">commutazzio.filtration.clfiltration module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-filtration-database-module">commutazzio.filtration.database module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-filtration-pointcloud-to-clfiltration-module">commutazzio.filtration.pointcloud_to_clfiltration module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-filtration-simplex-tree-module">commutazzio.filtration.simplex_tree module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-filtration-simplicial-complex-module">commutazzio.filtration.simplicial_complex module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.filtration.clfiltration">commutazzio.filtration.clfiltration module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration"><code class="docutils literal notranslate"><span class="pre">CLFiltration</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.Epsilon"><code class="docutils literal notranslate"><span class="pre">CLFiltration.Epsilon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.dimension"><code class="docutils literal notranslate"><span class="pre">CLFiltration.dimension()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.from_database_item"><code class="docutils literal notranslate"><span class="pre">CLFiltration.from_database_item()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.get_filtration_as_a_nested_list"><code class="docutils literal notranslate"><span class="pre">CLFiltration.get_filtration_as_a_nested_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.get_filtration_fv"><code class="docutils literal notranslate"><span class="pre">CLFiltration.get_filtration_fv()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.get_filtration_with_custom_filtration_values"><code class="docutils literal notranslate"><span class="pre">CLFiltration.get_filtration_with_custom_filtration_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.get_simplicial_complex"><code class="docutils literal notranslate"><span class="pre">CLFiltration.get_simplicial_complex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.h_params"><code class="docutils literal notranslate"><span class="pre">CLFiltration.h_params</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.incremental_filtration_creation"><code class="docutils literal notranslate"><span class="pre">CLFiltration.incremental_filtration_creation()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.info_key_append"><code class="docutils literal notranslate"><span class="pre">CLFiltration.info_key_append()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.info_update"><code class="docutils literal notranslate"><span class="pre">CLFiltration.info_update()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.num_simplices"><code class="docutils literal notranslate"><span class="pre">CLFiltration.num_simplices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.plot"><code class="docutils literal notranslate"><span class="pre">CLFiltration.plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.random_cech_format_output_file"><code class="docutils literal notranslate"><span class="pre">CLFiltration.random_cech_format_output_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.random_cech_format_output_list"><code class="docutils literal notranslate"><span class="pre">CLFiltration.random_cech_format_output_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.serialize"><code class="docutils literal notranslate"><span class="pre">CLFiltration.serialize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.set_info"><code class="docutils literal notranslate"><span class="pre">CLFiltration.set_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.set_new_length"><code class="docutils literal notranslate"><span class="pre">CLFiltration.set_new_length()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration.validation"><code class="docutils literal notranslate"><span class="pre">CLFiltration.validation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.filtration.clfiltration.ZigzagFiltration"><code class="docutils literal notranslate"><span class="pre">ZigzagFiltration</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.clfiltration.ZigzagFiltration.all_time_sequences"><code class="docutils literal notranslate"><span class="pre">ZigzagFiltration.all_time_sequences()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.filtration.database">commutazzio.filtration.database module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.filtration.database.CLFiltrationDB"><code class="docutils literal notranslate"><span class="pre">CLFiltrationDB</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.database.CLFiltrationDB.add_filtration"><code class="docutils literal notranslate"><span class="pre">CLFiltrationDB.add_filtration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.database.CLFiltrationDB.close"><code class="docutils literal notranslate"><span class="pre">CLFiltrationDB.close()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.database.CLFiltrationDB.create_table"><code class="docutils literal notranslate"><span class="pre">CLFiltrationDB.create_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.database.CLFiltrationDB.get_all"><code class="docutils literal notranslate"><span class="pre">CLFiltrationDB.get_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.database.CLFiltrationDB.get_filtration_by_id"><code class="docutils literal notranslate"><span class="pre">CLFiltrationDB.get_filtration_by_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.database.CLFiltrationDB.reset_table_name_for_legacy"><code class="docutils literal notranslate"><span class="pre">CLFiltrationDB.reset_table_name_for_legacy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.filtration.pointcloud_to_clfiltration">commutazzio.filtration.pointcloud_to_clfiltration module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.filtration.pointcloud_to_clfiltration.pointCloud2Filtration"><code class="docutils literal notranslate"><span class="pre">pointCloud2Filtration()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.filtration.pointcloud_to_clfiltration.points_to_clfiltration"><code class="docutils literal notranslate"><span class="pre">points_to_clfiltration()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.filtration.pointcloud_to_clfiltration.random_vertical_removal_points_only"><code class="docutils literal notranslate"><span class="pre">random_vertical_removal_points_only()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.filtration.simplex_tree">commutazzio.filtration.simplex_tree module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree"><code class="docutils literal notranslate"><span class="pre">SimplexTree</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.Epsilon"><code class="docutils literal notranslate"><span class="pre">SimplexTree.Epsilon</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.critical_radii"><code class="docutils literal notranslate"><span class="pre">SimplexTree.critical_radii()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.filtration_values"><code class="docutils literal notranslate"><span class="pre">SimplexTree.filtration_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.from_point_cloud"><code class="docutils literal notranslate"><span class="pre">SimplexTree.from_point_cloud()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.from_random_point_cloud"><code class="docutils literal notranslate"><span class="pre">SimplexTree.from_random_point_cloud()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.insert"><code class="docutils literal notranslate"><span class="pre">SimplexTree.insert()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.maximum_simplicial_complex"><code class="docutils literal notranslate"><span class="pre">SimplexTree.maximum_simplicial_complex</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.ordered_simplices"><code class="docutils literal notranslate"><span class="pre">SimplexTree.ordered_simplices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.prune_above_dimension"><code class="docutils literal notranslate"><span class="pre">SimplexTree.prune_above_dimension()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.prune_above_filtration"><code class="docutils literal notranslate"><span class="pre">SimplexTree.prune_above_filtration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.to_custom_filtration_values"><code class="docutils literal notranslate"><span class="pre">SimplexTree.to_custom_filtration_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.to_ordinal_number_indexing"><code class="docutils literal notranslate"><span class="pre">SimplexTree.to_ordinal_number_indexing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.truncation"><code class="docutils literal notranslate"><span class="pre">SimplexTree.truncation()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.filtration.simplicial_complex">commutazzio.filtration.simplicial_complex module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.add"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.deleteOne"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.deleteOne()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.delete_simplices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.delete_simplices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.dimension"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.dimension()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.dionysus_form"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.dionysus_form()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.from_simplices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.from_simplices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.get_faces"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.get_faces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.info_node"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.info_node()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.is_subcomplex_of"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.is_subcomplex_of()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.issimplicialComplex"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.issimplicialComplex()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.issuperset"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.issuperset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.maximum_simplices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.maximum_simplices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.random_delete_vertices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.random_delete_vertices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.sc"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.sc</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.simplexify"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.simplexify()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.simplices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.simplices</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.vertices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.vertices()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.filtration">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.non_intervals.html">commutazzio/non_intervals</a></li>
@@ -96,23 +178,563 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="commutazzio-filtration-clfiltration-module">
-<h2>commutazzio.filtration.clfiltration module<a class="headerlink" href="#commutazzio-filtration-clfiltration-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.filtration.clfiltration">
+<span id="commutazzio-filtration-clfiltration-module"></span><h2>commutazzio.filtration.clfiltration module<a class="headerlink" href="#module-commutazzio.filtration.clfiltration" title="Link to this heading"></a></h2>
+<p>Created on Thu Oct 28 22:01:47 2021</p>
+<p>&#64;author: kasumi</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.clfiltration.</span></span><span class="sig-name descname"><span class="pre">CLFiltration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper=a</span> <span class="pre">simplex</span> <span class="pre">tree</span> <span class="pre">with</span> <span class="pre">0</span> <span class="pre">simplices</span> <span class="pre">and</span> <span class="pre">0</span> <span class="pre">filtration</span> <span class="pre">values</span> <span class="pre">&#64;</span> <span class="pre">0x7f32cba949f0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower=a</span> <span class="pre">simplex</span> <span class="pre">tree</span> <span class="pre">with</span> <span class="pre">0</span> <span class="pre">simplices</span> <span class="pre">and</span> <span class="pre">0</span> <span class="pre">filtration</span> <span class="pre">values</span> <span class="pre">&#64;</span> <span class="pre">0x7f32bdcccd60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ladder_length=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_params=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info={}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_validation=True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.Epsilon">
+<span class="sig-name descname"><span class="pre">Epsilon</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-10</span></em><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.Epsilon" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.dimension">
+<span class="sig-name descname"><span class="pre">dimension</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.dimension" title="Link to this definition"></a></dt>
+<dd><p>return both dimensions  of the final simplicial complexes</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.from_database_item">
+<span class="sig-name descname"><span class="pre">from_database_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.from_database_item" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.get_filtration_as_a_nested_list">
+<span class="sig-name descname"><span class="pre">get_filtration_as_a_nested_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.get_filtration_as_a_nested_list" title="Link to this definition"></a></dt>
+<dd><p>return the filtration as a nested list</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.get_filtration_fv">
+<span class="sig-name descname"><span class="pre">get_filtration_fv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.get_filtration_fv" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.get_filtration_with_custom_filtration_values">
+<span class="sig-name descname"><span class="pre">get_filtration_with_custom_filtration_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.get_filtration_with_custom_filtration_values" title="Link to this definition"></a></dt>
+<dd><p>return the filtration with original filtration values by layer</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.get_simplicial_complex">
+<span class="sig-name descname"><span class="pre">get_simplicial_complex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.get_simplicial_complex" title="Link to this definition"></a></dt>
+<dd><p>return the simplicial complex of the given coordinate (x,y)
+x: an ordinal number, 1,2,…,ladder_length</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.h_params">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">h_params</span></span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.h_params" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.incremental_filtration_creation">
+<span class="sig-name descname"><span class="pre">incremental_filtration_creation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">increments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.incremental_filtration_creation" title="Link to this definition"></a></dt>
+<dd><p>Create the filtration by adding simplices one by one.
+increments: a list of lists of simplices,
+can be the output of get_filtration_as_a_nested_list()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.info_key_append">
+<span class="sig-name descname"><span class="pre">info_key_append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.info_key_append" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.info_update">
+<span class="sig-name descname"><span class="pre">info_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kv_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.info_update" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.num_simplices">
+<span class="sig-name descname"><span class="pre">num_simplices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.num_simplices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.plot" title="Link to this definition"></a></dt>
+<dd><p>Visualise the filtration, using networkx
+draw a commutative ladder graph, with number of simplicial complexes on each node
+which looks like below
+<em>–</em>–<em>–</em>–<em>–</em>
+|  |  |  |  |  | 
+<em>–</em>–<em>–</em>–<em>–</em></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.random_cech_format_output_file">
+<span class="sig-name descname"><span class="pre">random_cech_format_output_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.random_cech_format_output_file" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.random_cech_format_output_list">
+<span class="sig-name descname"><span class="pre">random_cech_format_output_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.random_cech_format_output_list" title="Link to this definition"></a></dt>
+<dd><p>print the filtration in the format as described in 
+<a class="reference external" href="https://bitbucket.org/tda-homcloud/random-cech/src/master/">https://bitbucket.org/tda-homcloud/random-cech/src/master/</a>
+# dim birth n m v_0 .. v_dim (CECH_RANDOM)
+* 1番目のカラム: 単体の次元 
+* 2番目のカラム: その単体の発生時刻(h_params) 
+* 3番目のカラム: n 0 or 1, corresponding to 1(lower) or 2(upper) here
+* 4番目のカラム: 0…ladder_length-1, corresponding to the index of the filtration value subtracted by 1
+* 5番目以降のカラム: 頂点のインデックス，(dim + 1)個
+ordered by birth time (h_params)
+———————————–
+add the lines from left to right, lower then upper.
+for each fixed m,
+if a simplex is seen in the lower row first,
+do not need to add it from the upper row</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.serialize" title="Link to this definition"></a></dt>
+<dd><p>Convert the filtration to a dictionary.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.set_info">
+<span class="sig-name descname"><span class="pre">set_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.set_info" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.set_new_length">
+<span class="sig-name descname"><span class="pre">set_new_length</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">new_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_h_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.set_new_length" title="Link to this definition"></a></dt>
+<dd><p>This method allows the user to refactor the length of the ladder.
+new_length shall be strictly shorter than the current length.
+new_h_params: a list of length new_length consisting of integers between 1 and the current ladder length.
+new_h_params will be set to [1,2,3,…,new_length] if not given.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.validation">
+<span class="sig-name descname"><span class="pre">validation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration.validation" title="Link to this definition"></a></dt>
+<dd><p>Verify that the lower row is contained in the upper row for each filtration value</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.ZigzagFiltration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.clfiltration.</span></span><span class="sig-name descname"><span class="pre">ZigzagFiltration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.ZigzagFiltration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.ZigzagFiltration.all_time_sequences">
+<span class="sig-name descname"><span class="pre">all_time_sequences</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.ZigzagFiltration.all_time_sequences" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="commutazzio-filtration-database-module">
-<h2>commutazzio.filtration.database module<a class="headerlink" href="#commutazzio-filtration-database-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.filtration.database">
+<span id="commutazzio-filtration-database-module"></span><h2>commutazzio.filtration.database module<a class="headerlink" href="#module-commutazzio.filtration.database" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.filtration.database.CLFiltrationDB">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.database.</span></span><span class="sig-name descname"><span class="pre">CLFiltrationDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'clf_database.db'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'filtration'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_new_db</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.database.CLFiltrationDB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for creating and managing a SQLite database to store and retrieve 
+instances of CLFiltration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>filename</strong><span class="classifier">str, optional</span></dt><dd><p>The name of the database file to connect to. If ‘:memory:’, creates a 
+temporary in-memory database. Defaults to ‘clf_database.db’.</p>
+</dd>
+<dt><strong>table_name</strong><span class="classifier">str, optional</span></dt><dd><p>The name of the table within the database to create or use. 
+Defaults to ‘filtration’.</p>
+</dd>
+<dt><strong>create_new_db</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, creates a new database file if one does not exist. Raises an 
+exception if the file already exists. Defaults to False.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>Exception</dt><dd><p>If <cite>create_new_db</cite> is True and the database file already exists, or if
+the database file does not exist when <cite>create_new_db</cite> is False.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Attributes<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>conn</strong><span class="classifier">sqlite3.Connection</span></dt><dd><p>The connection object to the database.</p>
+</dd>
+<dt><strong>filename</strong><span class="classifier">str</span></dt><dd><p>The name of the database file.</p>
+</dd>
+<dt><strong>table_name</strong><span class="classifier">str</span></dt><dd><p>The name of the table used for storing filtration data.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.database.CLFiltrationDB.add_filtration">
+<span class="sig-name descname"><span class="pre">add_filtration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clfiltration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#commutazzio.filtration.clfiltration.CLFiltration" title="commutazzio.filtration.clfiltration.CLFiltration"><span class="pre">CLFiltration</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">store_minimal_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.database.CLFiltrationDB.add_filtration" title="Link to this definition"></a></dt>
+<dd><p>Adds a CLFiltration instance to the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>clfiltration</strong><span class="classifier">CLFiltration</span></dt><dd><p>The CLFiltration instance to store in the database.</p>
+</dd>
+<dt><strong>store_minimal_data</strong><span class="classifier">bool, optional</span></dt><dd><p>If True, only stores the ladder_length and info of the CLFiltration 
+instance. Defaults to False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.database.CLFiltrationDB.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.database.CLFiltrationDB.close" title="Link to this definition"></a></dt>
+<dd><p>Closes the database connection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.database.CLFiltrationDB.create_table">
+<span class="sig-name descname"><span class="pre">create_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.database.CLFiltrationDB.create_table" title="Link to this definition"></a></dt>
+<dd><p>Creates a table in the database with a specified name if it doesn’t exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>table_name</strong><span class="classifier">str</span></dt><dd><p>The name of the table to be created.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The table will have columns for id (primary key), ladder_length, upper, 
+lower, horizontal_parameters, and info (stored in JSON format).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.database.CLFiltrationDB.get_all">
+<span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.database.CLFiltrationDB.get_all" title="Link to this definition"></a></dt>
+<dd><p>Retrieves all CLFiltration instances from the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt>generator of CLFiltration</dt><dd><p>A generator that yields CLFiltration instances for each record in 
+the database table.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.database.CLFiltrationDB.get_filtration_by_id">
+<span class="sig-name descname"><span class="pre">get_filtration_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.database.CLFiltrationDB.get_filtration_by_id" title="Link to this definition"></a></dt>
+<dd><p>Retrieves a CLFiltration instance from the database by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>id</strong><span class="classifier">int</span></dt><dd><p>The ID of the CLFiltration instance to retrieve.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>CLFiltration or None</dt><dd><p>The CLFiltration instance corresponding to the given ID, or None if 
+no instance is found.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.database.CLFiltrationDB.reset_table_name_for_legacy">
+<span class="sig-name descname"><span class="pre">reset_table_name_for_legacy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.database.CLFiltrationDB.reset_table_name_for_legacy" title="Link to this definition"></a></dt>
+<dd><p>Resets the table name to the first table found in the database.</p>
+<p>This method is intended for legacy support and updates the instance’s
+table name attribute to match the first table name found in the
+database schema.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="commutazzio-filtration-pointcloud-to-clfiltration-module">
-<h2>commutazzio.filtration.pointcloud_to_clfiltration module<a class="headerlink" href="#commutazzio-filtration-pointcloud-to-clfiltration-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.filtration.pointcloud_to_clfiltration">
+<span id="commutazzio-filtration-pointcloud-to-clfiltration-module"></span><h2>commutazzio.filtration.pointcloud_to_clfiltration module<a class="headerlink" href="#module-commutazzio.filtration.pointcloud_to_clfiltration" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.filtration.pointcloud_to_clfiltration.pointCloud2Filtration">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.pointcloud_to_clfiltration.</span></span><span class="sig-name descname"><span class="pre">pointCloud2Filtration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.pointcloud_to_clfiltration.pointCloud2Filtration" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.filtration.pointcloud_to_clfiltration.points_to_clfiltration">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.pointcloud_to_clfiltration.</span></span><span class="sig-name descname"><span class="pre">points_to_clfiltration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertical_removal_input</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_simplex_dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cech'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.pointcloud_to_clfiltration.points_to_clfiltration" title="Link to this definition"></a></dt>
+<dd><p>Convert a point cloud to a commutative ladder filtration.
+pts: a numpy array of shape (num_pts, dim)
+vertical_removal_input: a list of list of simplices to be removed, notice that it is the name of the simplices, not the indices of the simplices
+radii: a list of radii
+max_simplex_dim: the maximum simplex dimension to be considered
+method: ‘cech’ or ‘rips’ or ‘alpha’</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.filtration.pointcloud_to_clfiltration.random_vertical_removal_points_only">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.pointcloud_to_clfiltration.</span></span><span class="sig-name descname"><span class="pre">random_vertical_removal_points_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_pts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ladder_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_removal_per_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.pointcloud_to_clfiltration.random_vertical_removal_points_only" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="commutazzio-filtration-simplex-tree-module">
-<h2>commutazzio.filtration.simplex_tree module<a class="headerlink" href="#commutazzio-filtration-simplex-tree-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.filtration.simplex_tree">
+<span id="commutazzio-filtration-simplex-tree-module"></span><h2>commutazzio.filtration.simplex_tree module<a class="headerlink" href="#module-commutazzio.filtration.simplex_tree" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.simplex_tree.</span></span><span class="sig-name descname"><span class="pre">SimplexTree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SimplexTree</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.Epsilon">
+<span class="sig-name descname"><span class="pre">Epsilon</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1e-10</span></em><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.Epsilon" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.critical_radii">
+<span class="sig-name descname"><span class="pre">critical_radii</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dimension</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.critical_radii" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.filtration_values">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">filtration_values</span></span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.filtration_values" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.from_point_cloud">
+<span class="sig-name descname"><span class="pre">from_point_cloud</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pt_cloud</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cech'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sc_dim_ceil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.from_point_cloud" title="Link to this definition"></a></dt>
+<dd><p>Create a simplex tree from a point cloud.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.from_random_point_cloud">
+<span class="sig-name descname"><span class="pre">from_random_point_cloud</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_pts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space_dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sc_dim_ceil</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alpha'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.from_random_point_cloud" title="Link to this definition"></a></dt>
+<dd><p>Generate a simplicial complex out of a random point cloud,
+using the given method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>nb_pts</strong></dt><dd><p>Number of points in the point cloud. The default is 100.</p>
+</dd>
+<dt><strong>space_dim</strong><span class="classifier">TYPE, optional</span></dt><dd><p>Dimension of the point cloud. The default is 3.</p>
+</dd>
+<dt><strong>sc_dim_ceil</strong><span class="classifier">TYPE, optiona, the default is pc_dim - 1</span></dt><dd></dd>
+<dt><strong>method</strong><span class="classifier">TYPE, optional</span></dt><dd><p>Method to be used. Supported methods are ‘rips’, ‘alpha’, ‘weak-witness’ and ‘strong-witness’.
+Using gudhi library to generate the array of simplices.
+<a class="reference external" href="https://geometrica.saclay.inria.fr/team/Fred.Chazal/slides/Intro_TDA_with_GUDHI_Part_1.html">https://geometrica.saclay.inria.fr/team/Fred.Chazal/slides/Intro_TDA_with_GUDHI_Part_1.html</a></p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt>A simplicial complex represented by a list of tuples.</dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.insert">
+<span class="sig-name descname"><span class="pre">insert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filtration_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.insert" title="Link to this definition"></a></dt>
+<dd><p>This function inserts the given N-simplex and its subfaces with the
+given filtration value (default value is ‘0.0’). If some of those
+simplices are already present with a higher filtration value, their
+filtration value is lowered.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>simplex</strong> (<em>list</em><em> of </em><em>int</em>) – The N-simplex to insert, represented by a list of
+vertex.</p></li>
+<li><p><strong>filtration</strong> (<em>float</em>) – The filtration value of the simplex.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if the simplex was not yet in the complex, false
+otherwise (whatever its original filtration value).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.maximum_simplicial_complex">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">maximum_simplicial_complex</span></span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.maximum_simplicial_complex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.ordered_simplices">
+<span class="sig-name descname"><span class="pre">ordered_simplices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.ordered_simplices" title="Link to this definition"></a></dt>
+<dd><p>Generator that yields simplices ordered by filtration value, dimension, and then dictionary order.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.prune_above_dimension">
+<span class="sig-name descname"><span class="pre">prune_above_dimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dimension</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.prune_above_dimension" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.prune_above_filtration">
+<span class="sig-name descname"><span class="pre">prune_above_filtration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filtration_value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.prune_above_filtration" title="Link to this definition"></a></dt>
+<dd><p>Prune above filtration value given as parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filtration</strong> (<em>float</em>) – Maximum threshold value.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The filtration modification information.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that the dimension of the simplicial complex may be lower
+after calling
+<a class="reference internal" href="#commutazzio.filtration.simplex_tree.SimplexTree.prune_above_filtration" title="commutazzio.filtration.simplex_tree.SimplexTree.prune_above_filtration"><code class="xref py py-func docutils literal notranslate"><span class="pre">prune_above_filtration()</span></code></a>
+than it was before. However,
+<code class="xref py py-func docutils literal notranslate"><span class="pre">upper_bound_dimension()</span></code>
+will return the old value, which remains a
+valid upper bound. If you care, you can call
+<code class="xref py py-func docutils literal notranslate"><span class="pre">dimension()</span></code>
+method to recompute the exact dimension.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.to_custom_filtration_values">
+<span class="sig-name descname"><span class="pre">to_custom_filtration_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fvs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.to_custom_filtration_values" title="Link to this definition"></a></dt>
+<dd><p>Rescale a simplex tree with ordinal number filtration values [1,2,…,n]
+to user input filtration values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.to_ordinal_number_indexing">
+<span class="sig-name descname"><span class="pre">to_ordinal_number_indexing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fvs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.to_ordinal_number_indexing" title="Link to this definition"></a></dt>
+<dd><p>Rescale the filtration values to ordinal numbers, starting from 1.
+Based on the input fv=[t_1,t_2,…,t_n]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplex_tree.SimplexTree.truncation">
+<span class="sig-name descname"><span class="pre">truncation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ceiling</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplex_tree.SimplexTree.truncation" title="Link to this definition"></a></dt>
+<dd><p>Return a simplicial complex of simplices with filtration values &lt;= ceiling.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="commutazzio-filtration-simplicial-complex-module">
-<h2>commutazzio.filtration.simplicial_complex module<a class="headerlink" href="#commutazzio-filtration-simplicial-complex-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.filtration.simplicial_complex">
+<span id="commutazzio-filtration-simplicial-complex-module"></span><h2>commutazzio.filtration.simplicial_complex module<a class="headerlink" href="#module-commutazzio.filtration.simplicial_complex" title="Link to this heading"></a></h2>
+<p>Created on Wed Oct 27 16:21:47 2021</p>
+<p>&#64;author: kasumi</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.simplicial_complex.</span></span><span class="sig-name descname"><span class="pre">SimplicialComplex</span></span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">SimplexTree</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.add" title="Link to this definition"></a></dt>
+<dd><p>Add a simplex, together with all of its faces</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.deleteOne">
+<span class="sig-name descname"><span class="pre">deleteOne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.deleteOne" title="Link to this definition"></a></dt>
+<dd><p>Delete one simplex, together with its superset</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.delete_simplices">
+<span class="sig-name descname"><span class="pre">delete_simplices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.delete_simplices" title="Link to this definition"></a></dt>
+<dd><p>Delete vertices</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.dimension">
+<span class="sig-name descname"><span class="pre">dimension</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.dimension" title="Link to this definition"></a></dt>
+<dd><p>Return the dimension of the simplicial complex</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.dionysus_form">
+<span class="sig-name descname"><span class="pre">dionysus_form</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.dionysus_form" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.from_simplices">
+<span class="sig-name descname"><span class="pre">from_simplices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplices</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.from_simplices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.get_faces">
+<span class="sig-name descname"><span class="pre">get_faces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.get_faces" title="Link to this definition"></a></dt>
+<dd><p>Generate all faces of a given simplex of a specific dimension.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.info_node">
+<span class="sig-name descname"><span class="pre">info_node</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.info_node" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.is_subcomplex_of">
+<span class="sig-name descname"><span class="pre">is_subcomplex_of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_sc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.is_subcomplex_of" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.issimplicialComplex">
+<span class="sig-name descname"><span class="pre">issimplicialComplex</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.issimplicialComplex" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.issuperset">
+<span class="sig-name descname"><span class="pre">issuperset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">external_sc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.issuperset" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.maximum_simplices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">maximum_simplices</span></span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.maximum_simplices" title="Link to this definition"></a></dt>
+<dd><p>Returns a list of maximum simplices in the simplicial complex.
+A maximum simplex is not a proper face of any other simplex in the complex.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.random_delete_vertices">
+<span class="sig-name descname"><span class="pre">random_delete_vertices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.random_delete_vertices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.sc">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sc</span></span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.sc" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.simplexify">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">simplexify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplex</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.simplexify" title="Link to this definition"></a></dt>
+<dd><p>Normalize the representation of a simplex</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.simplices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">simplices</span></span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.simplices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.vertices">
+<span class="sig-name descname"><span class="pre">vertices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.vertices" title="Link to this definition"></a></dt>
+<dd><p>Returns the list of 0-simplices (vertices).</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.filtration">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-commutazzio.filtration" title="Link to this heading"></a></h2>
 </section>
 </section>
 

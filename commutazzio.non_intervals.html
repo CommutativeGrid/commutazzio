@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>commutazzio.non_intervals package &mdash; commutazzio 0.5.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -51,8 +49,26 @@
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.filtration.html">commutazzio/filtration</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">commutazzio/non_intervals</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-non-intervals-reader-module">commutazzio.non_intervals.reader module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.non_intervals.reader">commutazzio.non_intervals.reader module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.non_intervals.reader.NonIntervalCL4"><code class="docutils literal notranslate"><span class="pre">NonIntervalCL4</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.NonIntervalCL4.df_repr"><code class="docutils literal notranslate"><span class="pre">NonIntervalCL4.df_repr</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.NonIntervalCL4.lower"><code class="docutils literal notranslate"><span class="pre">NonIntervalCL4.lower</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.NonIntervalCL4.upper"><code class="docutils literal notranslate"><span class="pre">NonIntervalCL4.upper</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.NonIntervalCL4.visualization"><code class="docutils literal notranslate"><span class="pre">NonIntervalCL4.visualization()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.NonIntervalCL4.write2file"><code class="docutils literal notranslate"><span class="pre">NonIntervalCL4.write2file()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4"><code class="docutils literal notranslate"><span class="pre">StatisticsNonIntervalsCL4</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.add_from_line"><code class="docutils literal notranslate"><span class="pre">StatisticsNonIntervalsCL4.add_from_line()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.bar_plot_plotly"><code class="docutils literal notranslate"><span class="pre">StatisticsNonIntervalsCL4.bar_plot_plotly()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.barchart"><code class="docutils literal notranslate"><span class="pre">StatisticsNonIntervalsCL4.barchart()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.data2df"><code class="docutils literal notranslate"><span class="pre">StatisticsNonIntervalsCL4.data2df()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.dim_counts"><code class="docutils literal notranslate"><span class="pre">StatisticsNonIntervalsCL4.dim_counts()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.non_intervals">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.persistence.html">commutazzio/persistence</a></li>
@@ -92,11 +108,75 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="commutazzio-non-intervals-reader-module">
-<h2>commutazzio.non_intervals.reader module<a class="headerlink" href="#commutazzio-non-intervals-reader-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.non_intervals.reader">
+<span id="commutazzio-non-intervals-reader-module"></span><h2>commutazzio.non_intervals.reader module<a class="headerlink" href="#module-commutazzio.non_intervals.reader" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.NonIntervalCL4">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.non_intervals.reader.</span></span><span class="sig-name descname"><span class="pre">NonIntervalCL4</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.non_intervals.reader.NonIntervalCL4" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Store info of a point cloud data that has a non-interval</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.NonIntervalCL4.df_repr">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">df_repr</span></span><a class="headerlink" href="#commutazzio.non_intervals.reader.NonIntervalCL4.df_repr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.NonIntervalCL4.lower">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lower</span></span><a class="headerlink" href="#commutazzio.non_intervals.reader.NonIntervalCL4.lower" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.NonIntervalCL4.upper">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">upper</span></span><a class="headerlink" href="#commutazzio.non_intervals.reader.NonIntervalCL4.upper" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.NonIntervalCL4.visualization">
+<span class="sig-name descname"><span class="pre">visualization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sub_width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sub_height</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.non_intervals.reader.NonIntervalCL4.visualization" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.NonIntervalCL4.write2file">
+<span class="sig-name descname"><span class="pre">write2file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'homcloud'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.non_intervals.reader.NonIntervalCL4.write2file" title="Link to this definition"></a></dt>
+<dd><p>Write the points in a form that can be read by homcloud</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.non_intervals.reader.</span></span><span class="sig-name descname"><span class="pre">StatisticsNonIntervalsCL4</span></span><a class="headerlink" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.add_from_line">
+<span class="sig-name descname"><span class="pre">add_from_line</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.add_from_line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.bar_plot_plotly">
+<span class="sig-name descname"><span class="pre">bar_plot_plotly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xaxis_title</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.bar_plot_plotly" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.barchart">
+<span class="sig-name descname"><span class="pre">barchart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'non-intervals'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.barchart" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.data2df">
+<span class="sig-name descname"><span class="pre">data2df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.data2df" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.dim_counts">
+<span class="sig-name descname"><span class="pre">dim_counts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.non_intervals.reader.StatisticsNonIntervalsCL4.dim_counts" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.non_intervals">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-commutazzio.non_intervals" title="Link to this heading"></a></h2>
 </section>
 </section>
 

@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>commutazzio.persistence package &mdash; commutazzio 0.5.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -52,10 +50,40 @@
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.non_intervals.html">commutazzio/non_intervals</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">commutazzio/persistence</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-persistence-pd-animation-module">commutazzio.persistence.PD_animation module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-persistence-format-conversion-module">commutazzio.persistence.format_conversion module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#commutazzio-persistence-pd-points3d-module">commutazzio.persistence.pd_points3d module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.persistence.PD_animation">commutazzio.persistence.PD_animation module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.persistence.PD_animation.PD_animation"><code class="docutils literal notranslate"><span class="pre">PD_animation()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.persistence.format_conversion">commutazzio.persistence.format_conversion module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.persistence.format_conversion.diagrams_d2g"><code class="docutils literal notranslate"><span class="pre">diagrams_d2g()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.persistence.format_conversion.filtration_g2d"><code class="docutils literal notranslate"><span class="pre">filtration_g2d()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.persistence.pd_points3d">commutazzio.persistence.pd_points3d module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D"><code class="docutils literal notranslate"><span class="pre">PD_Points3D</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.diagram_multiplicity_count"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.diagram_multiplicity_count()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.filtration"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.filtration()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.info"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.isclose"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.isclose()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.omnifield_persistence_primes"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.omnifield_persistence_primes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.pd_formatter"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.pd_formatter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.plot_0D"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.plot_0D()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.plot_1D"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.plot_1D()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.plot_2D"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.plot_2D()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.PD_Points3D.plot_all"><code class="docutils literal notranslate"><span class="pre">PD_Points3D.plot_all()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.pd_multiplicity"><code class="docutils literal notranslate"><span class="pre">pd_multiplicity</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.pd_multiplicity.birth"><code class="docutils literal notranslate"><span class="pre">pd_multiplicity.birth</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.pd_multiplicity.count"><code class="docutils literal notranslate"><span class="pre">pd_multiplicity.count</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.pd_multiplicity.death"><code class="docutils literal notranslate"><span class="pre">pd_multiplicity.death</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.pd_multiplicity.dim"><code class="docutils literal notranslate"><span class="pre">pd_multiplicity.dim</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.persistence.pd_points3d.wasserstein_distance"><code class="docutils literal notranslate"><span class="pre">wasserstein_distance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.persistence">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.plot.html">commutazzio/plot</a></li>
@@ -94,17 +122,138 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="commutazzio-persistence-pd-animation-module">
-<h2>commutazzio.persistence.PD_animation module<a class="headerlink" href="#commutazzio-persistence-pd-animation-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.persistence.PD_animation">
+<span id="commutazzio-persistence-pd-animation-module"></span><h2>commutazzio.persistence.PD_animation module<a class="headerlink" href="#module-commutazzio.persistence.PD_animation" title="Link to this heading"></a></h2>
+<p>Created on Wed Jan 19 11:51:00 2022</p>
+<p>&#64;author: kasumi</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.persistence.PD_animation.PD_animation">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.persistence.PD_animation.</span></span><span class="sig-name descname"><span class="pre">PD_animation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.PD_animation.PD_animation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="commutazzio-persistence-format-conversion-module">
-<h2>commutazzio.persistence.format_conversion module<a class="headerlink" href="#commutazzio-persistence-format-conversion-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.persistence.format_conversion">
+<span id="commutazzio-persistence-format-conversion-module"></span><h2>commutazzio.persistence.format_conversion module<a class="headerlink" href="#module-commutazzio.persistence.format_conversion" title="Link to this heading"></a></h2>
+<p>Created on Wed Dec  8 12:31:20 2021</p>
+<p>&#64;author: kasumi</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.persistence.format_conversion.diagrams_d2g">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.persistence.format_conversion.</span></span><span class="sig-name descname"><span class="pre">diagrams_d2g</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagrams</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list[tuple[int,</span> <span class="pre">(&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;)]]</span></span></span><a class="headerlink" href="#commutazzio.persistence.format_conversion.diagrams_d2g" title="Link to this definition"></a></dt>
+<dd><p>convert diagrams in dionysus to a diagram in gudhi</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.persistence.format_conversion.filtration_g2d">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.persistence.format_conversion.</span></span><span class="sig-name descname"><span class="pre">filtration_g2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplex_tree</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.format_conversion.filtration_g2d" title="Link to this definition"></a></dt>
+<dd><p>convert a filtration in a simplex tree (format in gudhi) to a filtration in dionysus
+(generator object to dionysus._dionysus.Filtration)</p>
+</dd></dl>
+
 </section>
-<section id="commutazzio-persistence-pd-points3d-module">
-<h2>commutazzio.persistence.pd_points3d module<a class="headerlink" href="#commutazzio-persistence-pd-points3d-module" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.persistence.pd_points3d">
+<span id="commutazzio-persistence-pd-points3d-module"></span><h2>commutazzio.persistence.pd_points3d module<a class="headerlink" href="#module-commutazzio.persistence.pd_points3d" title="Link to this heading"></a></h2>
+<p>Created on Wed Dec  1 14:46:51 2021</p>
+<p>&#64;author: kasumi</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.persistence.pd_points3d.</span></span><span class="sig-name descname"><span class="pre">PD_Points3D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points3d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'alpha'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_squared</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">characteristic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>collection of persistence diagrams of the input three-dimensional data</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.diagram_multiplicity_count">
+<span class="sig-name descname"><span class="pre">diagram_multiplicity_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">diagrams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gudhi'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.diagram_multiplicity_count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.filtration">
+<span class="sig-name descname"><span class="pre">filtration</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.filtration" title="Link to this definition"></a></dt>
+<dd><p>get the filtration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.info">
+<span class="sig-name descname"><span class="pre">info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dimensions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prune</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.info" title="Link to this definition"></a></dt>
+<dd><p>return significant points in all the persistence diagrams
+epsilon is the threshold of lifetime</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.isclose">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">isclose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.isclose" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.omnifield_persistence_primes">
+<span class="sig-name descname"><span class="pre">omnifield_persistence_primes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.omnifield_persistence_primes" title="Link to this definition"></a></dt>
+<dd><p>return outstanding primes
+<a class="reference external" href="https://mrzv.org/software/dionysus2/tutorial/omni-field.html">https://mrzv.org/software/dionysus2/tutorial/omni-field.html</a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.pd_formatter">
+<span class="sig-name descname"><span class="pre">pd_formatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'distance'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.pd_formatter" title="Link to this definition"></a></dt>
+<dd><p>Output dots of a persistence diagram used for computing
+Wasserstein distance</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.plot_0D">
+<span class="sig-name descname"><span class="pre">plot_0D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotrange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">3)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.plot_0D" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.plot_1D">
+<span class="sig-name descname"><span class="pre">plot_1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotrange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">3)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.plot_1D" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.plot_2D">
+<span class="sig-name descname"><span class="pre">plot_2D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduced</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plotrange</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">3)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.plot_2D" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.PD_Points3D.plot_all">
+<span class="sig-name descname"><span class="pre">plot_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.PD_Points3D.plot_all" title="Link to this definition"></a></dt>
+<dd><p>Plot the persistence diagram using giotto-tda</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.pd_multiplicity">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.persistence.pd_points3d.</span></span><span class="sig-name descname"><span class="pre">pd_multiplicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">birth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">death</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.pd_multiplicity" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.pd_multiplicity.birth">
+<span class="sig-name descname"><span class="pre">birth</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#commutazzio.persistence.pd_points3d.pd_multiplicity.birth" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.pd_multiplicity.count">
+<span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#commutazzio.persistence.pd_points3d.pd_multiplicity.count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.pd_multiplicity.death">
+<span class="sig-name descname"><span class="pre">death</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#commutazzio.persistence.pd_points3d.pd_multiplicity.death" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.pd_multiplicity.dim">
+<span class="sig-name descname"><span class="pre">dim</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#commutazzio.persistence.pd_points3d.pd_multiplicity.dim" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="commutazzio.persistence.pd_points3d.wasserstein_distance">
+<span class="sig-prename descclassname"><span class="pre">commutazzio.persistence.pd_points3d.</span></span><span class="sig-name descname"><span class="pre">wasserstein_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pd1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pd2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">internal_p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.persistence.pd_points3d.wasserstein_distance" title="Link to this definition"></a></dt>
+<dd><p>Calculates the wasserstein distance at the specified dimension between two PD_Points3D object.</p>
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-commutazzio.persistence">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-commutazzio.persistence" title="Link to this heading"></a></h2>
 </section>
 </section>
 

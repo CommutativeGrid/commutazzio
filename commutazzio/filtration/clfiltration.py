@@ -10,7 +10,6 @@ from warnings import warn
 from functools import cache
 import networkx as nx
 from ..utils import filepath_generator
-from random import sample
 from collections import defaultdict
 from orjson import dumps, OPT_SERIALIZE_NUMPY
 
@@ -105,15 +104,15 @@ class CLFiltration():
             raise ValueError("new_length must be strictly shorter than the current length")
         if new_h_params is None: 
             # will be a strictly increasing list of length new_length, picking values from 1,...,self.ladder_length
-            indices = sorted(sample(range(1,self.ladder_length+1),new_length))
+            indices = np.random.choice(range(1,self.ladder_length+1), new_length,replace=False)
         else:
-            for i in new_h_params:
-                # i has to be an integer, or 1.0
-                if not i.is_integer():
-                    raise ValueError("Each element in new_h_params must be an integer")
-                if not 1 <= i <= self.ladder_length:
-                    raise ValueError("Each element in new_h_params must be between 1 and the current ladder length")
-    
+            indices = new_h_params
+        for i in indices:
+            # i has to be an integer, or 1.0
+            if not isinstance(i,int):
+                raise ValueError("Each element in new_h_params must be an integer")
+            if not 1 <= i <= self.ladder_length:
+                raise ValueError("Each element in new_h_params must be between 1 and the current ladder length")
         if len(indices) != new_length:
             raise ValueError(f"indices must be a list of length {new_length}")
         if len(set(indices)) != new_length:

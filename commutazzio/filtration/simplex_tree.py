@@ -198,26 +198,6 @@ class SimplexTree(gudhi_SimplexTree):
             cech_complex = CechComplex(points=pt_cloud,max_radius=radius_max)
             simplex_tree = cech_complex.create_simplex_tree(max_dimension=sc_dim_ceil)
             simplex_tree.make_filtration_non_decreasing()
-        # elif method == 'weak-witness':
-        #     diameter = max(distance.cdist(pt_cloud,pt_cloud,'euclidean').flatten())
-        #     witnesses=pt_cloud
-        #     w_l_ratio=5
-        #     n_landmarks=int(len(pt_cloud)/w_l_ratio) # vertices consist of landmarks. A too low value may cause zero candidates available for being deleted.
-        #     landmarks=gd.pick_n_random_points(points=pt_cloud,nb_points=n_landmarks)
-        #     witness_complex = gd.EuclideanWitnessComplex(witnesses=witnesses, landmarks=landmarks)
-        #     max_alpha_square = diameter/50.0
-        #     simplex_tree = witness_complex.create_simplex_tree(max_alpha_square=max_alpha_square,limit_dimension=sc_dim_ceil)
-        #     simplex_tree.make_filtration_non_decreasing()
-        # elif method == 'strong-witness':
-        #     diameter = max(distance.cdist(pt_cloud,pt_cloud,'euclidean').flatten())
-        #     witnesses=pt_cloud
-        #     w_l_ratio=5
-        #     n_landmarks=int(len(pt_cloud)/w_l_ratio)
-        #     landmarks=gd.pick_n_random_points(points=pt_cloud,nb_points=n_landmarks)
-        #     witness_complex = gd.EuclideanStrongWitnessComplex(witnesses=witnesses, landmarks=landmarks)
-        #     max_alpha_square = diameter/50.0
-        #     simplex_tree = witness_complex.create_simplex_tree(max_alpha_square=max_alpha_square,limit_dimension=sc_dim_ceil)
-        #     simplex_tree.make_filtration_non_decreasing()
         else:
             raise NotImplementedError('Method not supported.')
         # reconstruct the simplex tree from the gudhi simplex tree.

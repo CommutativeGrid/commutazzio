@@ -114,7 +114,7 @@ class ChroAlphaCL4Viz():
         for i in deletion_list:
             labels[i]=1
         self.chro_alpha = chro.ChromaticAlphaComplex(points, labels)
-        self.lower_layer_points = points[[i for i,_ in enumerate(labels) if labels[i] == 0]]
+        self.lower_layer_points = points[[i for i,label in enumerate(labels) if label == 0]]
         self.lower_layer_points_indices = [i for i, x in enumerate(labels) if x == 0]
         self.figures=[]
 

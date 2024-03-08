@@ -4,6 +4,7 @@ from .clfiltration import CLFiltration
 from random import randint #inclusive of the upper bound
 from bisect import bisect_left
 from functools import lru_cache
+import chromatic_tda as chro
 
 EPSILON = 1e-10 # for numerical comparison
 
@@ -40,6 +41,7 @@ def random_vertical_removal_points_only(num_pts,ladder_length,max_removal_per_ti
     
     return result[::-1]
 
+
 def points_to_clfiltration(pts:np.array,vertical_removal_input:list,radii:list,max_simplex_dim:int,method:str='cech'):
     """
     Convert a point cloud to a commutative ladder filtration.
@@ -47,7 +49,7 @@ def points_to_clfiltration(pts:np.array,vertical_removal_input:list,radii:list,m
     vertical_removal_input: a list of list of simplices to be removed, notice that it is the name of the simplices, not the indices of the simplices
     radii: a list of radii
     max_simplex_dim: the maximum simplex dimension to be considered
-    method: 'cech' or 'rips' or 'alpha'
+    method: 'cech' or 'rips'
     """    
     # create a simplex tree
     # truncation it using radius in radii, get a sc
@@ -106,12 +108,49 @@ def points_to_clfiltration(pts:np.array,vertical_removal_input:list,radii:list,m
                 break
         else:
             lower.insert(simplex,x_coord)
-        # counter += 1
-        # will not print progress, as the print statement slows down the program
-        # print progress based on simplex processed and total number of simplices
-        # print(f"\rProgress: {100*counter/total_num_simplices:.2f}%", flush=True)
     return CLFiltration(upper=upper,lower=lower,ladder_length=len_radii,h_params=radii,info={'vertical_removal':vertical_removal_input},enable_validation=False)
 
 
 def pointCloud2Filtration(*args,**kwargs):
     return points_to_clfiltration(*args,**kwargs)
+
+
+def points_to_clfiltration_chro(pts:np.array, labels:list, max_simplex_dim:int, radii='auto'):
+    """
+    Convert a labeled point cloud to a commutative ladder filtration using chromatic alpha complexes.
+    
+    pts: a numpy array of shape (num_pts, dim)
+    labels: a list of binary labels for each point. 0 means lower layer, 1 means upper layer.
+    radii: a list of radii
+    max_simplex_dim: the maximum simplex dimension to be considered
+    """
+    assert len(labels) == len(pts)
+    assert all(label in [0, 1] for label in labels)
+    
+    print("Creating chromatic alpha filtration...", flush=True)
+    chro_alpha = chro.ChromaticAlphaComplex(pts, labels)
+    upper_layer_points = pts
+    lower_layer_points = pts[[i for i,label in enumerate(labels) if label == 0]]
+    lower_layer_points_indices = [i for i,label in enumerate(labels) if label == 0]
+    critical_radii = np.sort(list(set(chro_alpha.weight_function().values())))
+
+    upper = SimplexTree()
+    lower = SimplexTree()
+
+    for simplex,radius in chro_alpha.weight_function().items():
+        if len(simplex) <= max_simplex_dim+1:
+            upper.insert(simplex, radius)
+            if all([v in lower_layer_points_indices for v in simplex]):
+                lower.insert(simplex, radius)
+    if radii == 'auto':
+        cl_radii = critical_radii
+    else:
+        cl_radii = radii
+
+    return CLFiltration(upper=upper, 
+                        lower=lower, 
+                        ladder_length=len(cl_radii), 
+                        h_params=cl_radii, 
+                        info={'points': pts, 'labels': labels}, 
+                        enable_validation=False
+                        )

@@ -17,7 +17,7 @@ class CLInvariants:
                     num_cores="auto",algorithm_phat="chunk_reduction",verbose=False):
         self.clf = clf
         if len(clf) in [3,4]:
-            self.quiver = CLQ(len(clf))
+            self.quiver = CLQ(len(clf),verbose=verbose)
             self.repr_filled = False
             self.ladder_type = "finite"
         else:

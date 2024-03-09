@@ -27,8 +27,8 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
     """
     Equi-oriented by default
     """
-    def __init__(self,m:int,orientation:str='equi',one_based=True):
-        super().__init__(m,2,orientation=orientation,one_based=one_based)
+    def __init__(self,m:int,orientation:str='equi',one_based=True,verbose=False):
+        super().__init__(m,2,orientation=orientation,one_based=one_based,verbose=verbose)
         if orientation in ['equi','ff','fff']: # Specify the tours for the two cases below
             if m==3:
                 self.courses_list=courses_cl3(one_based=one_based)
@@ -68,14 +68,15 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
         if enable_multi_processing == False:
             vector_list = []
             for i, course in enumerate(self.courses.values()):
-                progress = f"Progress: {i+1} / {total_courses}"
                 # a course is a sequence of nodes
                 sc_zigzag_list=self.attribute_sequence(course,"simplicial_complex")
                 # obtain the corresponding nodes from course to make
                 # self.multiplicity_zigzag a static method, for easier parallelization implementation
                 vector = self.multiplicity_zigzag(sc_zigzag_list, dim, prime)
                 vector_list.append([vector])
-                print(f"{progress} - tours processed.",flush=True)
+                if self.verbose:
+                    progress = f"Progress: {i+1} / {total_courses}"
+                    print(f"{progress} - tours processed.",flush=True)
             # vector_list=[[self.multiplicity_zigzag(tour,dim,prime)] for tour in self.tours.values()]
         elif enable_multi_processing == True:
             max_cores=cpu_count()
@@ -109,7 +110,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
         """Return the vector of multiplicities"""
         
         if len(self.decomp_collection.dim(dim).prime(prime).collection)!=0 and not recalculate:
-            print("Already existed. Pass parameter recalculate=True to recalculate.")
+            print("Data already exists. Use `recalculate=True` to force recalculation.")
         else:
             b=self.tours_vector(dim=dim,prime=prime,enable_multi_processing=enable_multi_processing,num_cores=num_cores)
             result=np.linalg.solve(self.coeff_mat,b)

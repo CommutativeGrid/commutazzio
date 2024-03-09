@@ -63,7 +63,7 @@ class CommutativeGridQuiver:
         plot(): Plots the quiver using networkx drawing facilities.
         attribute_sequence(nodes, attribute): Generates a list of attributes for given nodes.
     """
-    def __init__(self,dim_vector,one_based=True):
+    def __init__(self,dim_vector,one_based=True,verbose=False):
         """
         Initializes the CommutativeGridQuiver with a specified grid shape and indexing convention.
         
@@ -80,6 +80,7 @@ class CommutativeGridQuiver:
         else:
             self.G=H
         self.shape=dim_vector
+        self.verbose=verbose
 
     def plot(self):
         """
@@ -173,7 +174,7 @@ class CommutativeGrid2DQuiver(CommutativeGridQuiver):
         orientation (str): A string representing the orientation of arrows between nodes in the grid.
     """
 
-    def __init__(self,m:int,n:int,orientation:str='equi',one_based=True):
+    def __init__(self,m:int,n:int,orientation:str='equi',one_based=True,verbose=False):
         """
         Initializes the CommutativeGrid2DQuiver with specified dimensions and orientation.
         
@@ -187,7 +188,7 @@ class CommutativeGrid2DQuiver(CommutativeGridQuiver):
             self.orientation = (m-1)*'f'
         else:
             self.orientation = orientation
-        super().__init__([m,n],one_based=one_based)
+        super().__init__([m,n],one_based=one_based,verbose=verbose)
         self.G.remove_edges_from(list(self.G.edges)) # remove all edges
         self.__add_edges(m,n,self.orientation)
         

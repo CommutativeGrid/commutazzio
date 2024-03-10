@@ -86,6 +86,8 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
                 print(f"Number of cores specified ({num_cores}) is larger than the maximum number of cores ({max_cores}).")
                 print(f"Resetting number of cores to {max_cores}.")
                 num_cores=max_cores
+            if num_cores < 2:
+                Warning("Multiprocessing is activated but number of cores is less than 2.")
             print('Number of cores being used:',num_cores)
             params = [(self.attribute_sequence(course,"simplicial_complex"),dim,prime) for course in self.courses.values()]
             from ..utils import tqdm_joblib

@@ -108,11 +108,15 @@ def test_resample_filtration(clf_resample_example):
     np.testing.assert_allclose(cl3.h_params, expected_h_params, atol=1e-12)
     
     # Compute topological invariants after resampling
-    inv3 = CLInvariants(cl3)
-    inv3.total_decomposition_computation(dim=1, prime=2)
+    inv3_mp = CLInvariants(cl3,num_cores=4)
+    inv3_mp.total_decomposition_computation(dim=1, prime=2)
     
     # Check the computed topological invariants
-    assert inv3.decompositions_all[0].nonzero_components == {'N9': 1}
+    assert inv3_mp.decompositions_all[0].nonzero_components == {'N9': 1}
+
+    inv3_sp = CLInvariants(cl3,num_cores=1)
+    inv3_sp.total_decomposition_computation(dim=1, prime=2)
+    assert inv3_sp.decompositions_all[0].nonzero_components == {'N9': 1}
 
 # Include your existing tests here
 

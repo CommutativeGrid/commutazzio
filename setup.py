@@ -28,7 +28,7 @@ INSTALL_REQUIRES = [
       'pandas~= 2.0.3',
       'fire~= 0.5.0',
       'gudhi',
-      'giotto-tda>=0.5.1,<1',
+      'giotto-tda',
       'pytest>=8.0.1',
       'networkx~= 3.0',
       'icecream~= 2.1.3',

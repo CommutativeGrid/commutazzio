@@ -93,52 +93,52 @@ class CLFiltration():
             self.info[key] = []
         self.info[key].append(value)
 
-    def set_new_length(self,new_length,new_h_params=None):
+    def resample_filtration(self,new_length,ordinal_filtration_values=None):
         """
         This method allows the user to refactor the length of the ladder.
         new_length shall be strictly shorter than the current length.
-        new_h_params: a list of length new_length consisting of integers between 1 and the current ladder length.
-        new_h_params will be set to [1,2,3,...,new_length] if not given.
+        ordinal_filtration_values: a list of length new_length consisting of integers between 1 and the current ladder length.
+        new_h_params will be set to a random choice on [1,2,3,...,new_length] if not given.
         """
         if new_length >= self.ladder_length:
             raise ValueError("new_length must be strictly shorter than the current length")
-        if new_h_params is None: 
+        if ordinal_filtration_values is None: 
             # will be a strictly increasing list of length new_length, picking values from 1,...,self.ladder_length
             indices = np.random.choice(range(1,self.ladder_length+1), new_length,replace=False)
         else:
-            indices = new_h_params
+            indices = ordinal_filtration_values
         for i in indices:
             # i has to be an integer, or 1.0
             if not isinstance(i,int):
-                raise ValueError("Each element in new_h_params must be an integer")
+                raise ValueError("Each element in ordinal_filtration_values must be an integer")
             if not 1 <= i <= self.ladder_length:
-                raise ValueError("Each element in new_h_params must be between 1 and the current ladder length")
+                raise ValueError("Each element in ordinal_filtration_values must be between 1 and the current ladder length")
         if len(indices) != new_length:
             raise ValueError(f"indices must be a list of length {new_length}")
         if len(set(indices)) != new_length:
             raise ValueError("indices must be a list of distinct integers")
 
-        new_upper = SimplexTree(self.upper)
-        new_lower = SimplexTree(self.lower)
+        new_upper = SimplexTree()
+        new_lower = SimplexTree()
         # Reassign filtration values
-        for simplex, original_fv in self.upper.get_filtration():
+        for simplex, original_ordinal_fv in self.upper.get_filtration():
             # new filtration value is determined by its relative position in indices
             # for example, if indices = [2,4,6], then the filtration value of a simplex with original filtration value 4 is 2
             # and the new filtration value of a simplex with original filtration value 3 is also 2,
             # and the new filtration value of simplex with original filtration value 2 is 1
-            new_fv = len(indices)
-            for i in range(len(indices)):
-                if original_fv <= indices[i]:
-                    new_fv = i+1
+            for new_ordinal_fv,current_ordinal_fv in enumerate(indices):
+                if  original_ordinal_fv <= current_ordinal_fv:
+                    new_upper.insert(simplex,new_ordinal_fv+1) #one-based
                     break
-            new_upper.assign_filtration(simplex,new_fv)
-        for simplex, original_fv in self.lower.get_filtration():
-            new_fv = len(indices)
-            for i in range(len(indices)):
-                if original_fv <= indices[i]:
-                    new_fv = i+1
+            else:
+                pass # will not add the simplex to the new filtration            
+        for simplex, original_ordinal_fv in self.lower.get_filtration():
+            for new_ordinal_fv,current_ordinal_fv in enumerate(indices):
+                if  original_ordinal_fv <= current_ordinal_fv:
+                    new_lower.insert(simplex,new_ordinal_fv+1) #one-based
                     break
-            new_lower.assign_filtration(simplex,new_fv)
+            else:
+                pass # will not add the simplex to the new filtration   
         if new_upper.make_filtration_non_decreasing() or new_lower.make_filtration_non_decreasing():
             raise ValueError("There is a bug in the code, please report it to the developer")
         # return a new CLFiltration object

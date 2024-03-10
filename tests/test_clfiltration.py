@@ -1,6 +1,9 @@
-from commutazzio.filtration import CLFiltration,SimplicialComplex
+from commutazzio.filtration import points_to_clfiltration_chro, CLFiltration, SimplicialComplex
 from gudhi import SimplexTree as gudhi_SimplexTree
+from commutazzio.compute import CLInvariants
+import numpy as np
 import pytest
+
 
 
 @pytest.fixture
@@ -76,5 +79,41 @@ def test_validation(clf_example):
 
 
 
+
+
+
+# Assuming the existing fixture clf_example is correctly set up as provided
+
+@pytest.fixture
+def clf_resample_example():
+    points = np.array([[0.54188618, 0.77381996],
+                       [0.25357397, 0.51056493],
+                       [0.34719385, 0.38837853],
+                       [0.76154592, 0.78689659],
+                       [0.73971318, 0.18711194],
+                       [0.16215802, 0.07998491]])
+    labels = [0] * 6
+    indices_removal = [2, 5]
+    for i in indices_removal:
+        labels[i] = 1
+    clf = points_to_clfiltration_chro(pts=points, labels=labels, max_simplex_dim=1+1)
+    return clf
+
+def test_resample_filtration(clf_resample_example):
+    clf = clf_resample_example
+    # Resample filtration with specific indices
+    cl3 = clf.resample_filtration(4, [1, 11, 12, 13])
+    # Check h_params after resampling
+    expected_h_params = [0.0, 0.3000909424289286, 0.3095810970736587, 0.311008537608585]
+    np.testing.assert_allclose(cl3.h_params, expected_h_params, atol=1e-12)
+    
+    # Compute topological invariants after resampling
+    inv3 = CLInvariants(cl3)
+    inv3.total_decomposition_computation(dim=1, prime=2)
+    
+    # Check the computed topological invariants
+    assert inv3.decompositions_all[0].nonzero_components == {'N9': 1}
+
+# Include your existing tests here
 
 

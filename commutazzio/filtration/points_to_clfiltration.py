@@ -151,6 +151,6 @@ def points_to_clfiltration_chro(pts:np.array, labels:list, max_simplex_dim:int, 
                         lower=lower, 
                         ladder_length=len(cl_radii), 
                         h_params=cl_radii, 
-                        info={'points': pts, 'labels': labels}, 
+                        info={'points': pts, 'labels': labels, 'critical_radii': critical_radii, 'max_simplex_dim': max_simplex_dim,}, 
                         enable_validation=False
                         )

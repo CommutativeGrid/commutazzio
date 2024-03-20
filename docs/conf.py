@@ -9,7 +9,7 @@
 project = 'commutazzio'
 copyright = '2024, Hiraoka Laboratory Interval Approximation Implementation Team'
 author = 'Hiraoka Laboratory Interval Approximation Implementation Team'
-release = '0.5.0'
+release = '0.5.1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -20,12 +20,10 @@ extensions = [
     'sphinx.ext.autodoc',
 ]
 
-
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 autosummary_generate = True
 numpydoc_show_class_members = False 
-
 
 
 # -- Options for HTML output -------------------------------------------------

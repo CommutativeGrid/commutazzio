@@ -17,7 +17,7 @@ Contents:
    :maxdepth: 2
    :caption: Modules Overview
 
-   commutazzio <commutazzio>
+   modules
 
    commutazzio/compute <commutazzio.compute>
    commutazzio/filtration <commutazzio.filtration>
@@ -28,6 +28,7 @@ Contents:
    commutazzio/statistics <commutazzio.statistics>
    commutazzio/utils <commutazzio.utils>
 
+   
 
 Indices and tables
 ==================

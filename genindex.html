@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; commutazzio 0.5.0 documentation</title>
+  <title>Index &mdash; commutazzio 0.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -12,7 +12,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=1dd76d02"></script>
+        <script src="_static/documentation_options.js?v=b9afe91b"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -41,7 +41,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Modules Overview</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="commutazzio.html">commutazzio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">commutazzio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.compute.html">commutazzio/compute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.filtration.html">commutazzio/filtration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.non_intervals.html">commutazzio/non_intervals</a></li>
@@ -152,7 +152,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="commutazzio.compute.html#commutazzio.compute.precompute.CommutativeGridPreCompute.c_ss_initializer">c_ss_initializer() (commutazzio.compute.precompute.CommutativeGridPreCompute method)</a>
 </li>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.CechCL4Viz">CechCL4Viz (class in commutazzio.plot.cl4_point_cloud_visualizers)</a>
+</li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.check_cdn_access">check_cdn_access() (commutazzio.plot.plot_engine.ComplementaryTrianglesPlot static method)</a>
+</li>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz">ChroAlphaCL4Viz (class in commutazzio.plot.cl4_point_cloud_visualizers)</a>
 </li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.CIRCUMFERENCE_COLOR">CIRCUMFERENCE_COLOR (commutazzio.plot.simplicial_complex_2d.SC2DViz attribute)</a>
 </li>
@@ -275,10 +279,10 @@
 </li>
       </ul></li>
       <li>
-    commutazzio.filtration.pointcloud_to_clfiltration
+    commutazzio.filtration.points_to_clfiltration
 
       <ul>
-        <li><a href="commutazzio.filtration.html#module-commutazzio.filtration.pointcloud_to_clfiltration">module</a>
+        <li><a href="commutazzio.filtration.html#module-commutazzio.filtration.points_to_clfiltration">module</a>
 </li>
       </ul></li>
       <li>
@@ -347,6 +351,13 @@
 </li>
       </ul></li>
       <li>
+    commutazzio.plot.cl4_point_cloud_visualizers
+
+      <ul>
+        <li><a href="commutazzio.plot.html#module-commutazzio.plot.cl4_point_cloud_visualizers">module</a>
+</li>
+      </ul></li>
+      <li>
     commutazzio.plot.colors_helper
 
       <ul>
@@ -358,6 +369,13 @@
 
       <ul>
         <li><a href="commutazzio.plot.html#module-commutazzio.plot.plot_engine">module</a>
+</li>
+      </ul></li>
+      <li>
+    commutazzio.plot.row_visualizer
+
+      <ul>
+        <li><a href="commutazzio.plot.html#module-commutazzio.plot.row_visualizer">module</a>
 </li>
       </ul></li>
       <li>
@@ -652,30 +670,50 @@
 </li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.colors_helper.get_continuous_color">get_continuous_color() (in module commutazzio.plot.colors_helper)</a>
 </li>
-      <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_edges">get_edges() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_edges">get_edges() (commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
+
+      <ul>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_edges">(commutazzio.plot.row_visualizer.RowVisualizerChroAlpha method)</a>
 </li>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_edges">(commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+</li>
+      </ul></li>
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.simplicial_complex.SimplicialComplex.get_faces">get_faces() (commutazzio.filtration.simplicial_complex.SimplicialComplex method)</a>
 </li>
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.clfiltration.CLFiltration.get_filtration_as_a_nested_list">get_filtration_as_a_nested_list() (commutazzio.filtration.clfiltration.CLFiltration method)</a>
 </li>
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.database.CLFiltrationDB.get_filtration_by_id">get_filtration_by_id() (commutazzio.filtration.database.CLFiltrationDB method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.clfiltration.CLFiltration.get_filtration_fv">get_filtration_fv() (commutazzio.filtration.clfiltration.CLFiltration method)</a>
 </li>
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.clfiltration.CLFiltration.get_filtration_with_custom_filtration_values">get_filtration_with_custom_filtration_values() (commutazzio.filtration.clfiltration.CLFiltration method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="commutazzio.compute.html#commutazzio.compute.precompute.CommutativeGridPreCompute.get_intervals">get_intervals() (commutazzio.compute.precompute.CommutativeGridPreCompute method)</a>
 </li>
-      <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_n_simplices">get_n_simplices() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_n_simplices">get_n_simplices() (commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
+
+      <ul>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_n_simplices">(commutazzio.plot.row_visualizer.RowVisualizerChroAlpha method)</a>
 </li>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_n_simplices">(commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+</li>
+      </ul></li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_points">get_points() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
 </li>
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.clfiltration.CLFiltration.get_simplicial_complex">get_simplicial_complex() (commutazzio.filtration.clfiltration.CLFiltration method)</a>
 </li>
-      <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_triangles">get_triangles() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_tetrahedra">get_tetrahedra() (commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
 </li>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_triangles">get_triangles() (commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
+
+      <ul>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_triangles">(commutazzio.plot.row_visualizer.RowVisualizerChroAlpha method)</a>
+</li>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.get_triangles">(commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+</li>
+      </ul></li>
       <li><a href="commutazzio.compute.html#commutazzio.compute.precompute.CommutativeGridPreCompute.get_variables">get_variables() (commutazzio.compute.precompute.CommutativeGridPreCompute method)</a>
 </li>
   </ul></td>
@@ -808,7 +846,7 @@
 </li>
         <li><a href="commutazzio.filtration.html#module-commutazzio.filtration.database">commutazzio.filtration.database</a>
 </li>
-        <li><a href="commutazzio.filtration.html#module-commutazzio.filtration.pointcloud_to_clfiltration">commutazzio.filtration.pointcloud_to_clfiltration</a>
+        <li><a href="commutazzio.filtration.html#module-commutazzio.filtration.points_to_clfiltration">commutazzio.filtration.points_to_clfiltration</a>
 </li>
         <li><a href="commutazzio.filtration.html#module-commutazzio.filtration.simplex_tree">commutazzio.filtration.simplex_tree</a>
 </li>
@@ -828,9 +866,13 @@
 </li>
         <li><a href="commutazzio.plot.html#module-commutazzio.plot">commutazzio.plot</a>
 </li>
+        <li><a href="commutazzio.plot.html#module-commutazzio.plot.cl4_point_cloud_visualizers">commutazzio.plot.cl4_point_cloud_visualizers</a>
+</li>
         <li><a href="commutazzio.plot.html#module-commutazzio.plot.colors_helper">commutazzio.plot.colors_helper</a>
 </li>
         <li><a href="commutazzio.plot.html#module-commutazzio.plot.plot_engine">commutazzio.plot.plot_engine</a>
+</li>
+        <li><a href="commutazzio.plot.html#module-commutazzio.plot.row_visualizer">commutazzio.plot.row_visualizer</a>
 </li>
         <li><a href="commutazzio.plot.html#module-commutazzio.plot.simplicial_complex_2d">commutazzio.plot.simplicial_complex_2d</a>
 </li>
@@ -973,29 +1015,51 @@
 </li>
       <li><a href="commutazzio.persistence.html#commutazzio.persistence.pd_points3d.PD_Points3D.plot_all">plot_all() (commutazzio.persistence.pd_points3d.PD_Points3D method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.PLOT_BGCOLOR">PLOT_BGCOLOR (commutazzio.plot.simplicial_complex_2d.SC2DViz attribute)</a>
 </li>
       <li><a href="commutazzio.compute.html#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.plot_data">plot_data (commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram property)</a>
 </li>
       <li><a href="commutazzio.compute.html#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.plot_dots">plot_dots (commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram attribute)</a>
 </li>
-      <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_edges">plot_edges() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_edges">plot_edges() (commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
+
+      <ul>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_edges">(commutazzio.plot.row_visualizer.RowVisualizerChroAlpha method)</a>
 </li>
-      <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_points">plot_points() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_edges">(commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
 </li>
-      <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_triangle">plot_triangle() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_points">plot_points() (commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
+
+      <ul>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_points">(commutazzio.plot.row_visualizer.RowVisualizerChroAlpha method)</a>
 </li>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_points">(commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+</li>
+      </ul></li>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_tetrathedron">plot_tetrathedron() (commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
+</li>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_triangle">plot_triangle() (commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
+
+      <ul>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_triangle">(commutazzio.plot.row_visualizer.RowVisualizerChroAlpha method)</a>
+</li>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_triangle">(commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+</li>
+      </ul></li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.plot_triangles">plot_triangles() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
 </li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.POINT_COLOR">POINT_COLOR (commutazzio.plot.simplicial_complex_2d.SC2DViz attribute)</a>
 </li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.POINT_SIZE">POINT_SIZE (commutazzio.plot.simplicial_complex_2d.SC2DViz attribute)</a>
 </li>
-      <li><a href="commutazzio.filtration.html#commutazzio.filtration.pointcloud_to_clfiltration.pointCloud2Filtration">pointCloud2Filtration() (in module commutazzio.filtration.pointcloud_to_clfiltration)</a>
+      <li><a href="commutazzio.filtration.html#commutazzio.filtration.points_to_clfiltration.pointCloud2Filtration">pointCloud2Filtration() (in module commutazzio.filtration.points_to_clfiltration)</a>
 </li>
-      <li><a href="commutazzio.filtration.html#commutazzio.filtration.pointcloud_to_clfiltration.points_to_clfiltration">points_to_clfiltration() (in module commutazzio.filtration.pointcloud_to_clfiltration)</a>
+      <li><a href="commutazzio.filtration.html#commutazzio.filtration.points_to_clfiltration.points_to_clfiltration">points_to_clfiltration() (in module commutazzio.filtration.points_to_clfiltration)</a>
+</li>
+      <li><a href="commutazzio.filtration.html#commutazzio.filtration.points_to_clfiltration.points_to_clfiltration_chro">points_to_clfiltration_chro() (in module commutazzio.filtration.points_to_clfiltration)</a>
 </li>
       <li><a href="commutazzio.compute.html#commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram.preprocess_filtration_values">preprocess_filtration_values() (commutazzio.compute.connected_persistence_diagram.ConnectedPersistenceDiagram method)</a>
 </li>
@@ -1029,7 +1093,7 @@
 </li>
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.simplicial_complex.SimplicialComplex.random_delete_vertices">random_delete_vertices() (commutazzio.filtration.simplicial_complex.SimplicialComplex method)</a>
 </li>
-      <li><a href="commutazzio.filtration.html#commutazzio.filtration.pointcloud_to_clfiltration.random_vertical_removal_points_only">random_vertical_removal_points_only() (in module commutazzio.filtration.pointcloud_to_clfiltration)</a>
+      <li><a href="commutazzio.filtration.html#commutazzio.filtration.points_to_clfiltration.random_vertical_removal_points_only">random_vertical_removal_points_only() (in module commutazzio.filtration.points_to_clfiltration)</a>
 </li>
       <li><a href="commutazzio.random.html#commutazzio.random.point_cloud_model.RandomFiltrationPointCloudModel">RandomFiltrationPointCloudModel (class in commutazzio.random.point_cloud_model)</a>
 </li>
@@ -1041,10 +1105,18 @@
 </li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render">render() (commutazzio.plot.plot_engine.ComplementaryTrianglesPlot method)</a>
 </li>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.CechCL4Viz.render_all">render_all() (commutazzio.plot.cl4_point_cloud_visualizers.CechCL4Viz method)</a>
+
+      <ul>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.render_all">(commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
+</li>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.render_all">(commutazzio.plot.row_visualizer.RowVisualizerChroAlpha method)</a>
+</li>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_all">(commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_all">render_all() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
-</li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_and_export_figure">render_and_export_figure() (commutazzio.plot.plot_engine.ComplementaryTrianglesPlot method)</a>
 </li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_axes">render_axes() (commutazzio.plot.plot_engine.ComplementaryTrianglesPlot method)</a>
@@ -1055,15 +1127,25 @@
 </li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_legend">render_legend() (commutazzio.plot.plot_engine.ComplementaryTrianglesPlot method)</a>
 </li>
-      <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_sc">render_sc() (commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.render_sc">render_sc() (commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz method)</a>
+
+      <ul>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.render_sc">(commutazzio.plot.row_visualizer.RowVisualizerChroAlpha method)</a>
 </li>
+        <li><a href="commutazzio.plot.html#commutazzio.plot.simplicial_complex_2d.SC2DViz.render_sc">(commutazzio.plot.simplicial_complex_2d.SC2DViz method)</a>
+</li>
+      </ul></li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.render_ticks">render_ticks() (commutazzio.plot.plot_engine.ComplementaryTrianglesPlot method)</a>
 </li>
       <li><a href="commutazzio.compute.html#commutazzio.compute.compute_engine.CLInvariants.repr_generation">repr_generation() (commutazzio.compute.compute_engine.CLInvariants method)</a>
 </li>
+      <li><a href="commutazzio.filtration.html#commutazzio.filtration.clfiltration.CLFiltration.resample_filtration">resample_filtration() (commutazzio.filtration.clfiltration.CLFiltration method)</a>
+</li>
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.database.CLFiltrationDB.reset_table_name_for_legacy">reset_table_name_for_legacy() (commutazzio.filtration.database.CLFiltrationDB method)</a>
 </li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.ribbonise">ribbonise() (commutazzio.plot.plot_engine.ComplementaryTrianglesPlot method)</a>
+</li>
+      <li><a href="commutazzio.plot.html#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha">RowVisualizerChroAlpha (class in commutazzio.plot.row_visualizer)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1084,8 +1166,6 @@
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.clfiltration.CLFiltration.serialize">serialize() (commutazzio.filtration.clfiltration.CLFiltration method)</a>
 </li>
       <li><a href="commutazzio.filtration.html#commutazzio.filtration.clfiltration.CLFiltration.set_info">set_info() (commutazzio.filtration.clfiltration.CLFiltration method)</a>
-</li>
-      <li><a href="commutazzio.filtration.html#commutazzio.filtration.clfiltration.CLFiltration.set_new_length">set_new_length() (commutazzio.filtration.clfiltration.CLFiltration method)</a>
 </li>
       <li><a href="commutazzio.plot.html#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.show">show() (commutazzio.plot.plot_engine.ComplementaryTrianglesPlot method)</a>
 </li>

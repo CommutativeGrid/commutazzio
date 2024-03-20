@@ -20,10 +20,10 @@ commutazzio.filtration.database module
    :undoc-members:
    :show-inheritance:
 
-commutazzio.filtration.pointcloud\_to\_clfiltration module
-----------------------------------------------------------
+commutazzio.filtration.points\_to\_clfiltration module
+------------------------------------------------------
 
-.. automodule:: commutazzio.filtration.pointcloud_to_clfiltration
+.. automodule:: commutazzio.filtration.points_to_clfiltration
    :members:
    :undoc-members:
    :show-inheritance:

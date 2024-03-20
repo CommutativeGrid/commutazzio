@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>commutazzio.plot package &mdash; commutazzio 0.5.0 documentation</title>
+  <title>commutazzio.plot package &mdash; commutazzio 0.5.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,7 +13,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=1dd76d02"></script>
+        <script src="_static/documentation_options.js?v=b9afe91b"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -44,13 +44,33 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Modules Overview</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="commutazzio.html">commutazzio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">commutazzio</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.compute.html">commutazzio/compute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.filtration.html">commutazzio/filtration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.non_intervals.html">commutazzio/non_intervals</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commutazzio.persistence.html">commutazzio/persistence</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">commutazzio/plot</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.plot.cl4_point_cloud_visualizers">commutazzio.plot.cl4_point_cloud_visualizers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.CechCL4Viz"><code class="docutils literal notranslate"><span class="pre">CechCL4Viz</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.CechCL4Viz.render_all"><code class="docutils literal notranslate"><span class="pre">CechCL4Viz.render_all()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_edges"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.get_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_n_simplices"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.get_n_simplices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_tetrahedra"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.get_tetrahedra()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_triangles"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.get_triangles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_edges"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.plot_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_points"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.plot_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_tetrathedron"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.plot_tetrathedron()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_triangle"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.plot_triangle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.render_all"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.render_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.render_sc"><code class="docutils literal notranslate"><span class="pre">ChroAlphaCL4Viz.render_sc()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.plot.colors_helper">commutazzio.plot.colors_helper module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.colors_helper.get_color"><code class="docutils literal notranslate"><span class="pre">get_color()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.colors_helper.get_continuous_color"><code class="docutils literal notranslate"><span class="pre">get_continuous_color()</span></code></a></li>
@@ -75,6 +95,20 @@
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.ribbonise"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.ribbonise()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.scatter_chart"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.scatter_chart()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.show"><code class="docutils literal notranslate"><span class="pre">ComplementaryTrianglesPlot.show()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.plot.row_visualizer">commutazzio.plot.row_visualizer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha"><code class="docutils literal notranslate"><span class="pre">RowVisualizerChroAlpha</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_edges"><code class="docutils literal notranslate"><span class="pre">RowVisualizerChroAlpha.get_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_n_simplices"><code class="docutils literal notranslate"><span class="pre">RowVisualizerChroAlpha.get_n_simplices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_triangles"><code class="docutils literal notranslate"><span class="pre">RowVisualizerChroAlpha.get_triangles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_edges"><code class="docutils literal notranslate"><span class="pre">RowVisualizerChroAlpha.plot_edges()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_points"><code class="docutils literal notranslate"><span class="pre">RowVisualizerChroAlpha.plot_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_triangle"><code class="docutils literal notranslate"><span class="pre">RowVisualizerChroAlpha.plot_triangle()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.render_all"><code class="docutils literal notranslate"><span class="pre">RowVisualizerChroAlpha.render_all()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.render_sc"><code class="docutils literal notranslate"><span class="pre">RowVisualizerChroAlpha.render_sc()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -132,6 +166,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">commutazzio</a></li>
           <li class="breadcrumb-item"><a href="commutazzio.html">commutazzio package</a></li>
       <li class="breadcrumb-item active">commutazzio.plot package</li>
       <li class="wy-breadcrumbs-aside">
@@ -147,6 +182,89 @@
 <h1>commutazzio.plot package<a class="headerlink" href="#commutazzio-plot-package" title="Link to this heading"></a></h1>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-commutazzio.plot.cl4_point_cloud_visualizers">
+<span id="commutazzio-plot-cl4-point-cloud-visualizers-module"></span><h2>commutazzio.plot.cl4_point_cloud_visualizers module<a class="headerlink" href="#module-commutazzio.plot.cl4_point_cloud_visualizers" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.CechCL4Viz">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.plot.cl4_point_cloud_visualizers.</span></span><span class="sig-name descname"><span class="pre">CechCL4Viz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deletion_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.CechCL4Viz" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>visualize the 2D configuration of CL(4)-filtration of simplicial complexes formed from a point cloud in 2D use the Cech Complex</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.CechCL4Viz.render_all">
+<span class="sig-name descname"><span class="pre">render_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xrange</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[-5,</span> <span class="pre">5]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yrange</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[0,</span> <span class="pre">5]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtitles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">180</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">220</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.CechCL4Viz.render_all" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.plot.cl4_point_cloud_visualizers.</span></span><span class="sig-name descname"><span class="pre">ChroAlphaCL4Viz</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deletion_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>visualize the 2D configuration of CL(4)-filtration of simplicial complexes formed from a point cloud in 2D use the Chromatic Alpha Complex.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_edges">
+<span class="sig-name descname"><span class="pre">get_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_edges" title="Link to this definition"></a></dt>
+<dd><p>return all edges with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_n_simplices">
+<span class="sig-name descname"><span class="pre">get_n_simplices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_n_simplices" title="Link to this definition"></a></dt>
+<dd><p>return all n-simplices with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_tetrahedra">
+<span class="sig-name descname"><span class="pre">get_tetrahedra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_tetrahedra" title="Link to this definition"></a></dt>
+<dd><p>return all tetrahedra with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_triangles">
+<span class="sig-name descname"><span class="pre">get_triangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.get_triangles" title="Link to this definition"></a></dt>
+<dd><p>return all triangles with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_edges">
+<span class="sig-name descname"><span class="pre">plot_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_edges" title="Link to this definition"></a></dt>
+<dd><p>plot all edges with filtration value not greater than radius</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_points">
+<span class="sig-name descname"><span class="pre">plot_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_points" title="Link to this definition"></a></dt>
+<dd><p>Plot the point cloud.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_tetrathedron">
+<span class="sig-name descname"><span class="pre">plot_tetrathedron</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tetrahedron</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_tetrathedron" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_triangle">
+<span class="sig-name descname"><span class="pre">plot_triangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triangle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.plot_triangle" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.render_all">
+<span class="sig-name descname"><span class="pre">render_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">170</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.render_all" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.render_sc">
+<span class="sig-name descname"><span class="pre">render_sc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.cl4_point_cloud_visualizers.ChroAlphaCL4Viz.render_sc" title="Link to this definition"></a></dt>
+<dd><p>Render the simplicial complex.</p>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-commutazzio.plot.colors_helper">
 <span id="commutazzio-plot-colors-helper-module"></span><h2>commutazzio.plot.colors_helper module<a class="headerlink" href="#module-commutazzio.plot.colors_helper" title="Link to this heading"></a></h2>
@@ -332,6 +450,64 @@ see <a class="reference external" href="https://plotly.com/python/interactive-ht
 <dt class="sig sig-object py" id="commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.show">
 <span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.plot_engine.ComplementaryTrianglesPlot.show" title="Link to this definition"></a></dt>
 <dd><p>a synonym for render and show</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-commutazzio.plot.row_visualizer">
+<span id="commutazzio-plot-row-visualizer-module"></span><h2>commutazzio.plot.row_visualizer module<a class="headerlink" href="#module-commutazzio.plot.row_visualizer" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="commutazzio.plot.row_visualizer.RowVisualizerChroAlpha">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.plot.row_visualizer.</span></span><span class="sig-name descname"><span class="pre">RowVisualizerChroAlpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_edges">
+<span class="sig-name descname"><span class="pre">get_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_edges" title="Link to this definition"></a></dt>
+<dd><p>return all edges with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_n_simplices">
+<span class="sig-name descname"><span class="pre">get_n_simplices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_n_simplices" title="Link to this definition"></a></dt>
+<dd><p>return all n-simplices with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_triangles">
+<span class="sig-name descname"><span class="pre">get_triangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.get_triangles" title="Link to this definition"></a></dt>
+<dd><p>return all triangles with filtration value equal or less than radius
+notice that filtration value in an alpha complex is squared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_edges">
+<span class="sig-name descname"><span class="pre">plot_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_edges" title="Link to this definition"></a></dt>
+<dd><p>plot all edges with filtration value not greater than radius</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_points">
+<span class="sig-name descname"><span class="pre">plot_points</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_points" title="Link to this definition"></a></dt>
+<dd><p>Plot the point cloud.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_triangle">
+<span class="sig-name descname"><span class="pre">plot_triangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triangle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.plot_triangle" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.render_all">
+<span class="sig-name descname"><span class="pre">render_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radii</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">330</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.render_all" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.render_sc">
+<span class="sig-name descname"><span class="pre">render_sc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.plot.row_visualizer.RowVisualizerChroAlpha.render_sc" title="Link to this definition"></a></dt>
+<dd><p>Render the simplicial complex.</p>
 </dd></dl>
 
 </dd></dl>

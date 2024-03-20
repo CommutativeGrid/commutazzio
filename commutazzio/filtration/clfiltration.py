@@ -26,7 +26,7 @@ class CLFiltration():
     def __init__(self,upper=SimplexTree(),lower=SimplexTree(),ladder_length=4,h_params=None,info={},enable_validation=True):
         self.ladder_length=ladder_length
         if h_params is None: 
-            print(f'{self.__class__.__name__}:assuming ordinal number filtration values.')
+            # print(f'{self.__class__.__name__}:assuming ordinal number filtration values.')
             if not set([int(_) for _ in upper.filtration_values]).issubset(set(range(1,ladder_length+1))) or not set([int(_) for _ in lower.filtration_values]).issubset(set(range(1,ladder_length+1))):
                 raise ValueError('Filtration values of the input not matching the ordinal number filtration values')
             if ladder_length < len(upper.filtration_values) or ladder_length < len(lower.filtration_values):

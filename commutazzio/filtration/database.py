@@ -175,7 +175,6 @@ class CLFiltrationDB:
         if row:
             # If a row is found, create a new CLFiltration object and fill it with the data from the row
             cl_filtration = CLFiltration()
-            cl_filtration = CLFiltration()
             cl_filtration.ladder_length = row[1]
             if row[2] is not None:
                 cl_filtration.upper = cl_filtration.incremental_filtration_creation(eval(row[2]))

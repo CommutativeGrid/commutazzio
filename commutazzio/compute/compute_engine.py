@@ -112,7 +112,8 @@ class CLInvariants:
         if not self.repr_filled:
             self.repr_generation()
         self.quiver.multiplicity_computation(dim=dim,prime=prime,recalculate=recalculate,output_message=output_message,enable_multi_processing=self._enable_multi_processing,num_cores=self._num_cores)
-        print(f"Total decomposition of the homology module at dimension {dim} and finite field F{prime} is computed.")
+        if self._verbose:
+            print(f"Total decomposition of the homology module at dimension {dim} and finite field F{prime} is computed.")
         
     @property
     def decompositions_all(self):

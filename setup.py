@@ -35,12 +35,14 @@ INSTALL_REQUIRES = [
       'orjson~= 3.8.10',
       'joblib~= 1.2.0',
       'dionysus~= 2.0.9',
+      'numba>=0.57.0',
       'tqdm~= 4.64.1',
       'pympler~= 1.0.1',
       'lz4~= 4.3.2',
       'cpes @ git+https://github.com/Commutative-Ladders/cpes.git',
       'fzzpy @ git+https://github.com/CommutativeGrids/fzzpy.git',
       'chromatic_tda~=1.0.8',
+
 ]
 
 

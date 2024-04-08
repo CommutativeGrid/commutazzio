@@ -23,7 +23,7 @@ from functools import cache
 class CLFiltration():
     Epsilon = 1e-10 # for numerical comparison
 
-    def __init__(self,upper=SimplexTree(),lower=SimplexTree(),ladder_length=4,h_params=None,info={},enable_validation=True):
+    def __init__(self,upper=SimplexTree(),lower=SimplexTree(),ladder_length=4,h_params=None,info={},enable_validation=True,verbose=False):
         self.ladder_length=ladder_length
         if h_params is None: 
             # print(f'{self.__class__.__name__}:assuming ordinal number filtration values.')
@@ -44,11 +44,13 @@ class CLFiltration():
                 raise ValueError('The length of the horizontal parameters does not match the ladder length.')
             # will not rescale again if the filtration values are already ordinal numbers
             if not set([int(_) for _ in upper.filtration_values]).issubset(set(range(1,ladder_length+1))) or not set([int(_) for _ in lower.filtration_values]).issubset(set(range(1,ladder_length+1))):
-                print(f'{self.__class__.__name__}:rescaling filtration values to ordinal numbers.')
+                if verbose:
+                    print(f'{self.__class__.__name__}:rescaling filtration values to ordinal numbers.')
                 self.upper = upper.to_ordinal_number_indexing(h_params) # a SimplexTree, filtration values are 1,2,3,...,length
                 self.lower = lower.to_ordinal_number_indexing(h_params) # a SimplexTree, filtration values are 1,2,3,...,length
             else:
-                print(f'{self.__class__.__name__}:ordinal number filtration values detected, will not rescale.')
+                if verbose:
+                    print(f'{self.__class__.__name__}:ordinal number filtration values detected, will not rescale.')
                 self.upper = upper
                 self.lower = lower
         # for example, it can be a list of radii 

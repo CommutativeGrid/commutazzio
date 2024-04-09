@@ -36,6 +36,14 @@ class SimplexTree(gudhi_SimplexTree):
         """
         return self.ordered_simplices()
     
+    def __reduce__(self):
+        state = list(self.ordered_simplices())
+        return (self.__class__,(),state)
+    
+    def __setstate__(self,state):
+        for s,fv in state:
+            self.insert(s,fv)
+
     def ordered_simplices(self):
         """
         Generator that yields simplices ordered by filtration value, dimension, and then dictionary order.

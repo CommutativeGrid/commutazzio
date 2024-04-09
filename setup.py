@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 HERE = pathlib.Path(__file__).parent
 
-VERSION = '0.5.1'
+VERSION = '0.5.2'
 PACKAGE_NAME = 'commutazzio'
 AUTHOR = '平岡研究室区間近似実用化チーム'
 AUTHOR_EMAIL = 'xu.chenguang.k34@kyoto-u.jp'

@@ -55,11 +55,11 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
         print("Filtration updated.")
     
     #@timeit
-    def tours_vector(self,dim,prime,enable_multi_processing,num_cores):
+    def tours_vector(self,dim,prime,enable_multi_processing,num_cores:int):
         """
         Returns the vector of all the tours over the simplicial complex.
         mp_method: multiprocessing method, 0 for none, 1 for pool
-        num_cores: int or 'auto'
+        num_cores: int
         """
         m=self.shape[0]
         if set(self.orientation)!={'f'} or (m!=3 and m!=4):
@@ -80,7 +80,7 @@ class CommutativeLadderQuiver(CommutativeGrid2DQuiver):
             # vector_list=[[self.multiplicity_zigzag(tour,dim,prime)] for tour in self.tours.values()]
         elif enable_multi_processing == True:
             max_cores=cpu_count()
-            if num_cores == 'auto':
+            if num_cores == -1: # if -1 then determine the number of cores to use
                 num_cores=int(0.5*max_cores) # use half number of total cores
             elif num_cores > max_cores:
                 print(f"Number of cores specified ({num_cores}) is larger than the maximum number of cores ({max_cores}).")

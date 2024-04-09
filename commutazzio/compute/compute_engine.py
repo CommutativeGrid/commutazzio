@@ -13,8 +13,8 @@ import gc
 
 class CLInvariants:
     def __init__(self, clf: CLFiltration,\
-                 enable_multi_processing=False,\
-                    num_cores="auto",algorithm_phat="chunk_reduction",verbose=False):
+                 enable_multi_processing:bool=False,\
+                    num_cores:int=-1,algorithm_phat:str="chunk_reduction",verbose:bool=False):
         self.clf = clf
         if len(clf) in [3,4]:
             self.quiver = CLQ(len(clf),verbose=verbose)

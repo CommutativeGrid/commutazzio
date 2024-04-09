@@ -47,7 +47,7 @@ class ConnectedPersistenceDiagram():
                         'indexAligner','dots','lines','dotdec','plot_dots',\
                             'NodeToStr','PathToStr']
 
-    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,enable_multi_processing=False,num_cores="auto",verbose=False,clean_up=True,algorithm_phat='chunk_reduction',**kwargs ):
+    def __init__(self, filtration_filepath,ladder_length,homology_dim,filtration_values,enable_multi_processing:bool=False,num_cores:int=-1,verbose:bool=False,clean_up:bool=True,algorithm_phat:str='chunk_reduction',**kwargs ):
         self.txf = os.path.abspath(filtration_filepath) # filtration file
         #TODO: validate the txf file, check if all faces are contained, etc. But validation costs time. do we really need to do that?
         self.txf_dir = os.path.dirname(self.txf)
@@ -576,7 +576,7 @@ class ConnectedPersistenceDiagram():
             logging.debug("Starting parallel computation of barcodes...")
             max_cores=cpu_count() 
             num_cores=self._num_cores
-            if num_cores == "auto":       
+            if num_cores == -1: # if -1 then default to max_cores-2
                 num_cores = max(1,max_cores-2)
             elif self._num_cores > max_cores:
                 print(f"Number of cores specified ({num_cores}) is larger than the maximum number of cores ({max_cores}).")

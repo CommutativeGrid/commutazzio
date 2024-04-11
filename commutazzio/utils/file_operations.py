@@ -53,8 +53,8 @@ def filepath_generator(dirname='./',filename=None,extension=None,overwrite=False
     count=1
     while os.path.isfile(file_path):
         if overwrite is True:
-            print(f"Overwrite mode is on. Rewriting on {file_path} .")
-            break   
+            print(f"Overwrite mode is on. Using {file_path} for potential rewriting/reading.")
+            break 
         else:
             #file_path=os.path.join(dirname,f"{name}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S-%f')}.{extension}")
             file_path=os.path.join(dirname,f"{filename}_{str(count).zfill(6)}.{extension}")
@@ -63,9 +63,9 @@ def filepath_generator(dirname='./',filename=None,extension=None,overwrite=False
             if count>=1e5:
                 raise FileExistsError(f"{file_path} already exists. Cannot create a new file with an ordinal (within 100k) attached to the original name.")
     if count==1:
-        print(f"Saving to {file_path}")
+        print(f"Using new file path {file_path}")
     else:
-        print(f"File {original_file_path} already exists. Saving to {file_path}.")
+        print(f"File {original_file_path} already exists. Using new file path {file_path}.")
     return file_path
 
 def filename_logger(obj,filename):

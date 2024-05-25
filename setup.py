@@ -27,7 +27,7 @@ INSTALL_REQUIRES = [
       'plotly~= 5.15.0',
       'pandas~= 2.0.3',
       'fire~= 0.5.0',
-      'gudhi',
+      'gudhi~=3.9.0',
       'giotto-tda',
       'pytest>=8.0.1',
       'networkx~= 3.0',

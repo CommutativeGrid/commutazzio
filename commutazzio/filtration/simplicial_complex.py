@@ -9,6 +9,7 @@ import dionysus as d
 import numpy as np
 from gudhi import SimplexTree as gudhi_SimplexTree
 from itertools import combinations
+import dionysus as d
 
     
 class SimplicialComplex(gudhi_SimplexTree):
@@ -28,6 +29,19 @@ class SimplicialComplex(gudhi_SimplexTree):
                 self.insert(list(simplex))
         else:
             raise TypeError('Invalid input type. Must be a SimplexTree or list of tuples.')
+        
+    def betti_numbers(self):
+        # use dionysus to compute betti numbers
+        filtration = d.Filtration([d.Simplex(s) for s in self.simplices])
+        homology = d.homology_persistence(filtration)
+        dgms = d.init_diagrams(homology, filtration)
+        # Compute the Betti numbers
+        betti_numbers = [len(dgm) for dgm in dgms]
+        # Remove trailing zeros
+        while len(betti_numbers)>1 and betti_numbers[-1] == 0:
+            betti_numbers.pop()
+        return betti_numbers
+    
     
     @property
     def simplices(self):
@@ -102,35 +116,39 @@ class SimplicialComplex(gudhi_SimplexTree):
         return simplex
 
 
-    def deleteOne(self,simplex,inplace=False):
+    def removeOne(self,simplex):
         """Delete one simplex, together with its superset"""
         simplex=self.simplexify(simplex)    
         new_sc=[s for s in self.sc if not set(simplex).issubset(set(s))]
-        if inplace:
-            self.simplices=new_sc
-        else:
-            temp = SimplicialComplex()
-            temp.from_simplices(new_sc)
-            return temp
+        temp = SimplicialComplex()
+        temp.from_simplices(new_sc)
+        return temp
+    
+    def deleteOne(self,simplex):
+        return self.removeOne(simplex)
         
-    def __delete_from(self,simplex,from_sc):
+    def __remove_from(self,simplex,from_sc):
         """Delete one simplex, together with its superset"""
         """seems to be very time consuming"""
         simplex=self.simplexify(simplex)    
         new_sc=[s for s in from_sc if not set(simplex).issubset(set(s))]
         return new_sc
+    
+    def __delete_from(self,simplex,from_sc):
+        return self.__remove_from(simplex,from_sc)
 
-    def delete_simplices(self,simplices,inplace=False):
+    def remove_simplices(self,simplices):
         """Delete vertices"""
         intermediate_agent=self.simplices
         for simplex in simplices:
             intermediate_agent=self.__delete_from(simplex,intermediate_agent)
-        if inplace:
-            self.sc=intermediate_agent
-        else:
-            temp = SimplicialComplex()
-            temp.from_simplices(intermediate_agent)
-            return temp
+        temp = SimplicialComplex()
+        temp.from_simplices(intermediate_agent)
+        return temp
+    
+    def delete_simplices(self,simplices):
+        # another name for remove_simplices
+        return self.remove_simplices(simplices)
                         
     def add(self,simplex,inplace=False):
         """Add a simplex, together with all of its faces"""
@@ -157,11 +175,12 @@ class SimplicialComplex(gudhi_SimplexTree):
         new_sc=self.delete_simplices(to_be_deleted,inplace)
         return new_sc
         
-        
+    @property
     def vertices(self):
         """Returns the list of 0-simplices (vertices)."""
-        raw=[s for s in self.sc if len(s)==1]
-        return list(np.array(raw).flatten())
+        # raw=[s for s in self.sc if len(s)==1]
+        # return list(np.array(raw).flatten())
+        return {s[0] for s in self.sc if len(s) == 1}
 
         
     def dimension(self):

@@ -118,6 +118,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-commutazzio.filtration.simplicial_complex">commutazzio.filtration.simplicial_complex module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.add"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.betti_numbers"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.betti_numbers()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.deleteOne"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.deleteOne()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.delete_simplices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.delete_simplices()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.dimension"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.dimension()</span></code></a></li>
@@ -130,10 +131,12 @@
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.issuperset"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.issuperset()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.maximum_simplices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.maximum_simplices</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.random_delete_vertices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.random_delete_vertices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.removeOne"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.removeOne()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.remove_simplices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.remove_simplices()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.sc"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.sc</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.simplexify"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.simplexify()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.simplices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.simplices</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.vertices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.vertices()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.vertices"><code class="docutils literal notranslate"><span class="pre">SimplicialComplex.vertices</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -186,7 +189,7 @@
 <p>&#64;author: kasumi</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.clfiltration.</span></span><span class="sig-name descname"><span class="pre">CLFiltration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper=a</span> <span class="pre">simplex</span> <span class="pre">tree</span> <span class="pre">with</span> <span class="pre">0</span> <span class="pre">simplices</span> <span class="pre">and</span> <span class="pre">0</span> <span class="pre">filtration</span> <span class="pre">values</span> <span class="pre">&#64;</span> <span class="pre">0x7f3490be7650</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower=a</span> <span class="pre">simplex</span> <span class="pre">tree</span> <span class="pre">with</span> <span class="pre">0</span> <span class="pre">simplices</span> <span class="pre">and</span> <span class="pre">0</span> <span class="pre">filtration</span> <span class="pre">values</span> <span class="pre">&#64;</span> <span class="pre">0x7f3490be7ba0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ladder_length=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_params=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info={}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_validation=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">commutazzio.filtration.clfiltration.</span></span><span class="sig-name descname"><span class="pre">CLFiltration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">upper=a</span> <span class="pre">simplex</span> <span class="pre">tree</span> <span class="pre">with</span> <span class="pre">0</span> <span class="pre">simplices</span> <span class="pre">and</span> <span class="pre">0</span> <span class="pre">filtration</span> <span class="pre">values</span> <span class="pre">&#64;</span> <span class="pre">0x7f136c3fd850</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower=a</span> <span class="pre">simplex</span> <span class="pre">tree</span> <span class="pre">with</span> <span class="pre">0</span> <span class="pre">simplices</span> <span class="pre">and</span> <span class="pre">0</span> <span class="pre">filtration</span> <span class="pre">values</span> <span class="pre">&#64;</span> <span class="pre">0x7f136c3fddf0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ladder_length=4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h_params=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info={}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_validation=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose=False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.clfiltration.CLFiltration" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="commutazzio.filtration.clfiltration.CLFiltration.Epsilon">
@@ -667,16 +670,33 @@ Based on the input fv=[t_1,t_2,…,t_n]</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.deleteOne">
-<span class="sig-name descname"><span class="pre">deleteOne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.deleteOne" title="Link to this definition"></a></dt>
-<dd><p>Delete one simplex, together with its superset</p>
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.betti_numbers">
+<span class="sig-name descname"><span class="pre">betti_numbers</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.betti_numbers" title="Link to this definition"></a></dt>
+<dd><p>This function returns the Betti numbers of the simplicial complex.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The Betti numbers ([B0, B1, …, Bn]).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of int</p>
+</dd>
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><p>betti_numbers function requires
+<code class="xref py py-func docutils literal notranslate"><span class="pre">compute_persistence()</span></code>
+function to be launched first.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.deleteOne">
+<span class="sig-name descname"><span class="pre">deleteOne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplex</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.deleteOne" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.delete_simplices">
-<span class="sig-name descname"><span class="pre">delete_simplices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.delete_simplices" title="Link to this definition"></a></dt>
-<dd><p>Delete vertices</p>
-</dd></dl>
+<span class="sig-name descname"><span class="pre">delete_simplices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplices</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.delete_simplices" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.dimension">
@@ -732,6 +752,18 @@ A maximum simplex is not a proper face of any other simplex in the complex.</p>
 <span class="sig-name descname"><span class="pre">random_delete_vertices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.random_delete_vertices" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.removeOne">
+<span class="sig-name descname"><span class="pre">removeOne</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplex</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.removeOne" title="Link to this definition"></a></dt>
+<dd><p>Delete one simplex, together with its superset</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.remove_simplices">
+<span class="sig-name descname"><span class="pre">remove_simplices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">simplices</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.remove_simplices" title="Link to this definition"></a></dt>
+<dd><p>Delete vertices</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.sc">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sc</span></span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.sc" title="Link to this definition"></a></dt>
@@ -748,9 +780,9 @@ A maximum simplex is not a proper face of any other simplex in the complex.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">simplices</span></span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.simplices" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
-<dl class="py method">
+<dl class="py property">
 <dt class="sig sig-object py" id="commutazzio.filtration.simplicial_complex.SimplicialComplex.vertices">
-<span class="sig-name descname"><span class="pre">vertices</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.vertices" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vertices</span></span><a class="headerlink" href="#commutazzio.filtration.simplicial_complex.SimplicialComplex.vertices" title="Link to this definition"></a></dt>
 <dd><p>Returns the list of 0-simplices (vertices).</p>
 </dd></dl>
 

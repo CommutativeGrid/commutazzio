@@ -23,7 +23,7 @@ CLASSIFIERS = [
 ]
 
 INSTALL_REQUIRES = [
-      'numpy~=1.24.3',
+      'numpy~=1.26.4',
       'plotly~= 5.15.0',
       'pandas~= 2.0.3',
       'fire~= 0.5.0',
@@ -34,8 +34,8 @@ INSTALL_REQUIRES = [
       'icecream~= 2.1.3',
       'orjson~= 3.8.10',
       'joblib~= 1.2.0',
-      'dionysus~= 2.0.9',
-      'numba>=0.57.0',
+      'dionysus~= 2.0.10',
+      'numba>=0.59.0',
       'tqdm~= 4.64.1',
       'pympler~= 1.0.1',
       'lz4~= 4.3.2',

@@ -6,7 +6,7 @@ We are continually expanding our library with more examples and extensive docume
 
 ## Documentation
 
-The documentation can be found at [https://commutativegrids.github.io/commutazzio/](https://commutativegrids.github.io/commutazzio/).
+The documentation can be found at [https://commutativegrid.github.io/commutazzio/](https://commutativegrid.github.io/commutazzio/).
 
 ## Installation
 

@@ -19,14 +19,13 @@ from ..compute import ConnectedPersistenceDiagram
 diagonal_line_color="LightSteelBlue"
 legend_background_color="WhiteSmoke"
 legend_border_color="black"
-colorscales=px.colors.sequential.Rainbow
 line_opacity=0.4
 #colorscales=px.colors.sequential.Plotly3
 #colorscales=px.colors.sequential.Plasma
 #original_colorscales = 
 #TODO: align to radii function (currently align to the ladder length)
 
-class ComplementaryTrianglesPlot():
+class OverlappingTrianglesPlot():
     """
     A class for visualizing a connected persistence diagram via a complementary triangles plot. 
     This class supports initialization with either a ConnectedPersistenceDiagram instance 
@@ -45,7 +44,9 @@ class ComplementaryTrianglesPlot():
         """
         self.title = title
         self.legend = True
-        self.colorscales = colorscales
+        self.line_colorscales = px.colors.sequential.YlGn
+        self.dot_U_colorscale = px.colors.sequential.Purp
+        self.dot_D_colorscale = px.colors.sequential.Blues
         self.template = 'plotly'
         self.size_area_min = 5  # min dot size in area
         self.size_area_max = 24  # max dot size in area
@@ -61,7 +62,11 @@ class ComplementaryTrianglesPlot():
         parse the data and do some preprocessing
         """
         self.dots = pd.read_csv(StringIO(kwargs.get("dots")),index_col=0)
+        # iterate over rows, if the area is D, swap x and y
+        self.dots.loc[self.dots["area"]=="D",["x","y"]] = self.dots.loc[self.dots["area"]=="D",["y","x"]].values
         self.lines = pd.read_csv(StringIO(kwargs.get("lines")),index_col=0)
+        # swap x0 and y0 for all rows
+        self.lines[["x0","y0"]] = self.lines[["y0","x0"]]
         self.radii = kwargs.get("radii")
         self.radii = np.array(self.radii)
         self.ladder_length = kwargs.get("ladder_length", None)
@@ -131,12 +136,13 @@ class ComplementaryTrianglesPlot():
         # the layer of shape does not work properly, see add_shape_to_fig in obsolete.py
         # create scatter chart and line chart for the final figure
         # https://stackoverflow.com/questions/65124833/plotly-how-to-combine-scatter-and-line-plots-using-plotly-express
-        fig1 = self.scatter_chart() # intervals on the upper and the lower rows
+        fig1U = self.scatter_chart(area="U",colorscale=self.dot_U_colorscale)
+        fig1D = self.scatter_chart(area="D",colorscale=self.dot_D_colorscale)
         if self.lines.empty is not True:
             fig2 = self.line_chart() # connecting lines
-            fig.add_traces(data=[*fig2.data, *fig1.data])
+            fig.add_traces(data=[*fig2.data, *fig1U.data, *fig1D.data])
         else:
-            fig.add_traces(data=[*fig1.data])
+            fig.add_traces(data=[*fig1U.data, *fig1D.data])
         # configure the layout
         self.render_general_layout(fig)
         self.render_axes(fig, offset)
@@ -333,10 +339,10 @@ class ComplementaryTrianglesPlot():
             df.log_abs_multi, (np.log10(self.multi_dots_min)
             , np.log10(self.multi_dots_max)), (0, 1))
 
-    def scatter_chart(self):
+    def scatter_chart(self,area:str,colorscale):
         """generate the scatter plot, which is a joint of two one-parameter persistence diagrams
         """
-        df = self.dots
+        df = self.dots[self.dots["area"] == area]
         if self.multi_dots_max <= 1:
             color_tick_vals = [0, 1]
         else:
@@ -375,7 +381,7 @@ class ComplementaryTrianglesPlot():
                 sizeref=2.*self.multi_dots_max/(self.size_area_max**2),
                 sizemin=self.size_area_min,
                 color=df.log_abs_multi,#get_color(self.colorscales, df.colorscale),#df.log_abs_multi,
-                colorscale=self.colorscales,
+                colorscale=colorscale,
                 colorbar=dict(
                     title="multiplicity",
                     titleside="top",
@@ -387,7 +393,7 @@ class ComplementaryTrianglesPlot():
                 line=dict(width=0,
                           ),
             ),
-            showlegend=False,
+            showlegend=True,
             name="",
             hovertemplate="multiplicity: %{customdata[0]}<br>"
             +"birth: %{customdata[1]},%{customdata[3]}<br>"
@@ -465,7 +471,7 @@ class ComplementaryTrianglesPlot():
         """add a line connecting two dots from two PDs respectively"""
         x_coords, y_coords = self.ribbonise(row)
         legend_index = self.legend_grouping(row.multiplicity)
-        fillcolor = get_color(self.colorscales, row.colorscale)
+        fillcolor = get_color(self.line_colorscales, row.colorscale)
         # add a transparent rectangle for triggering the hover event
         fig.add_trace(go.Scatter(
             x=x_coords,

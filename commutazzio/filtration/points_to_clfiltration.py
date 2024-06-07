@@ -51,6 +51,10 @@ def points_to_clfiltration(pts:np.array,vertical_removal_input:list,radii:list,m
     max_simplex_dim: the maximum simplex dimension to be considered
     method: 'cech' or 'rips'
     """    
+    if method == 'chromatic':
+        # create the labels: 0 for indices not in vertical_removal_input, 1 for indices in vertical_removal_input
+        labels = [0 if i not in vertical_removal_input else 1 for i in range(len(pts))]
+        return points_to_clfiltration_chro(pts, labels, max_simplex_dim, radii)
     # create a simplex tree
     # truncation it using radius in radii, get a sc
     # create upper row and lower row

@@ -167,32 +167,44 @@ class PD_Points3D:
 
     #TODO use heat plot
     def plot_0D(self,reduced=False,plotrange=(0,3)):
-        if reduced:
-            diagram=self.diagram_0_r
-        else:
-            diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==0]
-        self._plot_diagram(diagram,plotrange)
+        # if reduced:
+        #     diagram=self.diagram_0_r
+        # else:
+        #     diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==0]
+        return self._plot_diagram(self._diagrams,
+                           [0], #homology dimension
+                           plotrange)
 
     def plot_1D(self,reduced=False,plotrange=(0,3)):
-        if reduced:
-            diagram=self.diagram_1_r
-        else:
-            diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==1]
-        self._plot_diagram(diagram,plotrange)
+        # if reduced:
+        #     diagram=self.diagram_1_r
+        # else:
+        #     diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==1]
+        return self._plot_diagram(self._diagrams,
+                           [1],#homology dimension
+                           plotrange)
 
     def plot_2D(self,reduced=False,plotrange=(0,3)):
-        if reduced:
-            diagram=self.diagram_2_r
-        else:
-            diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==2]
-        self._plot_diagram(diagram,plotrange)
-        
-    
-    def _plot_diagram(self,points,plotrange):
-        points = [pt for pt in points if plotrange[0]<=pt[0]<plotrange[1]] # remove high values
-        ax = gd.plot_persistence_diagram(points,legend=False)
-        ax.set_title(f"Persistence diagram")
-        ax.set_aspect("equal")
+        # if reduced:
+        #     diagram=self.diagram_2_r
+        # else:
+        #     diagram=[(birth,death) for (dim,(birth,death)) in self._diagrams if dim==2]
+        return self._plot_diagram(self._diagrams,
+                           [2],#homology dimension
+                           plotrange)
+
+    def _plot_diagram(self,diagrams,homology_dimensions,plotrange):
+        # diagrams in form [...,(dim,(birth,death)),...]
+        # change to [...,(birth,death,dim),...]
+        points = np.array([(birth,death,dim) for (dim,(birth,death)) in diagrams])
+        # only keep points with both birth and death within plotrange
+        points = np.array([pt for pt in points if plotrange[0]<=pt[0]<plotrange[1] and plotrange[0]<=pt[1]<plotrange[1]])
+        plotly_params={"layout":{'xaxis': {'range': plotrange},'yaxis': {'range': plotrange}}}
+        fig=plot_diagram_gtda(points,
+                              homology_dimensions=homology_dimensions,
+                              plotly_params=plotly_params)
+        return fig
+
 
     #TODO use np.around instead
     @staticmethod

@@ -56,6 +56,16 @@ class OverlappingTrianglesPlot():
             self._preprocessing(**cPD.plot_data)
         else:
             self._preprocessing(**kwargs)
+        self.colorbar_positions = {
+            "U": 0.9,
+            "D": 1,
+            "lines": 1.1
+        }
+        self.colorbar_ticks_positions = {
+            "U": "outside left",
+            "D": "outside left",
+            "lines": "outside right",
+        }
 
     def _preprocessing(self,**kwargs):
         """
@@ -120,6 +130,7 @@ class OverlappingTrianglesPlot():
         fig = go.Figure()  # initiate the final figure
         # add a diagonal line, 
         # use add_trace because the layer of add_shape does not work properly
+        # the layer of shape does not work properly, see add_shape_to_fig in obsolete.py
         fig.add_trace(go.Scatter(
             x=[-offset_diag, self.ladder_length+offset_diag],
             y=[-offset_diag, self.ladder_length+offset_diag],
@@ -133,7 +144,7 @@ class OverlappingTrianglesPlot():
             hoverinfo='none',
         )
         )
-        # the layer of shape does not work properly, see add_shape_to_fig in obsolete.py
+
         # create scatter chart and line chart for the final figure
         # https://stackoverflow.com/questions/65124833/plotly-how-to-combine-scatter-and-line-plots-using-plotly-express
         fig1U = self.scatter_chart(area="U",colorscale=self.dot_U_colorscale)
@@ -369,24 +380,35 @@ class OverlappingTrianglesPlot():
             new_row.append(f"{row[4]:.3f}" if row[4] != self.inf_replacement else ' +\u221E') # death_radius
             custom_data.append(new_row)
         fig = go.Figure()
+        fixed_bubble_size=2*self.size_area_min
+        if area == "U":
+            title = "Upper"
+            colorbar_position = self.colorbar_positions["U"]
+        elif area == "D":
+            title = "Lower"
+            colorbar_position = self.colorbar_positions["D"]
+        else:
+            raise ValueError("area must be either U or D")
         fig.add_trace(go.Scatter(
             x=df['x'],
             y=df['y'],
             customdata=custom_data,
             mode='markers',
             marker=dict(
-                size=df.multiplicity,
+                size=fixed_bubble_size,#df.multiplicity,
                 sizemode='area',
                 # see https://plotly.com/python/bubble-charts/
-                sizeref=2.*self.multi_dots_max/(self.size_area_max**2),
-                sizemin=self.size_area_min,
+                sizeref=fixed_bubble_size,#2.*self.multi_dots_max/(self.size_area_max**2),
+                sizemin=fixed_bubble_size,
                 color=df.log_abs_multi,#get_color(self.colorscales, df.colorscale),#df.log_abs_multi,
                 colorscale=colorscale,
                 colorbar=dict(
-                    title="multiplicity",
+                    title=title,
                     titleside="top",
+                    ticklabelposition=self.colorbar_ticks_positions[area], # Position the colorbar ticks
                     tickvals=color_tick_vals,
                     ticktext=color_tick_text,
+                    x=colorbar_position # Position the colorbar
                 ),
                 showscale=True,
                 opacity=1,
@@ -394,6 +416,7 @@ class OverlappingTrianglesPlot():
                           ),
             ),
             showlegend=True,
+            # legend_title_text=area,
             name="",
             hovertemplate="multiplicity: %{customdata[0]}<br>"
             +"birth: %{customdata[1]},%{customdata[3]}<br>"
@@ -449,6 +472,30 @@ class OverlappingTrianglesPlot():
         next(self.legend_tracker)
         for index, row in df.iterrows():
             self.add_line(fig, index, row)
+
+        # Add a dummy scatter trace to show the color scale
+        fig.add_trace(go.Scatter(
+            x=[None],  # dummy data
+            y=[None],  # dummy data
+            mode='markers',
+            marker=dict(
+                colorscale=self.line_colorscales,
+                cmin=np.log10(self.multi_lines_min),
+                cmax=np.log10(self.multi_lines_max),
+                colorbar=dict(
+                    title="Connection",
+                    titleside="top",
+                    ticklabelposition=self.colorbar_ticks_positions["lines"],
+                    tickvals=[np.log10(x) for x in self.separators],
+                    ticktext=[str(x) for x in self.separators],
+                    x=self.colorbar_positions["lines"],
+                ),
+                showscale=True,
+            ),
+            showlegend=False,
+            hoverinfo='none'
+        ))
+
         fig.update_traces(
             hoverlabel=dict(
                 # bgcolor="#F0F0F0",

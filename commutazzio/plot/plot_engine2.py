@@ -16,9 +16,19 @@ from .colors_helper import get_color
 from ..compute import ConnectedPersistenceDiagram
 
 # global variables for the plot
-diagonal_line_color="LightSteelBlue"
-legend_background_color="WhiteSmoke"
-legend_border_color="black"
+# plotly_template="plotly_dark"
+plotly_template="plotly"
+if plotly_template == "plotly_dark":
+    diagonal_line_color="DimGray"
+    legend_background_color="MidNightBlue"
+    legend_border_color="white"
+elif plotly_template == "plotly":
+    diagonal_line_color="LightSteelBlue"
+    legend_background_color="WhiteSmoke"
+    legend_border_color="black"
+line_colorscales = px.colors.sequential.YlGn
+dot_U_colorscale = px.colors.sequential.PuRd
+dot_D_colorscale = px.colors.sequential.Blues
 line_opacity=0.4
 #colorscales=px.colors.sequential.Plotly3
 #colorscales=px.colors.sequential.Plasma
@@ -38,16 +48,16 @@ class OverlappingTrianglesPlot():
     - kwargs: Additional keyword arguments for custom data initialization.
     """
 
-    def __init__(self,cPD:ConnectedPersistenceDiagram = None,title = None, convention = "[b,d)",**kwargs):
+    def __init__(self,cPD:ConnectedPersistenceDiagram = None,title = None, convention = "[b,d]",**kwargs):
         """
         Initialize the ComplementaryTrianglesPlot instance. 
         """
         self.title = title
         self.legend = True
-        self.line_colorscales = px.colors.sequential.YlGn
-        self.dot_U_colorscale = px.colors.sequential.Purp
-        self.dot_D_colorscale = px.colors.sequential.Blues
-        self.template = 'plotly'
+        self.line_colorscales = line_colorscales
+        self.dot_U_colorscale = dot_U_colorscale
+        self.dot_D_colorscale = dot_D_colorscale
+        self.template = plotly_template
         self.size_area_min = 5  # min dot size in area
         self.size_area_max = 24  # max dot size in area
         self.convention = convention
@@ -98,7 +108,7 @@ class OverlappingTrianglesPlot():
             else:
                 self.inf_replacement = round(self.radii[-1]+self.radii[-1]-self.radii[-2],5)
             self.radii = np.append(self.radii,self.inf_replacement)
-            # format: x0 y0 x1 y1: d_lower  b_lower  b_upper  d_upper
+            # format: x0 y0 x1 y1: death_lower  birth_lower  birth_upper  death_upper
             #increase x0 by one, y1 by one
             self.lines["x0"] += 1
             self.lines["y1"] += 1
@@ -106,6 +116,15 @@ class OverlappingTrianglesPlot():
             # for all area == U, y plus one
             self.dots.loc[self.dots["area"]=="D","x"] += 1
             self.dots.loc[self.dots["area"]=="U","y"] += 1
+        elif self.convention == "[b,d]":
+            if self.radii[-1]-self.radii[-2] < 0.00001:
+                Warning("The last two radii are too close to each other.")
+                self.inf_replacement = round(self.radii[-1]+0.00001)
+            else:
+                self.inf_replacement = round(self.radii[-1]+self.radii[-1]-self.radii[-2],5)
+            self.radii = np.append(self.radii,self.inf_replacement)
+        else:
+            raise NotImplementedError("Convention not supported.")
 
     def show(self):
         """
@@ -336,8 +355,8 @@ class OverlappingTrianglesPlot():
         df = self.lines
         ribbon_width_coord_min = 0.15
         ribbon_width_coord_max = 0.15
-        ribbon_width_pixel_min = 2
-        ribbon_width_pixel_max = 8
+        ribbon_width_pixel_min = 5
+        ribbon_width_pixel_max = 12
         self.lines["log_abs_multi"] = np.log10(np.abs(df.multiplicity))
         #TODO: WARNING!!
         # calculate the thickness of the line based on the multiplicity
@@ -416,8 +435,7 @@ class OverlappingTrianglesPlot():
                           ),
             ),
             showlegend=True,
-            # legend_title_text=area,
-            name="",
+            name=area,
             hovertemplate="multiplicity: %{customdata[0]}<br>"
             +"birth: %{customdata[1]},%{customdata[3]}<br>"
             +"death: %{customdata[2]},%{customdata[4]}",

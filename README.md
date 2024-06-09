@@ -82,7 +82,18 @@ This section is currently under development and will be updated shortly.
 
 ### Connected Persistence Diagrams
 
-For a practical demonstration of Connected Persistence Diagrams, please refer to the Jupyter notebook located at `examples/connected_persistence_diagrams.ipynb`. This notebook is designed to guide you through the process of plotting Connected Persistence Diagrams, as illustrated in Figure 14 of our research paper.
+Interval approximations values required to plot a connected persistence diagram can be computed using the `CLInvariants` calss. We then provide two method to visualize it as depicted in the paper.
+
+1. Complementary triangles mode
+
+   The Jupyter notebook located at `./examples/connected_persistence_diagrams.ipynb` is designed to guide you through the process of plotting Connected Persistence Diagrams, as illustrated in Figure 14 of the paper.
+   We note that in the default settings, the death coordinate is exclusive to avoid the overlapping of homology generators from the upper and the lower layer respectively on the diagonal line of the plot.
+
+2. Overlapping triangels mode
+
+   The notebook `./examples/silica_thinning.ipynb` shows how to plot the diagram as in Figure 20(b) in the paper. In this plot mode the death coordinate is inclusive.
+
+
 
 ### Use Precomputed Intervals for Faster Computations
 

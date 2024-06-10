@@ -48,9 +48,16 @@ class OverlappingTrianglesPlot():
     - kwargs: Additional keyword arguments for custom data initialization.
     """
 
-    def __init__(self,cPD:ConnectedPersistenceDiagram = None,title = None, convention = "[b,d]",**kwargs):
+    def __init__(self,cPD:ConnectedPersistenceDiagram = None,
+                 title = None, 
+                 convention = "[b,d]",
+                 line_colorscales = line_colorscales,
+                 dot_U_colorscale = dot_U_colorscale,
+                 dot_D_colorscale = dot_D_colorscale,
+                 **kwargs):
         """
         Initialize the ComplementaryTrianglesPlot instance. 
+        Choose you favorite colorscales from https://plotly.com/python/builtin-colorscales/
         """
         self.title = title
         self.legend = True

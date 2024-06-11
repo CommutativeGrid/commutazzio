@@ -410,9 +410,11 @@ class OverlappingTrianglesPlot():
         if area == "U":
             title = "Upper"
             colorbar_position = self.colorbar_positions["U"]
+            name='Upper'
         elif area == "D":
             title = "Lower"
             colorbar_position = self.colorbar_positions["D"]
+            name='Lower'
         else:
             raise ValueError("area must be either U or D")
         fig.add_trace(go.Scatter(
@@ -442,7 +444,7 @@ class OverlappingTrianglesPlot():
                           ),
             ),
             showlegend=True,
-            name=area,
+            name=name,
             hovertemplate="multiplicity: %{customdata[0]}<br>"
             +"birth: %{customdata[1]},%{customdata[3]}<br>"
             +"death: %{customdata[2]},%{customdata[4]}",

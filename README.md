@@ -4,6 +4,8 @@
 
 We are continually expanding our library with more examples and extensive documentation.
 
+**Related projects:** See [rucpd](https://bitbucket.org/tda-homcloud/rucpd/src/main/) for a cPD computation software with improved integration with [homcloud](https://homcloud.dev/index.html).
+
 ## Documentation
 
 The documentation can be found at [https://commutativegrid.github.io/commutazzio/](https://commutativegrid.github.io/commutazzio/).
